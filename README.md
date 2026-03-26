@@ -1,3 +1,3 @@
-# My Second Brain
+# JANJAN x FlowGPS
 
-這是專案的最初始狀態。
+This is the repository for the JANJAN x FlowGPS project.
