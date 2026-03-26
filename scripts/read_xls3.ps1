@@ -1,0 +1,34 @@
+param($FilePath)
+
+try {
+    $excel = New-Object -ComObject Excel.Application
+    $excel.DisplayAlerts = $false
+    $wb = $excel.Workbooks.Open($FilePath)
+    $ws = $wb.Worksheets.Item(1)
+
+    $rows = $ws.UsedRange.Rows.Count
+    $cols = $ws.UsedRange.Columns.Count
+
+    $maxRow = [math]::min($rows, 100)
+    $maxCol = [math]::min($cols, 20)
+
+    for ($i = 1; $i -le $maxRow; $i++) {
+        $line = ""
+        for ($j = 1; $j -le $maxCol; $j++) {
+            $val = $ws.Cells.Item($i, $j).Text
+            if ($val -ne $null) {
+                $val = $val -replace "`n", " " -replace "`r", ""
+                $line += ($val + "|")
+            } else {
+                $line += "|"
+            }
+        }
+        Write-Output $line
+    }
+
+    $wb.Close($false)
+    $excel.Quit()
+    [System.Runtime.Interopservices.Marshal]::ReleaseComObject($excel) | Out-Null
+} catch {
+    Write-Output "Error: $($_.Exception.Message)"
+}
