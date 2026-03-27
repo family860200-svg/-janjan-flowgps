@@ -1,5 +1,7 @@
 param($FilePath)
 
+[Console]::OutputEncoding = [System.Text.Encoding]::UTF8
+
 try {
     $excel = New-Object -ComObject Excel.Application
     $excel.DisplayAlerts = $false
@@ -7,11 +9,10 @@ try {
 
     for ($s = 1; $s -le $wb.Worksheets.Count; $s++) {
         $ws = $wb.Worksheets.Item($s)
-        Write-Output "=== SHEET: $($ws.Name) ==="
+        [Console]::WriteLine("=== SHEET: $($ws.Name) ===")
 
         $rows = $ws.UsedRange.Rows.Count
         $cols = $ws.UsedRange.Columns.Count
-
         $maxRow = [math]::min($rows, 100)
         $maxCol = [math]::min($cols, 20)
 
@@ -21,12 +22,10 @@ try {
                 $val = $ws.Cells.Item($i, $j).Text
                 if ($val -ne $null) {
                     $val = $val -replace "`n", " " -replace "`r", ""
-                    $line += ($val + "|")
-                } else {
-                    $line += "|"
                 }
+                $line += ($val + "`t")
             }
-            Write-Output $line
+            [Console]::WriteLine($line)
         }
     }
 
@@ -34,5 +33,5 @@ try {
     $excel.Quit()
     [System.Runtime.Interopservices.Marshal]::ReleaseComObject($excel) | Out-Null
 } catch {
-    Write-Output "Error: $($_.Exception.Message)"
+    [Console]::WriteLine("Error: $($_.Exception.Message)")
 }
