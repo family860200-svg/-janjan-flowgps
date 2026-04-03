@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 import http.server
 import json
-import os
 import re
 from datetime import datetime
 from pathlib import Path
@@ -40,17 +39,25 @@ def parse_todos(md):
     return sections
 
 
-WEALTH_ACCOUNTS = ["財富", "健康", "事業", "家庭", "人脈", "學習", "休閒", "心靈"]
+WEALTH_ACCOUNTS = ["成長", "健康", "家庭", "技藝", "金錢", "人脈", "體驗", "服務"]
 
 WEALTH_ALIAS = {
-    "財富": "財富", "wealth": "財富",
+    # 成長
+    "成長": "成長", "learning": "成長", "學習": "成長", "growth": "成長",
+    # 健康
     "健康": "健康", "health": "健康", "wellness": "健康",
-    "事業": "事業", "career": "事業",
+    # 家庭
     "家庭": "家庭", "family": "家庭",
+    # 技藝
+    "技藝": "技藝", "craft": "技藝", "事業": "技藝", "career": "技藝",
+    # 金錢
+    "金錢": "金錢", "wealth": "金錢", "財富": "金錢", "money": "金錢",
+    # 人脈
     "人脈": "人脈", "relationships": "人脈",
-    "學習": "學習", "learning": "學習", "技藝": "學習", "craft": "學習",
-    "休閒": "休閒", "leisure": "休閒",
-    "心靈": "心靈", "spirituality": "心靈", "服務": "心靈", "成長": "學習",
+    # 體驗
+    "體驗": "體驗", "leisure": "體驗", "休閒": "體驗", "experience": "體驗",
+    # 服務
+    "服務": "服務", "spirituality": "服務", "心靈": "服務", "service": "服務",
 }
 
 def parse_wealth_from_md(md):
