@@ -219,19 +219,97 @@
     color: #222;
   }
 
-  /* Wealth tags */
+  /* Wealth scoreboard */
   .wealth-grid {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
   }
-  .wealth-tag {
+  @media (max-width: 768px) { .wealth-grid { grid-template-columns: repeat(2, 1fr); } }
+  .wealth-card {
     border: var(--border);
-    padding: 6px 14px;
-    font-size: 12px;
-    font-weight: 900;
-    box-shadow: 3px 3px 0 #000;
+    box-shadow: 4px 4px 0 #000;
+    text-align: center;
+    padding: 12px 8px;
   }
+  .wealth-name {
+    font-size: 13px;
+    font-weight: 900;
+    margin-bottom: 8px;
+  }
+  .wealth-total {
+    font-size: 32px;
+    font-weight: 900;
+    line-height: 1;
+  }
+  .wealth-today {
+    font-size: 11px;
+    font-weight: 700;
+    margin-top: 4px;
+    color: #333;
+  }
+  .wealth-today-badge {
+    display: inline-block;
+    background: var(--black);
+    color: var(--yellow);
+    border-radius: var(--radius-pill);
+    padding: 1px 8px;
+    font-size: 11px;
+    font-weight: 900;
+  }
+
+  /* Eisenhower Matrix */
+  .matrix-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto auto;
+    gap: 0;
+    border: var(--border);
+    box-shadow: var(--shadow);
+  }
+  .matrix-q {
+    border: var(--border);
+    padding: 16px;
+    min-height: 140px;
+  }
+  .matrix-q-label {
+    font-size: 11px;
+    font-weight: 900;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .matrix-q-label span {
+    padding: 2px 8px;
+    border: 2px solid #000;
+    font-size: 10px;
+  }
+  .matrix-q1 { background: #FFE5E5; }
+  .matrix-q2 { background: #FFFBE6; }
+  .matrix-q3 { background: #E8F4FF; }
+  .matrix-q4 { background: #F0F0F0; }
+  .matrix-axis-h {
+    display: flex;
+    justify-content: space-between;
+    font-size: 10px;
+    font-weight: 900;
+    letter-spacing: 1px;
+    padding: 4px 8px;
+    background: #000;
+    color: #fff;
+    grid-column: span 2;
+  }
+  .matrix-item {
+    font-size: 12px;
+    font-weight: 600;
+    padding: 3px 0;
+    border-bottom: 1px dashed #ccc;
+    line-height: 1.4;
+  }
+  .matrix-item:last-child { border-bottom: none; }
 
   /* Full width */
   .col-span-2 { grid-column: span 2; }
@@ -311,6 +389,62 @@ function escHtml(s) {
   return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 }
 
+// Eisenhower mapping by section title
+const eisenhowerMap = {
+  '🔴 四月主線（工作）': 'q1',
+  '🔴 四月主線': 'q1',
+  '💰 家庭財務': 'q2',
+  '🟡 健康日常': 'q2',
+  '🟠 系統維護': 'q3',
+  '🔵 支線任務（空檔推進）': 'q4',
+};
+
+function renderEisenhower(sections) {
+  const q = { q1: [], q2: [], q3: [], q4: [] };
+  for (const s of sections) {
+    const bucket = eisenhowerMap[s.title];
+    if (!bucket) continue;
+    for (const item of s.items) {
+      if (!item.done) q[bucket].push(item.text);
+    }
+  }
+
+  const renderItems = (items) => items.length
+    ? items.map(t => `<div class="matrix-item">· ${escHtml(t)}</div>`).join('')
+    : '<div class="matrix-item" style="color:#bbb">（空）</div>';
+
+  return `
+    <div class="card col-span-2" style="overflow:visible">
+      <div class="card-header" style="background:var(--yellow)">⚡ 艾森豪矩陣</div>
+      <div class="card-body" style="padding:0">
+        <div class="matrix-grid">
+          <div class="matrix-axis-h">
+            <span>← 不緊急</span>
+            <span style="font-size:12px">⬆ 重要度 ⬇</span>
+            <span>緊急 →</span>
+          </div>
+          <div class="matrix-q matrix-q1">
+            <div class="matrix-q-label">🔴 <span>重要 ＋ 緊急</span> 立刻做</div>
+            ${renderItems(q.q1)}
+          </div>
+          <div class="matrix-q matrix-q2">
+            <div class="matrix-q-label">🟡 <span>重要 ＋ 不緊急</span> 排時間</div>
+            ${renderItems(q.q2)}
+          </div>
+          <div class="matrix-q matrix-q3">
+            <div class="matrix-q-label">🟠 <span>不重要 ＋ 緊急</span> 快速處理</div>
+            ${renderItems(q.q3)}
+          </div>
+          <div class="matrix-q matrix-q4">
+            <div class="matrix-q-label">⚪ <span>不重要 ＋ 不緊急</span> 擱置</div>
+            ${renderItems(q.q4)}
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
 // Section color map
 const sectionColors = {
   '🔴 四月主線（工作）': 'card-red',
@@ -365,17 +499,28 @@ function parseSummarySection(md, heading) {
 function render(data) {
   document.getElementById('date-str').textContent = data.date;
 
-  const wealthText = parseSummarySection(data.summary, '財富帳戶');
-  const wealthHtml = wealthText
-    ? `<div class="wealth-grid">${
-        wealthText.split('\n')
-          .filter(l => l.includes('✦'))
-          .map(l => {
-            const clean = l.replace(/[-*]/g, '').trim();
-            return `<div class="wealth-tag" style="background:var(--lime)">${escHtml(clean)}</div>`;
-          }).join('')
-      }</div>`
-    : '<p class="empty">今日尚無財富記錄</p>';
+  const WEALTH_COLORS = [
+    '#FFE100','#B8FF3C','#00F0FF','#FF61D2',
+    '#FF9500','#CC88FF','#FF4444','#88DDFF'
+  ];
+  const WEALTH_ACCOUNTS = ["財富","健康","事業","家庭","人脈","學習","休閒","心靈"];
+  const WEALTH_EMOJI = ["💰","💊","🏭","👨‍👩‍👧","🤝","📚","🌴","🕊️"];
+
+  const wealthHtml = `<div class="wealth-grid">${
+    WEALTH_ACCOUNTS.map((name, i) => {
+      const total = (data.wealth_total || {})[name] || 0;
+      const today = (data.wealth_today || {})[name] || 0;
+      const todayBadge = today > 0
+        ? `<div class="wealth-today"><span class="wealth-today-badge">今日 +${today}</span></div>`
+        : `<div class="wealth-today" style="color:#bbb">今日 +0</div>`;
+      return `
+        <div class="wealth-card" style="background:${WEALTH_COLORS[i]}">
+          <div class="wealth-name">${WEALTH_EMOJI[i]} ${name}</div>
+          <div class="wealth-total">${total}</div>
+          ${todayBadge}
+        </div>`;
+    }).join('')
+  }</div>`;
 
   const html = `
     <!-- 手動記錄 -->
@@ -390,6 +535,9 @@ function render(data) {
         <div id="notes-list">${renderNotes(data.notes)}</div>
       </div>
     </div>
+
+    <!-- 艾森豪矩陣 -->
+    ${renderEisenhower(data.todos)}
 
     <!-- 待辦任務 -->
     ${renderTodos(data.todos)}

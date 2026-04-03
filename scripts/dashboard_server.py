@@ -40,6 +40,67 @@ def parse_todos(md):
     return sections
 
 
+WEALTH_ACCOUNTS = ["財富", "健康", "事業", "家庭", "人脈", "學習", "休閒", "心靈"]
+
+WEALTH_ALIAS = {
+    "財富": "財富", "wealth": "財富",
+    "健康": "健康", "health": "健康", "wellness": "健康",
+    "事業": "事業", "career": "事業",
+    "家庭": "家庭", "family": "家庭",
+    "人脈": "人脈", "relationships": "人脈",
+    "學習": "學習", "learning": "學習", "技藝": "學習", "craft": "學習",
+    "休閒": "休閒", "leisure": "休閒",
+    "心靈": "心靈", "spirituality": "心靈", "服務": "心靈", "成長": "學習",
+}
+
+def parse_wealth_from_md(md):
+    """Extract wealth entries from a summary markdown. Returns dict {account: points}."""
+    result = {}
+    in_section = False
+    for line in md.splitlines():
+        if "財富帳戶" in line and line.startswith("##"):
+            in_section = True
+            continue
+        if in_section and line.startswith("##"):
+            break
+        if in_section and "✦" in line:
+            stars = line.count("✦")
+            # Extract account name from bold text **帳戶（...）**
+            m = re.search(r"\*\*(.+?)[\(（]", line)
+            if not m:
+                m = re.search(r"\*\*(.+?)\*\*", line)
+            if m:
+                raw = m.group(1).strip()
+                key = WEALTH_ALIAS.get(raw, WEALTH_ALIAS.get(raw.lower()))
+                if key:
+                    result[key] = result.get(key, 0) + stars
+    return result
+
+
+def get_all_wealth_scores():
+    """Scan all summary files and accumulate total + today scores."""
+    d = ROOT / "F｜行動聚焦漏斗" / "對話摘要"
+    prefix = today_prefix()
+    total = {a: 0 for a in WEALTH_ACCOUNTS}
+    today = {a: 0 for a in WEALTH_ACCOUNTS}
+    if not d.exists():
+        return total, today
+    for f in sorted(d.iterdir()):
+        if not f.suffix == ".md":
+            continue
+        try:
+            md = f.read_text(encoding="utf-8")
+            scores = parse_wealth_from_md(md)
+            for acc, pts in scores.items():
+                if acc in total:
+                    total[acc] += pts
+                    if f.name.startswith(prefix):
+                        today[acc] += pts
+        except Exception:
+            pass
+    return total, today
+
+
 def get_today_summary():
     prefix = today_prefix()
     d = ROOT / "F｜行動聚焦漏斗" / "對話摘要"
@@ -111,11 +172,14 @@ class Handler(http.server.BaseHTTPRequestHandler):
             weekdays = ["一", "二", "三", "四", "五", "六", "日"]
             wday = weekdays[now.weekday()]
             date_str = f"{now.year} 年 {now.month} 月 {now.day} 日（週{wday}）"
+            wealth_total, wealth_today = get_all_wealth_scores()
             payload = {
                 "todos": parse_todos(md),
                 "summary": get_today_summary(),
                 "notes": get_manual_notes(),
                 "date": date_str,
+                "wealth_total": wealth_total,
+                "wealth_today": wealth_today,
             }
             body = json.dumps(payload, ensure_ascii=False).encode("utf-8")
             self.send_response(200)
