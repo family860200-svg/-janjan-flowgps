@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FlowGPS 日報</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --pink: #FF61D2;
+    --yellow: #FFE100;
+    --cyan: #00F0FF;
+    --lime: #B8FF3C;
+    --black: #000000;
+    --white: #FFFFFF;
+    --bg2: #FFB0E0;
+    --shadow: 6px 6px 0 #000;
+    --border: 3px solid #000;
+    --radius-pill: 9999px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Montserrat', sans-serif;
+    background: var(--white);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Background shapes */
+  body::before {
+    content: '';
+    position: fixed; inset: 0; z-index: -1;
+    background:
+      radial-gradient(circle 8px at 10% 15%, var(--black) 100%, transparent 0),
+      radial-gradient(circle 8px at 25% 80%, var(--black) 100%, transparent 0),
+      radial-gradient(circle 8px at 90% 20%, var(--black) 100%, transparent 0),
+      radial-gradient(circle 8px at 70% 90%, var(--black) 100%, transparent 0),
+      radial-gradient(circle 8px at 50% 50%, var(--black) 100%, transparent 0),
+      radial-gradient(circle 5px at 80% 55%, var(--black) 100%, transparent 0),
+      radial-gradient(circle 5px at 15% 45%, var(--black) 100%, transparent 0),
+      var(--white);
+  }
+
+  header {
+    background: var(--pink);
+    border-bottom: var(--border);
+    padding: 24px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 4px 0 #000;
+  }
+  .logo {
+    font-size: 28px;
+    font-weight: 900;
+    color: var(--black);
+    letter-spacing: -1px;
+  }
+  .logo span {
+    background: var(--yellow);
+    border: var(--border);
+    border-radius: var(--radius-pill);
+    padding: 2px 14px;
+    margin-left: 8px;
+    box-shadow: 3px 3px 0 #000;
+    font-size: 14px;
+    vertical-align: middle;
+  }
+  #clock {
+    font-size: 20px;
+    font-weight: 700;
+    background: var(--white);
+    border: var(--border);
+    border-radius: var(--radius-pill);
+    padding: 6px 20px;
+    box-shadow: var(--shadow);
+  }
+  #date-str {
+    font-size: 13px;
+    font-weight: 700;
+    color: #222;
+    margin-top: 4px;
+    text-align: right;
+  }
+
+  main {
+    max-width: 1120px;
+    margin: 0 auto;
+    padding: 32px 24px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+  }
+
+  @media (max-width: 768px) {
+    main { grid-template-columns: 1fr; }
+  }
+
+  .card {
+    background: var(--white);
+    border: var(--border);
+    border-radius: 0;
+    box-shadow: var(--shadow);
+    overflow: hidden;
+  }
+  .card-header {
+    padding: 14px 20px;
+    font-size: 15px;
+    font-weight: 900;
+    border-bottom: var(--border);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .card-body { padding: 20px; }
+
+  /* Colors per card */
+  .card-red .card-header { background: #FF4444; color: #fff; }
+  .card-yellow .card-header { background: var(--yellow); }
+  .card-cyan .card-header { background: var(--cyan); }
+  .card-lime .card-header { background: var(--lime); }
+  .card-pink .card-header { background: var(--pink); }
+  .card-purple .card-header { background: #CC88FF; }
+  .card-white .card-header { background: #f0f0f0; }
+
+  /* Todo items */
+  .todo-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 8px 0;
+    border-bottom: 1px dashed #ddd;
+    font-size: 14px;
+    font-weight: 600;
+  }
+  .todo-item:last-child { border-bottom: none; }
+  .todo-item.indent { padding-left: 20px; }
+  .todo-item.done { opacity: 0.4; text-decoration: line-through; }
+  .todo-dot {
+    width: 16px; height: 16px;
+    border: 2px solid #000;
+    border-radius: 3px;
+    flex-shrink: 0;
+    margin-top: 2px;
+    background: var(--white);
+  }
+  .todo-dot.checked {
+    background: var(--black);
+  }
+
+  /* Section label */
+  .section-label {
+    font-size: 11px;
+    font-weight: 900;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    background: var(--black);
+    color: var(--white);
+    display: inline-block;
+    padding: 2px 8px;
+    margin-bottom: 10px;
+    margin-top: 6px;
+  }
+
+  /* Notes */
+  .note-form {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+  .note-form input {
+    flex: 1;
+    border: var(--border);
+    padding: 10px 14px;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 600;
+    font-size: 13px;
+    outline: none;
+    box-shadow: 3px 3px 0 #000;
+  }
+  .note-form input:focus { background: #fffbe6; }
+  .btn {
+    background: var(--yellow);
+    border: var(--border);
+    padding: 10px 18px;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 900;
+    font-size: 13px;
+    cursor: pointer;
+    box-shadow: 3px 3px 0 #000;
+    transition: transform 150ms, box-shadow 150ms;
+  }
+  .btn:hover { transform: translate(-2px, -2px); box-shadow: 5px 5px 0 #000; }
+  .btn:active { transform: translate(1px, 1px); box-shadow: 1px 1px 0 #000; }
+
+  .note-item {
+    display: flex;
+    gap: 10px;
+    padding: 8px 0;
+    border-bottom: 1px dashed #ddd;
+    font-size: 13px;
+    font-weight: 600;
+  }
+  .note-time {
+    color: #999;
+    font-size: 11px;
+    white-space: nowrap;
+    margin-top: 2px;
+  }
+
+  /* Summary */
+  .summary-text {
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 1.8;
+    white-space: pre-wrap;
+    max-height: 300px;
+    overflow-y: auto;
+    color: #222;
+  }
+
+  /* Wealth tags */
+  .wealth-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .wealth-tag {
+    border: var(--border);
+    padding: 6px 14px;
+    font-size: 12px;
+    font-weight: 900;
+    box-shadow: 3px 3px 0 #000;
+  }
+
+  /* Full width */
+  .col-span-2 { grid-column: span 2; }
+  @media (max-width: 768px) { .col-span-2 { grid-column: span 1; } }
+
+  .empty { color: #aaa; font-size: 13px; font-weight: 600; }
+
+  /* Floating shape */
+  .shape {
+    position: fixed;
+    z-index: -1;
+    border: 3px solid #000;
+  }
+  .shape-circle { border-radius: 50%; }
+  .s1 { width: 80px; height: 80px; background: var(--cyan); top: 120px; right: 40px; }
+  .s2 { width: 50px; height: 50px; background: var(--lime); bottom: 200px; left: 30px; transform: rotate(15deg); }
+  .s3 { width: 120px; height: 120px; background: var(--yellow); top: 60%; right: 60px; border-radius: 50%; }
+
+  /* Refresh btn */
+  .refresh-btn {
+    background: var(--cyan);
+    border: var(--border);
+    border-radius: var(--radius-pill);
+    padding: 6px 16px;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 900;
+    font-size: 12px;
+    cursor: pointer;
+    box-shadow: 3px 3px 0 #000;
+    margin-left: 12px;
+  }
+  .refresh-btn:hover { transform: translate(-1px, -1px); box-shadow: 4px 4px 0 #000; }
+</style>
+</head>
+<body>
+
+<div class="shape s1 shape-circle"></div>
+<div class="shape s2"></div>
+<div class="shape s3 shape-circle"></div>
+
+<header>
+  <div>
+    <div class="logo">FlowGPS <span>日報</span></div>
+  </div>
+  <div>
+    <div id="clock">--:--:--</div>
+    <div id="date-str">載入中…</div>
+  </div>
+</header>
+
+<main id="main">
+  <div class="card col-span-2 card-white">
+    <div class="card-header">⏳ 載入中…</div>
+    <div class="card-body"><p class="empty">正在讀取你的 FlowGPS 資料</p></div>
+  </div>
+</main>
+
+<script>
+let allData = null;
+
+// Clock
+function updateClock() {
+  document.getElementById('clock').textContent =
+    new Date().toLocaleTimeString('zh-TW');
+}
+setInterval(updateClock, 1000);
+updateClock();
+
+// Fetch data
+async function loadData() {
+  const res = await fetch('/api/data');
+  allData = await res.json();
+  render(allData);
+}
+
+function escHtml(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+// Section color map
+const sectionColors = {
+  '🔴 四月主線（工作）': 'card-red',
+  '🔴 四月主線': 'card-red',
+  '💰 家庭財務': 'card-yellow',
+  '🟡 健康日常': 'card-lime',
+  '🟠 系統維護': 'card-cyan',
+  '🔵 支線任務（空檔推進）': 'card-purple',
+  '✅ 已完成': 'card-white',
+};
+
+function renderTodos(sections) {
+  return sections.filter(s => s.title !== '✅ 已完成' && s.items.length > 0).map(s => {
+    const color = sectionColors[s.title] || 'card-pink';
+    const items = s.items.map(item => `
+      <div class="todo-item ${item.done ? 'done' : ''} ${item.indent ? 'indent' : ''}">
+        <div class="todo-dot ${item.done ? 'checked' : ''}"></div>
+        <span>${escHtml(item.text)}</span>
+      </div>
+    `).join('');
+    return `
+      <div class="card ${color}">
+        <div class="card-header">${escHtml(s.title)}</div>
+        <div class="card-body">${items || '<p class="empty">沒有項目</p>'}</div>
+      </div>
+    `;
+  }).join('');
+}
+
+function renderNotes(notes) {
+  if (!notes.length) return '<p class="empty">今天還沒有手動記錄</p>';
+  return notes.map(n => `
+    <div class="note-item">
+      <span class="note-time">${escHtml(n.time)}</span>
+      <span>${escHtml(n.text)}</span>
+    </div>
+  `).join('');
+}
+
+function parseSummarySection(md, heading) {
+  if (!md) return null;
+  const lines = md.split('\n');
+  let capturing = false, result = [];
+  for (const line of lines) {
+    if (line.startsWith('## ') && line.includes(heading)) { capturing = true; continue; }
+    if (capturing && line.startsWith('## ')) break;
+    if (capturing) result.push(line);
+  }
+  return result.join('\n').trim() || null;
+}
+
+function render(data) {
+  document.getElementById('date-str').textContent = data.date;
+
+  const wealthText = parseSummarySection(data.summary, '財富帳戶');
+  const wealthHtml = wealthText
+    ? `<div class="wealth-grid">${
+        wealthText.split('\n')
+          .filter(l => l.includes('✦'))
+          .map(l => {
+            const clean = l.replace(/[-*]/g, '').trim();
+            return `<div class="wealth-tag" style="background:var(--lime)">${escHtml(clean)}</div>`;
+          }).join('')
+      }</div>`
+    : '<p class="empty">今日尚無財富記錄</p>';
+
+  const html = `
+    <!-- 手動記錄 -->
+    <div class="card card-pink col-span-2">
+      <div class="card-header">✏️ 今日手動記錄</div>
+      <div class="card-body">
+        <div class="note-form">
+          <input type="text" id="note-input" placeholder="隨手記一筆…" />
+          <button class="btn" onclick="addNote()">加入</button>
+          <button class="refresh-btn" onclick="loadData()">重新整理</button>
+        </div>
+        <div id="notes-list">${renderNotes(data.notes)}</div>
+      </div>
+    </div>
+
+    <!-- 待辦任務 -->
+    ${renderTodos(data.todos)}
+
+    <!-- 八大財富 -->
+    <div class="card card-lime col-span-2">
+      <div class="card-header">🏆 今日八大財富加分</div>
+      <div class="card-body">${wealthHtml}</div>
+    </div>
+  `;
+
+  document.getElementById('main').innerHTML = html;
+
+  // Enter key for note
+  document.getElementById('note-input').addEventListener('keydown', e => {
+    if (e.key === 'Enter') addNote();
+  });
+}
+
+async function addNote() {
+  const input = document.getElementById('note-input');
+  const note = input.value.trim();
+  if (!note) return;
+  await fetch('/api/note', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ note })
+  });
+  input.value = '';
+  await loadData();
+}
+
+loadData();
+</script>
+</body>
+</html>
