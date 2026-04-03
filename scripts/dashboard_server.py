@@ -84,11 +84,20 @@ def parse_wealth_from_md(md):
     return result
 
 
+def get_base_scores():
+    f = ROOT / "八大財富" / "base_scores.json"
+    try:
+        return json.loads(f.read_text(encoding="utf-8"))
+    except Exception:
+        return {}
+
+
 def get_all_wealth_scores():
     """Scan all summary files and accumulate total + today scores."""
     d = ROOT / "F｜行動聚焦漏斗" / "對話摘要"
     prefix = today_prefix()
-    total = {a: 0 for a in WEALTH_ACCOUNTS}
+    base = get_base_scores()
+    total = {a: base.get(a, 0) for a in WEALTH_ACCOUNTS}
     today = {a: 0 for a in WEALTH_ACCOUNTS}
     if not d.exists():
         return total, today
