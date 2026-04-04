@@ -43,23 +43,42 @@ function getTodaySummary() {
   } catch { return null; }
 }
 
-function getManualNotes() {
+function getAllNotes() {
   const file = path.join(ROOT, 'F｜行動聚焦漏斗', 'manual_notes.json');
-  try {
-    const data = JSON.parse(fs.readFileSync(file, 'utf8'));
-    const today = getTodayPrefix();
-    return data[today] || [];
-  } catch { return []; }
+  try { return JSON.parse(fs.readFileSync(file, 'utf8')); } catch { return {}; }
+}
+
+function getManualNotes(dateKey) {
+  const data = getAllNotes();
+  const key = dateKey || getTodayPrefix();
+  return data[key] || [];
 }
 
 function saveManualNote(note) {
   const file = path.join(ROOT, 'F｜行動聚焦漏斗', 'manual_notes.json');
   const today = getTodayPrefix();
-  let data = {};
-  try { data = JSON.parse(fs.readFileSync(file, 'utf8')); } catch {}
+  const data = getAllNotes();
   if (!data[today]) data[today] = [];
   data[today].unshift({ text: note, time: new Date().toLocaleTimeString('zh-TW') });
   fs.writeFileSync(file, JSON.stringify(data, null, 2));
+}
+
+function deleteManualNote(dateKey, index) {
+  const file = path.join(ROOT, 'F｜行動聚焦漏斗', 'manual_notes.json');
+  const data = getAllNotes();
+  if (data[dateKey]) {
+    data[dateKey].splice(index, 1);
+    fs.writeFileSync(file, JSON.stringify(data, null, 2));
+  }
+}
+
+function updateManualNote(dateKey, index, newText) {
+  const file = path.join(ROOT, 'F｜行動聚焦漏斗', 'manual_notes.json');
+  const data = getAllNotes();
+  if (data[dateKey] && data[dateKey][index]) {
+    data[dateKey][index].text = newText;
+    fs.writeFileSync(file, JSON.stringify(data, null, 2));
+  }
 }
 
 const server = http.createServer((req, res) => {
@@ -76,12 +95,18 @@ const server = http.createServer((req, res) => {
     return;
   }
 
-  if (req.url === '/api/data') {
+  const url = new URL(req.url, `http://localhost`);
+
+  if (url.pathname === '/api/data') {
+    const dateKey = url.searchParams.get('date') || getTodayPrefix();
     const todoMd = fs.readFileSync(path.join(ROOT, 'F｜行動聚焦漏斗', '玩家待辦任務.md'), 'utf8');
+    const allNotes = getAllNotes();
     const payload = {
       todos: parseTodos(todoMd),
       summary: getTodaySummary(),
-      notes: getManualNotes(),
+      notes: getManualNotes(dateKey),
+      noteDates: Object.keys(allNotes).sort().reverse(),
+      currentDate: dateKey,
       date: new Date().toLocaleDateString('zh-TW', { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' }),
     };
     res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
@@ -89,7 +114,7 @@ const server = http.createServer((req, res) => {
     return;
   }
 
-  if (req.url === '/api/note' && req.method === 'POST') {
+  if (url.pathname === '/api/note' && req.method === 'POST') {
     let body = '';
     req.on('data', c => body += c);
     req.on('end', () => {
@@ -98,9 +123,35 @@ const server = http.createServer((req, res) => {
         if (note && note.trim()) saveManualNote(note.trim());
         res.writeHead(200, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify({ ok: true }));
-      } catch {
-        res.writeHead(400); res.end();
-      }
+      } catch { res.writeHead(400); res.end(); }
+    });
+    return;
+  }
+
+  if (url.pathname === '/api/note/delete' && req.method === 'POST') {
+    let body = '';
+    req.on('data', c => body += c);
+    req.on('end', () => {
+      try {
+        const { date, index } = JSON.parse(body);
+        deleteManualNote(date, index);
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ ok: true }));
+      } catch { res.writeHead(400); res.end(); }
+    });
+    return;
+  }
+
+  if (url.pathname === '/api/note/update' && req.method === 'POST') {
+    let body = '';
+    req.on('data', c => body += c);
+    req.on('end', () => {
+      try {
+        const { date, index, text } = JSON.parse(body);
+        if (text && text.trim()) updateManualNote(date, index, text.trim());
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ ok: true }));
+      } catch { res.writeHead(400); res.end(); }
     });
     return;
   }

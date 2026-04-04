@@ -195,6 +195,7 @@
 
   .note-item {
     display: flex;
+    align-items: center;
     gap: 10px;
     padding: 8px 0;
     border-bottom: 1px dashed #ddd;
@@ -206,6 +207,35 @@
     font-size: 11px;
     white-space: nowrap;
     margin-top: 2px;
+  }
+  .note-text { flex: 1; }
+  .note-actions { display: flex; gap: 4px; margin-left: auto; }
+  .note-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 13px;
+    padding: 2px 4px;
+    opacity: 0.5;
+    line-height: 1;
+  }
+  .note-btn:hover { opacity: 1; }
+  .note-date-nav {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+    font-size: 12px;
+    font-weight: 700;
+  }
+  .note-date-nav select {
+    border: var(--border);
+    padding: 4px 8px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    background: #fff;
+    cursor: pointer;
   }
 
   /* Summary */
@@ -474,12 +504,16 @@ function renderTodos(sections) {
   }).join('');
 }
 
-function renderNotes(notes) {
-  if (!notes.length) return '<p class="empty">今天還沒有手動記錄</p>';
-  return notes.map(n => `
-    <div class="note-item">
+function renderNotes(notes, dateKey) {
+  if (!notes.length) return '<p class="empty">這天還沒有手動記錄</p>';
+  return notes.map((n, i) => `
+    <div class="note-item" id="note-${i}">
       <span class="note-time">${escHtml(n.time)}</span>
-      <span>${escHtml(n.text)}</span>
+      <span class="note-text" id="note-text-${i}">${escHtml(n.text)}</span>
+      <span class="note-actions">
+        <button class="note-btn" onclick="editNote('${dateKey}',${i})" title="編輯">✏️</button>
+        <button class="note-btn" onclick="deleteNote('${dateKey}',${i})" title="刪除">✕</button>
+      </span>
     </div>
   `).join('');
 }
@@ -525,14 +559,20 @@ function render(data) {
   const html = `
     <!-- 手動記錄 -->
     <div class="card card-pink col-span-2">
-      <div class="card-header">✏️ 今日手動記錄</div>
+      <div class="card-header">✏️ 隨手一記</div>
       <div class="card-body">
         <div class="note-form">
           <input type="text" id="note-input" placeholder="隨手記一筆…" />
           <button class="btn" onclick="addNote()">加入</button>
           <button class="refresh-btn" onclick="loadData()">重新整理</button>
         </div>
-        <div id="notes-list">${renderNotes(data.notes)}</div>
+        <div class="note-date-nav">
+          📅 查看：
+          <select id="note-date-select" onchange="loadNotesByDate(this.value)">
+            ${(data.noteDates || []).map(d => `<option value="${d}" ${d === data.currentDate ? 'selected' : ''}>${formatDateKey(d)}</option>`).join('')}
+          </select>
+        </div>
+        <div id="notes-list">${renderNotes(data.notes, data.currentDate)}</div>
       </div>
     </div>
 
@@ -557,6 +597,20 @@ function render(data) {
   });
 }
 
+function formatDateKey(key) {
+  // "260404" → "26/04/04"
+  return `20${key.slice(0,2)}/${key.slice(2,4)}/${key.slice(4,6)}`;
+}
+
+let _currentNoteDate = null;
+
+async function loadNotesByDate(dateKey) {
+  _currentNoteDate = dateKey;
+  const res = await fetch(`/api/data?date=${dateKey}`);
+  const data = await res.json();
+  document.getElementById('notes-list').innerHTML = renderNotes(data.notes, dateKey);
+}
+
 async function addNote() {
   const input = document.getElementById('note-input');
   const note = input.value.trim();
@@ -568,6 +622,29 @@ async function addNote() {
   });
   input.value = '';
   await loadData();
+}
+
+async function deleteNote(dateKey, index) {
+  if (!confirm('確定刪除這筆記錄？')) return;
+  await fetch('/api/note/delete', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ date: dateKey, index })
+  });
+  await loadNotesByDate(dateKey);
+}
+
+async function editNote(dateKey, index) {
+  const el = document.getElementById(`note-text-${index}`);
+  const oldText = el.textContent;
+  const newText = prompt('修改內容：', oldText);
+  if (!newText || newText.trim() === oldText) return;
+  await fetch('/api/note/update', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ date: dateKey, index, text: newText.trim() })
+  });
+  await loadNotesByDate(dateKey);
 }
 
 loadData();

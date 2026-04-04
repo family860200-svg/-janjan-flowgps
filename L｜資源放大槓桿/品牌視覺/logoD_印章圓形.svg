@@ -1,0 +1,11 @@
+<svg width="130" height="130" viewBox="0 0 130 130" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <circle cx="65" cy="65" r="58" stroke="#3D2B1A" stroke-width="1.4"/>
+  <circle cx="65" cy="65" r="50" stroke="#3D2B1A" stroke-width="0.6"/>
+  <!-- 縫線符號 -->
+  <line x1="65" y1="24" x2="65" y2="92" stroke="#3D2B1A" stroke-width="2"/>
+  <path d="M50,36 C56,36 60,41 65,41 C70,41 74,36 80,36" stroke="#3D2B1A" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+  <path d="M50,58 C56,58 60,63 65,63 C70,63 74,58 80,58" stroke="#3D2B1A" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+  <path d="M50,80 C56,80 60,85 65,85 C70,85 74,80 80,80" stroke="#3D2B1A" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+  <!-- 文字 -->
+  <text x="65" y="110" text-anchor="middle" font-family="'Helvetica Neue', sans-serif" font-size="8" fill="#3D2B1A" letter-spacing="4">JAN JAN'S</text>
+</svg>
