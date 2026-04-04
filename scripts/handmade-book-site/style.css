@@ -1,14 +1,14 @@
 @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Outfit:wght@300;400;500&display=swap');
 
 :root {
-    --bg: #f5f1eb;
-    --bg-white: #fdfbf8;
-    --accent: #8b6f5e;
-    --accent-light: #b89484;
-    --text: #2e2622;
-    --text-muted: #7a6e65;
-    --border: rgba(139, 111, 94, 0.15);
-    --shadow: 0 4px 24px rgba(46, 38, 34, 0.06);
+    --bg: #EDE5D8;           /* sandy */
+    --bg-white: #F8F5F0;     /* soft white */
+    --accent: #8FA898;       /* sage */
+    --accent-light: #9BA8B8; /* overcast */
+    --text: #1E2A26;         /* 深墨綠黑，清晰 */
+    --text-muted: #4A5850;   /* 深鼠尾草，比原本深很多 */
+    --border: rgba(143, 168, 152, 0.22);
+    --shadow: 0 4px 24px rgba(30, 42, 38, 0.07);
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -27,7 +27,7 @@ body {
     top: 24px;
     left: 50%;
     transform: translateX(-50%);
-    background: rgba(253, 251, 248, 0.88);
+    background: rgba(248, 245, 240, 0.88);
     backdrop-filter: blur(12px);
     padding: 10px 24px;
     border-radius: 40px;
@@ -53,7 +53,7 @@ body {
 
 .floating-nav a:hover {
     background: var(--accent);
-    color: #fdfbf8;
+    color: #F8F5F0;
 }
 
 /* ── Layout ── */
@@ -148,7 +148,7 @@ body {
 
 .link-btn:hover {
     background: var(--accent);
-    color: #fdfbf8;
+    color: #F8F5F0;
     border-color: var(--accent);
 }
 
@@ -263,7 +263,7 @@ body {
 .photo-area {
     width: 100%;
     aspect-ratio: 1;
-    background: #e8e0d8;
+    background: #D8E0DC;
     margin-bottom: 16px;
     display: flex;
     align-items: center;
@@ -389,7 +389,7 @@ body {
     width: 100%;
     aspect-ratio: 1;
     object-fit: cover;
-    background: #e8e0d8;
+    background: #D8E0DC;
     display: block;
 }
 
@@ -462,7 +462,7 @@ body {
 
 .submit-btn {
     background: var(--accent);
-    color: #fdfbf8;
+    color: #F8F5F0;
     border: none;
     padding: 16px;
     font-family: 'Outfit', sans-serif;

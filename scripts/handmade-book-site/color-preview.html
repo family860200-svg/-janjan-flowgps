@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Outfit:wght@300;400;500&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Outfit', sans-serif;
+    background: #F0EDE8;
+    padding: 40px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 60px;
+  }
+
+  .plan-label {
+    text-align: center;
+    font-size: 11px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: #999;
+    margin-bottom: 20px;
+    font-family: 'Outfit', sans-serif;
+  }
+
+  /* ── 通用卡片結構 ── */
+  .preview {
+    max-width: 860px;
+    margin: 0 auto;
+    width: 100%;
+  }
+
+  .mock-nav {
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+    padding: 10px 24px;
+    border-radius: 40px;
+    width: fit-content;
+    margin: 0 auto 32px;
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+
+  .mock-nav span {
+    padding: 5px 14px;
+    border-radius: 20px;
+    cursor: default;
+  }
+
+  .mock-body {
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    gap: 32px;
+  }
+
+  .mock-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .mock-mascot {
+    width: 100%;
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 48px;
+    border: 1px solid;
+    padding: 12px;
+  }
+
+  .mock-about {
+    padding: 16px;
+    border-left: 2px solid;
+    font-size: 11px;
+    line-height: 1.8;
+  }
+
+  .mock-about strong {
+    display: block;
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+
+  .mock-main { display: flex; flex-direction: column; gap: 24px; }
+
+  .mock-hero {
+    padding: 40px;
+    text-align: center;
+    border: 1px solid;
+    position: relative;
+  }
+
+  .mock-hero::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+  }
+
+  .mock-hero-sub {
+    font-size: 9px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+
+  .mock-hero h2 {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-weight: 300;
+    font-size: 2rem;
+    margin-bottom: 8px;
+  }
+
+  .mock-hero-tag {
+    font-size: 9px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+  }
+
+  .mock-cards {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+  }
+
+  .mock-card {
+    border: 1px solid;
+    padding: 12px;
+  }
+
+  .mock-card-img {
+    width: 100%;
+    aspect-ratio: 1;
+    margin-bottom: 10px;
+  }
+
+  .mock-card h5 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1rem;
+    font-weight: 400;
+    margin-bottom: 3px;
+  }
+
+  .mock-card p {
+    font-size: 9px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  .mock-btn {
+    padding: 12px 20px;
+    border: none;
+    font-size: 10px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    font-family: 'Outfit', sans-serif;
+    cursor: default;
+    width: 100%;
+  }
+
+  /* ══════════════════════════════
+     方案 1 — 清新自然
+     Sage + Soft White + Overcast + Sandy
+  ══════════════════════════════ */
+  .p1 { --bg: #EDE5D8; --bg2: #F8F5F0; --acc: #8FA898; --acc2: #9BA8B8; --txt: #3D4A46; --muted: #8A9490; --bdr: rgba(143,168,152,0.22); }
+
+  .p1 .mock-nav { background: rgba(248,245,240,0.9); border: 1px solid rgba(143,168,152,0.25); }
+  .p1 .mock-nav span { color: #8A9490; }
+  .p1 .mock-nav span.active { background: #8FA898; color: #F8F5F0; }
+  .p1 .mock-mascot { background: #F8F5F0; border-color: rgba(143,168,152,0.22); }
+  .p1 .mock-about { background: #F8F5F0; border-color: #8FA898; color: #8A9490; }
+  .p1 .mock-about strong { color: #8FA898; }
+  .p1 .mock-hero { background: #F8F5F0; border-color: rgba(143,168,152,0.22); }
+  .p1 .mock-hero::before { background: linear-gradient(90deg, transparent, #9BA8B8, transparent); }
+  .p1 .mock-hero-sub { color: #8A9490; }
+  .p1 .mock-hero h2 { color: #3D4A46; }
+  .p1 .mock-hero-tag { color: #9BA8B8; }
+  .p1 .mock-card { background: #F8F5F0; border-color: rgba(143,168,152,0.22); }
+  .p1 .mock-card-img { background: #D4E0D8; }
+  .p1 .mock-card h5 { color: #3D4A46; }
+  .p1 .mock-card p { color: #8A9490; }
+  .p1 .mock-btn { background: #8FA898; color: #F8F5F0; }
+
+  /* ══════════════════════════════
+     方案 2 — 溫柔文青
+     Sage + Lavender + Soft White + Taupe
+  ══════════════════════════════ */
+  .p2 { }
+
+  .p2 .mock-nav { background: rgba(248,245,250,0.9); border: 1px solid rgba(143,168,152,0.2); }
+  .p2 .mock-nav span { color: #9A8FA0; }
+  .p2 .mock-nav span.active { background: #8FA898; color: #F8F5F0; }
+  .p2 .mock-mascot { background: #F5F0F8; border-color: rgba(160,148,185,0.2); }
+  .p2 .mock-about { background: #F5F0F8; border-color: #B4A8C8; color: #9A8FA0; }
+  .p2 .mock-about strong { color: #8FA898; }
+  .p2 .mock-hero { background: #F8F5FA; border-color: rgba(160,148,185,0.2); }
+  .p2 .mock-hero::before { background: linear-gradient(90deg, transparent, #B4A8C8, transparent); }
+  .p2 .mock-hero-sub { color: #9A8FA0; }
+  .p2 .mock-hero h2 { color: #3D3848; }
+  .p2 .mock-hero-tag { color: #B4A8C8; }
+  .p2 .mock-card { background: #F8F5FA; border-color: rgba(160,148,185,0.2); }
+  .p2 .mock-card-img { background: #DDD8E8; }
+  .p2 .mock-card h5 { color: #3D3848; }
+  .p2 .mock-card p { color: #9A8FA0; }
+  .p2 .mock-btn { background: #8FA898; color: #F8F5F0; }
+
+  /* ══════════════════════════════
+     方案 3 — 低調優雅
+     Sage + Hazy Blue + Mink + Dove Gray
+  ══════════════════════════════ */
+  .p3 { }
+
+  .p3 .mock-nav { background: rgba(240,242,245,0.9); border: 1px solid rgba(143,168,152,0.2); }
+  .p3 .mock-nav span { color: #8A9098; }
+  .p3 .mock-nav span.active { background: #8FA898; color: #F0F2F5; }
+  .p3 .mock-mascot { background: #F0F2F5; border-color: rgba(143,168,152,0.2); }
+  .p3 .mock-about { background: #F0F2F5; border-color: #A8B8C4; color: #8A9098; }
+  .p3 .mock-about strong { color: #8FA898; }
+  .p3 .mock-hero { background: #F0F2F5; border-color: rgba(168,184,196,0.25); }
+  .p3 .mock-hero::before { background: linear-gradient(90deg, transparent, #A8B8C4, transparent); }
+  .p3 .mock-hero-sub { color: #8A9098; }
+  .p3 .mock-hero h2 { color: #3A3E44; }
+  .p3 .mock-hero-tag { color: #A8B8C4; }
+  .p3 .mock-card { background: #F0F2F5; border-color: rgba(168,184,196,0.25); }
+  .p3 .mock-card-img { background: #CDD8E0; }
+  .p3 .mock-card h5 { color: #3A3E44; }
+  .p3 .mock-card p { color: #8A9098; }
+  .p3 .mock-btn { background: #8FA898; color: #F0F2F5; }
+
+  /* ══════════════════════════════
+     方案 4 — 保留霧玫瑰
+     Sage + Dusty Rose + Sandy + Taupe
+  ══════════════════════════════ */
+  .p4 { }
+
+  .p4 .mock-nav { background: rgba(248,245,240,0.9); border: 1px solid rgba(143,168,152,0.2); }
+  .p4 .mock-nav span { color: #9A9088; }
+  .p4 .mock-nav span.active { background: #8FA898; color: #F8F5F0; }
+  .p4 .mock-mascot { background: #F8F5F0; border-color: rgba(143,168,152,0.2); }
+  .p4 .mock-about { background: #F8F5F0; border-color: #C4A0A0; color: #9A9088; }
+  .p4 .mock-about strong { color: #8FA898; }
+  .p4 .mock-hero { background: #F8F5F0; border-color: rgba(196,160,160,0.2); }
+  .p4 .mock-hero::before { background: linear-gradient(90deg, transparent, #C4A0A0, transparent); }
+  .p4 .mock-hero-sub { color: #9A9088; }
+  .p4 .mock-hero h2 { color: #4A3C38; }
+  .p4 .mock-hero-tag { color: #C4A0A0; }
+  .p4 .mock-card { background: #F8F5F0; border-color: rgba(196,160,160,0.2); }
+  .p4 .mock-card-img { background: #D8E0DC; }
+  .p4 .mock-card h5 { color: #4A3C38; }
+  .p4 .mock-card p { color: #9A9088; }
+  .p4 .mock-btn { background: #8FA898; color: #F8F5F0; }
+
+</style>
+</head>
+<body>
+
+<!-- 方案 1 -->
+<div class="preview p1">
+  <div class="plan-label">方案 1 — 清新自然　Sage + Overcast + Sandy</div>
+  <div class="mock-nav">
+    <span>Home</span><span class="active">作品</span><span>工藝</span><span>洽詢</span>
+  </div>
+  <div class="mock-body">
+    <div class="mock-sidebar">
+      <div class="mock-mascot">📖</div>
+      <div class="mock-about">
+        <strong>About</strong>
+        每一本書，都是時間的形狀。手工裝訂，限量手作。
+      </div>
+    </div>
+    <div class="mock-main">
+      <div class="mock-hero">
+        <div class="mock-hero-sub">Handmade Bookbinding Studio</div>
+        <h2>Jan Jan's Artisan Atelier</h2>
+        <div class="mock-hero-tag">每一針，都是心意</div>
+      </div>
+      <div class="mock-cards">
+        <div class="mock-card"><div class="mock-card-img"></div><h5>Golden Hour</h5><p>Coptic Stitch</p></div>
+        <div class="mock-card"><div class="mock-card-img"></div><h5>Indigo Sea</h5><p>Long Stitch</p></div>
+        <div class="mock-card"><div class="mock-card-img"></div><h5>Lavender</h5><p>French Link</p></div>
+      </div>
+      <button class="mock-btn">洽詢訂製</button>
+    </div>
+  </div>
+</div>
+
+<!-- 方案 2 -->
+<div class="preview p2">
+  <div class="plan-label">方案 2 — 溫柔文青　Sage + Lavender + Taupe</div>
+  <div class="mock-nav">
+    <span>Home</span><span class="active">作品</span><span>工藝</span><span>洽詢</span>
+  </div>
+  <div class="mock-body">
+    <div class="mock-sidebar">
+      <div class="mock-mascot">📖</div>
+      <div class="mock-about">
+        <strong>About</strong>
+        每一本書，都是時間的形狀。手工裝訂，限量手作。
+      </div>
+    </div>
+    <div class="mock-main">
+      <div class="mock-hero">
+        <div class="mock-hero-sub">Handmade Bookbinding Studio</div>
+        <h2>Jan Jan's Artisan Atelier</h2>
+        <div class="mock-hero-tag">每一針，都是心意</div>
+      </div>
+      <div class="mock-cards">
+        <div class="mock-card"><div class="mock-card-img"></div><h5>Golden Hour</h5><p>Coptic Stitch</p></div>
+        <div class="mock-card"><div class="mock-card-img"></div><h5>Indigo Sea</h5><p>Long Stitch</p></div>
+        <div class="mock-card"><div class="mock-card-img"></div><h5>Lavender</h5><p>French Link</p></div>
+      </div>
+      <button class="mock-btn">洽詢訂製</button>
+    </div>
+  </div>
+</div>
+
+<!-- 方案 3 -->
+<div class="preview p3">
+  <div class="plan-label">方案 3 — 低調優雅　Sage + Hazy Blue + Dove Gray</div>
+  <div class="mock-nav">
+    <span>Home</span><span class="active">作品</span><span>工藝</span><span>洽詢</span>
+  </div>
+  <div class="mock-body">
+    <div class="mock-sidebar">
+      <div class="mock-mascot">📖</div>
+      <div class="mock-about">
+        <strong>About</strong>
+        每一本書，都是時間的形狀。手工裝訂，限量手作。
+      </div>
+    </div>
+    <div class="mock-main">
+      <div class="mock-hero">
+        <div class="mock-hero-sub">Handmade Bookbinding Studio</div>
+        <h2>Jan Jan's Artisan Atelier</h2>
+        <div class="mock-hero-tag">每一針，都是心意</div>
+      </div>
+      <div class="mock-cards">
+        <div class="mock-card"><div class="mock-card-img"></div><h5>Golden Hour</h5><p>Coptic Stitch</p></div>
+        <div class="mock-card"><div class="mock-card-img"></div><h5>Indigo Sea</h5><p>Long Stitch</p></div>
+        <div class="mock-card"><div class="mock-card-img"></div><h5>Lavender</h5><p>French Link</p></div>
+      </div>
+      <button class="mock-btn">洽詢訂製</button>
+    </div>
+  </div>
+</div>
+
+<!-- 方案 4 -->
+<div class="preview p4">
+  <div class="plan-label">方案 4 — 霧玫瑰微調　Sage + Dusty Rose + Sandy</div>
+  <div class="mock-nav">
+    <span>Home</span><span class="active">作品</span><span>工藝</span><span>洽詢</span>
+  </div>
+  <div class="mock-body">
+    <div class="mock-sidebar">
+      <div class="mock-mascot">📖</div>
+      <div class="mock-about">
+        <strong>About</strong>
+        每一本書，都是時間的形狀。手工裝訂，限量手作。
+      </div>
+    </div>
+    <div class="mock-main">
+      <div class="mock-hero">
+        <div class="mock-hero-sub">Handmade Bookbinding Studio</div>
+        <h2>Jan Jan's Artisan Atelier</h2>
+        <div class="mock-hero-tag">每一針，都是心意</div>
+      </div>
+      <div class="mock-cards">
+        <div class="mock-card"><div class="mock-card-img"></div><h5>Golden Hour</h5><p>Coptic Stitch</p></div>
+        <div class="mock-card"><div class="mock-card-img"></div><h5>Indigo Sea</h5><p>Long Stitch</p></div>
+        <div class="mock-card"><div class="mock-card-img"></div><h5>Lavender</h5><p>French Link</p></div>
+      </div>
+      <button class="mock-btn">洽詢訂製</button>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
