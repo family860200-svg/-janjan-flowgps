@@ -5,6 +5,7 @@ on:
     branches: [main]
     paths:
       - 'F｜行動聚焦漏斗/對話摘要/*.md'
+      - 'F｜行動聚焦漏斗/玩家待辦任務.md'
 
 jobs:
   sync:
@@ -18,64 +19,70 @@ jobs:
         run: |
           python3 << 'EOF'
           import os, json, glob, urllib.request, urllib.error
-
-          files = sorted(glob.glob("F｜行動聚焦漏斗/對話摘要/*.md"))
-          if not files:
-              print("找不到摘要檔案")
-              exit(0)
-
-          latest_file = files[-1]
-          filename = os.path.basename(latest_file).replace('.md', '')
-          print(f"同步檔案：{filename}")
-
-          with open(latest_file, 'r', encoding='utf-8') as f:
-              content = f.read()
-
-          date_part = filename[:6]
-          formatted_date = f"20{date_part[:2]}-{date_part[2:4]}-{date_part[4:6]}"
+          from datetime import datetime
 
           token = os.environ['NOTION_TOKEN']
           database_id = "3399654af049808ea778d2af00c0b5cd"
+          today = datetime.utcnow().strftime("%Y-%m-%d")
 
-          chunks = [content[i:i+2000] for i in range(0, len(content), 2000)]
-          children = [
-              {
-                  "object": "block",
-                  "type": "paragraph",
-                  "paragraph": {
-                      "rich_text": [{"type": "text", "text": {"content": chunk}}]
+          def sync_to_notion(filename, content, formatted_date):
+              chunks = [content[i:i+2000] for i in range(0, len(content), 2000)]
+              children = [
+                  {
+                      "object": "block",
+                      "type": "paragraph",
+                      "paragraph": {
+                          "rich_text": [{"type": "text", "text": {"content": chunk}}]
+                      }
                   }
+                  for chunk in chunks
+              ]
+              payload = {
+                  "parent": {"database_id": database_id},
+                  "properties": {
+                      "標題": {"title": [{"text": {"content": filename}}]},
+                      "Date": {"date": {"start": formatted_date}},
+                  },
+                  "children": children
               }
-              for chunk in chunks
-          ]
+              data = json.dumps(payload).encode('utf-8')
+              req = urllib.request.Request(
+                  "https://api.notion.com/v1/pages",
+                  data=data,
+                  headers={
+                      "Authorization": f"Bearer {token}",
+                      "Content-Type": "application/json",
+                      "Notion-Version": "2026-03-11"
+                  },
+                  method="POST"
+              )
+              try:
+                  with urllib.request.urlopen(req) as response:
+                      result = json.loads(response.read())
+                      print(f"✅ 成功同步：{filename}（{result.get('id', '')}）")
+              except urllib.error.HTTPError as e:
+                  error_body = e.read().decode()
+                  print(f"❌ 失敗：{error_body}")
+                  exit(1)
 
-          payload = {
-              "parent": {"database_id": database_id},
-              "properties": {
-                  "標題": {"title": [{"text": {"content": filename}}]},
-                  "Date": {"date": {"start": formatted_date}},
-              },
-              "children": children
-          }
+          # 1. 同步最新對話摘要
+          files = sorted(glob.glob("F｜行動聚焦漏斗/對話摘要/*.md"))
+          if files:
+              latest_file = files[-1]
+              filename = os.path.basename(latest_file).replace('.md', '')
+              print(f"同步摘要：{filename}")
+              with open(latest_file, 'r', encoding='utf-8') as f:
+                  content = f.read()
+              date_part = filename[:6]
+              formatted_date = f"20{date_part[:2]}-{date_part[2:4]}-{date_part[4:6]}"
+              sync_to_notion(filename, content, formatted_date)
 
-          data = json.dumps(payload).encode('utf-8')
-          req = urllib.request.Request(
-              "https://api.notion.com/v1/pages",
-              data=data,
-              headers={
-                  "Authorization": f"Bearer {token}",
-                  "Content-Type": "application/json",
-                  "Notion-Version": "2026-03-11"
-              },
-              method="POST"
-          )
+          # 2. 同步玩家待辦任務（最新進度）
+          todo_file = "F｜行動聚焦漏斗/玩家待辦任務.md"
+          if os.path.exists(todo_file):
+              print(f"同步待辦任務：{today}")
+              with open(todo_file, 'r', encoding='utf-8') as f:
+                  content = f.read()
+              sync_to_notion(f"玩家待辦任務_{today}", content, today)
 
-          try:
-              with urllib.request.urlopen(req) as response:
-                  result = json.loads(response.read())
-                  print(f"✅ 成功同步到 Notion：{result.get('id', '')}")
-          except urllib.error.HTTPError as e:
-              error_body = e.read().decode()
-              print(f"❌ 失敗：{error_body}")
-              exit(1)
           EOF
