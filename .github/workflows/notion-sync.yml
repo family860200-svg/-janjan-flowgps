@@ -35,7 +35,7 @@ jobs:
           formatted_date = f"20{date_part[:2]}-{date_part[2:4]}-{date_part[4:6]}"
 
           token = os.environ['NOTION_TOKEN']
-          database_id = "3029654af04981bc94c6f53302540d71"
+          database_id = "3399654af049808ea778d2af00c0b5cd"
 
           chunks = [content[i:i+2000] for i in range(0, len(content), 2000)]
           children = [
