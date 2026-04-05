@@ -148,6 +148,46 @@
     background: var(--black);
   }
 
+  /* FLOW 日誌 */
+  .flow-journal { display: flex; flex-direction: column; gap: 16px; }
+  .flow-section { display: flex; flex-direction: column; gap: 6px; }
+  .flow-label {
+    font-size: 11px; font-weight: 900; letter-spacing: 1px;
+    text-transform: uppercase; background: #000; color: #fff;
+    display: inline-block; padding: 2px 10px;
+  }
+  .flow-input {
+    width: 100%; border: 2px solid #000; padding: 10px 12px;
+    font-family: 'Montserrat', sans-serif; font-size: 13px;
+    font-weight: 500; resize: vertical; outline: none;
+    box-shadow: 3px 3px 0 #000; background: #fffef7;
+    line-height: 1.6;
+  }
+  .flow-input:focus { background: #fffbe6; }
+  .flow-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
+  }
+  .drip-row { display: flex; gap: 8px; margin-bottom: 8px; }
+  .drip-select {
+    border: 2px solid #000; padding: 8px 10px;
+    font-family: 'Montserrat', sans-serif; font-weight: 700;
+    font-size: 12px; box-shadow: 3px 3px 0 #000; cursor: pointer;
+  }
+  .drip-input {
+    flex: 1; border: 2px solid #000; padding: 8px 12px;
+    font-family: 'Montserrat', sans-serif; font-size: 13px;
+    font-weight: 500; outline: none; box-shadow: 3px 3px 0 #000;
+  }
+  .drip-item {
+    display: flex; align-items: center; gap: 8px;
+    padding: 6px 10px; border-bottom: 1px dashed #ccc;
+    font-size: 12px; font-weight: 600;
+  }
+  .drip-badge {
+    padding: 2px 8px; font-size: 10px; font-weight: 900;
+    border: 1.5px solid #000;
+  }
+
   /* Section label */
   .section-label {
     font-size: 11px;
@@ -597,6 +637,66 @@ function render(data) {
       </div>
     </div>
 
+    <!-- FLOW 日誌 -->
+    <div class="card card-cyan col-span-2">
+      <div class="card-header">🌊 FLOW 日誌</div>
+      <div class="card-body">
+        <div class="flow-journal">
+
+          <div class="flow-section">
+            <div class="flow-label">🎯 今日 Boss（The One Thing）</div>
+            <textarea class="flow-input" id="flow-boss" placeholder="今天最重要的一件事是什麼？" rows="2"></textarea>
+          </div>
+
+          <div class="flow-grid">
+            <div class="flow-section">
+              <div class="flow-label">F｜行動聚焦</div>
+              <textarea class="flow-input" id="flow-f" placeholder="今天要完成哪些行動？" rows="3"></textarea>
+            </div>
+            <div class="flow-section">
+              <div class="flow-label">L｜資源槓桿</div>
+              <textarea class="flow-input" id="flow-l" placeholder="學到什麼？哪些資源可複用？" rows="3"></textarea>
+            </div>
+            <div class="flow-section">
+              <div class="flow-label">O｜系統優化</div>
+              <textarea class="flow-input" id="flow-o" placeholder="流程有什麼可改進？" rows="3"></textarea>
+            </div>
+            <div class="flow-section">
+              <div class="flow-label">W｜財富積累</div>
+              <textarea class="flow-input" id="flow-w" placeholder="今天投資了哪些財富帳戶？" rows="3"></textarea>
+            </div>
+          </div>
+
+          <div class="flow-section">
+            <div class="flow-label">⚡ DRIP 能量</div>
+            <div class="drip-row">
+              <select class="drip-select" id="drip-type">
+                <option value="P">P 全力投入 ⚡</option>
+                <option value="I">I 充電保留 🔋</option>
+                <option value="R">R 替換自動化 🔄</option>
+                <option value="D">D 委派給AI 🤖</option>
+              </select>
+              <input type="text" class="drip-input" id="drip-activity" placeholder="這段時間做了什麼？" />
+              <button class="btn" onclick="addDrip()">加入</button>
+            </div>
+            <div id="drip-list"></div>
+          </div>
+
+          <div class="flow-section">
+            <div class="flow-label">💡 今日覆盤</div>
+            <textarea class="flow-input" id="flow-review" placeholder="最大收穫：&#10;明天改進：&#10;感恩一件事：" rows="4"></textarea>
+          </div>
+
+          <div style="margin-top:12px;display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+            <button class="btn" onclick="saveFlowJournal()" style="background:#B8FF3C;">💾 儲存</button>
+            <span style="font-size:12px;font-weight:700;">📅 查看：</span>
+            <select id="flow-date-select" onchange="loadFlowJournal(this.value)" style="border:2px solid #000;padding:6px 10px;font-weight:700;font-size:12px;box-shadow:2px 2px 0 #000;cursor:pointer;">
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- 艾森豪矩陣 -->
     ${renderEisenhower(data.todos)}
 
@@ -667,6 +767,93 @@ async function editNote(dateKey, index) {
     body: JSON.stringify({ date: dateKey, index, text: newText.trim() })
   });
   await loadNotesByDate(dateKey);
+}
+
+// ── FLOW 日誌 ──────────────────────────────────────────
+let _dripItems = [];
+
+function addDrip() {
+  const type = document.getElementById('drip-type').value;
+  const activity = document.getElementById('drip-activity').value.trim();
+  if (!activity) return;
+  _dripItems.push({ type, activity });
+  document.getElementById('drip-activity').value = '';
+  renderDrip();
+}
+
+const DRIP_COLORS = { P: '#FFE100', I: '#B8FF3C', R: '#00F0FF', D: '#FF61D2' };
+
+function renderDrip() {
+  const el = document.getElementById('drip-list');
+  if (!el) return;
+  el.innerHTML = _dripItems.map((d, i) => `
+    <div class="drip-item">
+      <span class="drip-badge" style="background:${DRIP_COLORS[d.type]}">${d.type}</span>
+      <span style="flex:1">${escHtml(d.activity)}</span>
+      <button class="note-btn" onclick="_dripItems.splice(${i},1);renderDrip()">✕</button>
+    </div>
+  `).join('');
+}
+
+async function saveFlowJournal() {
+  const journal = {
+    boss: document.getElementById('flow-boss').value,
+    f: document.getElementById('flow-f').value,
+    l: document.getElementById('flow-l').value,
+    o: document.getElementById('flow-o').value,
+    w: document.getElementById('flow-w').value,
+    drip: _dripItems,
+    review: document.getElementById('flow-review').value,
+  };
+  await fetch('/api/flow-journal', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ journal })
+  });
+  alert('✅ FLOW 日誌已儲存！');
+}
+
+async function loadFlowJournal(dateKey) {
+  const url = dateKey ? `/api/flow-journal?date=${dateKey}` : '/api/flow-journal';
+  const res = await fetch(url);
+  const data = await res.json();
+
+  // 更新日期選單
+  const sel = document.getElementById('flow-date-select');
+  if (sel && data.dates) {
+    const today = getTodayKey();
+    const allDates = data.dates.includes(today) ? data.dates : [today, ...data.dates];
+    sel.innerHTML = allDates.map(d =>
+      `<option value="${d}" ${d === data.currentDate ? 'selected' : ''}>${formatDateKey(d)}</option>`
+    ).join('');
+  }
+
+  if (!data.journal) {
+    ['flow-boss','flow-f','flow-l','flow-o','flow-w','flow-review'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.value = '';
+    });
+    _dripItems = [];
+    renderDrip();
+    return;
+  }
+  const j = data.journal;
+  document.getElementById('flow-boss').value = j.boss || '';
+  document.getElementById('flow-f').value = j.f || '';
+  document.getElementById('flow-l').value = j.l || '';
+  document.getElementById('flow-o').value = j.o || '';
+  document.getElementById('flow-w').value = j.w || '';
+  document.getElementById('flow-review').value = j.review || '';
+  _dripItems = j.drip || [];
+  renderDrip();
+}
+
+function getTodayKey() {
+  const now = new Date();
+  const y = String(now.getFullYear()).slice(2);
+  const m = String(now.getMonth()+1).padStart(2,'0');
+  const d = String(now.getDate()).padStart(2,'0');
+  return `${y}${m}${d}`;
 }
 
 loadData();

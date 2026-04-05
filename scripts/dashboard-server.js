@@ -5,6 +5,18 @@ const path = require('path');
 const ROOT = path.resolve(__dirname, '..');
 const PORT = 3737;
 
+function getFlowJournalFile() {
+  return path.join(ROOT, 'F｜行動聚焦漏斗', `flow_journal_${getTodayPrefixNow()}.json`);
+}
+
+function getTodayPrefixNow() {
+  const now = new Date();
+  const y = String(now.getFullYear()).slice(2);
+  const m = String(now.getMonth() + 1).padStart(2, '0');
+  const d = String(now.getDate()).padStart(2, '0');
+  return `${y}${m}${d}`;
+}
+
 function getTodayPrefix() {
   const now = new Date();
   const y = String(now.getFullYear()).slice(2);
@@ -151,6 +163,40 @@ const server = http.createServer((req, res) => {
       try {
         const { date, index, text } = JSON.parse(body);
         if (text && text.trim()) updateManualNote(date, index, text.trim());
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ ok: true }));
+      } catch { res.writeHead(400); res.end(); }
+    });
+    return;
+  }
+
+  if (url.pathname === '/api/flow-journal' && req.method === 'GET') {
+    const dateKey = url.searchParams.get('date') || getTodayPrefixNow();
+    const file = path.join(ROOT, 'F｜行動聚焦漏斗', `flow_journal_${dateKey}.json`);
+    // 列出所有 flow_journal 日期
+    const dir = path.join(ROOT, 'F｜行動聚焦漏斗');
+    const dates = fs.readdirSync(dir)
+      .filter(f => f.startsWith('flow_journal_') && f.endsWith('.json'))
+      .map(f => f.replace('flow_journal_', '').replace('.json', ''))
+      .sort().reverse();
+    if (fs.existsSync(file)) {
+      const journal = JSON.parse(fs.readFileSync(file, 'utf8'));
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ journal, dates, currentDate: dateKey }));
+    } else {
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ journal: null, dates, currentDate: dateKey }));
+    }
+    return;
+  }
+
+  if (url.pathname === '/api/flow-journal' && req.method === 'POST') {
+    let body = '';
+    req.on('data', c => body += c);
+    req.on('end', () => {
+      try {
+        const { journal } = JSON.parse(body);
+        fs.writeFileSync(getFlowJournalFile(), JSON.stringify(journal, null, 2));
         res.writeHead(200, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify({ ok: true }));
       } catch { res.writeHead(400); res.end(); }
