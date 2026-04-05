@@ -53,7 +53,7 @@ jobs:
               "parent": {"database_id": database_id},
               "properties": {
                   "標題": {"title": [{"text": {"content": filename}}]},
-                  "日期": {"date": {"start": formatted_date}},
+                  "Date": {"date": {"start": formatted_date}},
               },
               "children": children
           }
