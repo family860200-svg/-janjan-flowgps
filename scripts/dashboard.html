@@ -504,11 +504,25 @@ function renderTodos(sections) {
   }).join('');
 }
 
+const TAG_STYLES = {
+  '行程':  { bg: '#00F0FF', color: '#000' },
+  '隨手記': { bg: '#FFE100', color: '#000' },
+  '重要':  { bg: '#FF4444', color: '#fff' },
+  '其他':  { bg: '#CC88FF', color: '#000' },
+};
+
+function tagBadge(tag) {
+  if (!tag) return '';
+  const s = TAG_STYLES[tag] || { bg: '#eee', color: '#333' };
+  return `<span style="background:${s.bg};color:${s.color};font-size:0.7rem;padding:1px 7px;border-radius:10px;font-weight:700;margin-right:6px;">${tag}</span>`;
+}
+
 function renderNotes(notes, dateKey) {
   if (!notes.length) return '<p class="empty">這天還沒有手動記錄</p>';
   return notes.map((n, i) => `
     <div class="note-item" id="note-${i}">
       <span class="note-time">${escHtml(n.time)}</span>
+      ${tagBadge(n.tag)}
       <span class="note-text" id="note-text-${i}">${escHtml(n.text)}</span>
       <span class="note-actions">
         <button class="note-btn" onclick="editNote('${dateKey}',${i})" title="編輯">✏️</button>
@@ -563,6 +577,13 @@ function render(data) {
       <div class="card-body">
         <div class="note-form">
           <input type="text" id="note-input" placeholder="隨手記一筆…" />
+          <select id="note-tag" style="border:2px solid #000;padding:6px 8px;font-size:0.85rem;font-weight:700;border-radius:0;cursor:pointer;">
+            <option value="">無標籤</option>
+            <option value="行程">🗓 行程</option>
+            <option value="隨手記">📝 隨手記</option>
+            <option value="重要">🔴 重要</option>
+            <option value="其他">💬 其他</option>
+          </select>
           <button class="btn" onclick="addNote()">加入</button>
           <button class="refresh-btn" onclick="loadData()">重新整理</button>
         </div>
@@ -615,10 +636,11 @@ async function addNote() {
   const input = document.getElementById('note-input');
   const note = input.value.trim();
   if (!note) return;
+  const tag = document.getElementById('note-tag').value;
   await fetch('/api/note', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ note })
+    body: JSON.stringify({ note, tag })
   });
   input.value = '';
   await loadData();

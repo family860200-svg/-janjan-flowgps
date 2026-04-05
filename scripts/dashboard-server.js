@@ -54,12 +54,14 @@ function getManualNotes(dateKey) {
   return data[key] || [];
 }
 
-function saveManualNote(note) {
+function saveManualNote(note, tag) {
   const file = path.join(ROOT, 'F｜行動聚焦漏斗', 'manual_notes.json');
   const today = getTodayPrefix();
   const data = getAllNotes();
   if (!data[today]) data[today] = [];
-  data[today].unshift({ text: note, time: new Date().toLocaleTimeString('zh-TW') });
+  const entry = { text: note, time: new Date().toLocaleTimeString('zh-TW') };
+  if (tag) entry.tag = tag;
+  data[today].unshift(entry);
   fs.writeFileSync(file, JSON.stringify(data, null, 2));
 }
 
@@ -119,8 +121,8 @@ const server = http.createServer((req, res) => {
     req.on('data', c => body += c);
     req.on('end', () => {
       try {
-        const { note } = JSON.parse(body);
-        if (note && note.trim()) saveManualNote(note.trim());
+        const { note, tag } = JSON.parse(body);
+        if (note && note.trim()) saveManualNote(note.trim(), tag || '');
         res.writeHead(200, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify({ ok: true }));
       } catch { res.writeHead(400); res.end(); }
