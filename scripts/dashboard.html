@@ -716,6 +716,9 @@ function render(data) {
   document.getElementById('note-input').addEventListener('keydown', e => {
     if (e.key === 'Enter') addNote();
   });
+
+  // 自動載入 FLOW 日誌（含日期選單）
+  loadFlowJournal();
 }
 
 function formatDateKey(key) {
