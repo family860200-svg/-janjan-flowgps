@@ -1,6 +1,7 @@
 const http = require('http');
 const fs = require('fs');
 const path = require('path');
+const schedule = require('node-schedule');
 
 const ROOT = path.resolve(__dirname, '..');
 const PORT = 3737;
@@ -209,4 +210,14 @@ const server = http.createServer((req, res) => {
 
 server.listen(PORT, () => {
   console.log(`✅ FlowGPS 日報啟動：http://localhost:${PORT}`);
+});
+
+// 每天 00:00 自動建立空白日誌
+schedule.scheduleJob('0 0 * * *', () => {
+  const file = getFlowJournalFile();
+  if (!fs.existsSync(file)) {
+    const blank = { boss: '', f: '', l: '', o: '', w: '', drip: [], review: '' };
+    fs.writeFileSync(file, JSON.stringify(blank, null, 2));
+    console.log(`✅ 新的一天，日誌已重置：${file}`);
+  }
 });
