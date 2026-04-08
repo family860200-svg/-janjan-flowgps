@@ -1,0 +1,37 @@
+{
+  "generatedAt": "2026-04-08T01:37:00",
+  "tasks": {
+    "urgent": [
+      { "title": "房租 $5,000 郵局轉帳", "source": "FlowGPS", "dueDate": "2026-04-05", "note": "⚠️ 已逾期 3 天！" },
+      { "title": "GOGORO 加保任意險－富邦", "source": "FlowGPS", "dueDate": "2026-04-30" },
+      { "title": "客訴處理接手上軌道（拍照→Claude辨識→貼ERP）", "source": "FlowGPS", "dueDate": null },
+      { "title": "趁品管課長退休前完成客訴判斷標準訪談與文件化", "source": "FlowGPS", "dueDate": null }
+    ],
+    "important": [
+      { "title": "動手製作樣品書，目標 3 本，先求有", "source": "FlowGPS", "dueDate": null },
+      { "title": "婦女培力計劃跟著節奏推進（5月起市集資訊到位）", "source": "FlowGPS", "dueDate": null },
+      { "title": "Threads 衝到 1000+ 追蹤（每日 3 篇）", "source": "FlowGPS", "dueDate": null }
+    ],
+    "quick": [
+      { "title": "拆線", "source": "FlowGPS", "dueDate": "2026-04-17" },
+      { "title": "童綜合回診－肝膽腸胃科", "source": "FlowGPS", "dueDate": "2026-04-30" },
+      { "title": "每天晚餐後吃藥（胃潰瘍）", "source": "FlowGPS", "dueDate": "daily" },
+      { "title": "看牙醫（空檔安排）", "source": "FlowGPS", "dueDate": null },
+      { "title": "看中醫（空檔安排）", "source": "FlowGPS", "dueDate": null },
+      { "title": "姪子的車 MBC-XXXX 決定是否繼續繳任意險", "source": "FlowGPS", "dueDate": "2026-06-16" },
+      { "title": "裕的小黑 XXX-TDA 強制險續保", "source": "FlowGPS", "dueDate": "2026-06-17" }
+    ],
+    "backlog": [
+      { "title": "Threads 貼文優化（風格、結構、鉤子策略）", "source": "FlowGPS", "dueDate": null },
+      { "title": "八大財富三個面向優化：人脈、服務、金錢", "source": "FlowGPS", "dueDate": null },
+      { "title": "手工書網站版面比例調整", "source": "FlowGPS", "dueDate": null },
+      { "title": "高雄之旅計劃", "source": "FlowGPS", "dueDate": null }
+    ]
+  },
+  "schedule": [],
+  "stats": {
+    "total": 18,
+    "done": 14,
+    "pending": 18
+  }
+}
