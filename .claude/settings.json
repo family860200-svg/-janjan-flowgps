@@ -1,0 +1,26 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 -c \"import json, datetime, os; log='/Users/user/-janjan-flowgps/F｜行動聚焦漏斗/session-log.json'; entry={'type':'start','time':datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}; data=json.load(open(log)) if os.path.exists(log) else []; data.append(entry); json.dump(data, open(log,'w'), ensure_ascii=False, indent=2)\" 2>/dev/null || true",
+            "statusMessage": "記錄對話開始時間..."
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 -c \"import json, datetime, os; log='/Users/user/-janjan-flowgps/F｜行動聚焦漏斗/session-log.json'; entry={'type':'end','time':datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}; data=json.load(open(log)) if os.path.exists(log) else []; data.append(entry); json.dump(data, open(log,'w'), ensure_ascii=False, indent=2)\" 2>/dev/null || true",
+            "statusMessage": "記錄對話結束時間..."
+          }
+        ]
+      }
+    ]
+  }
+}
