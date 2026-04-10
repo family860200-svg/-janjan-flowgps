@@ -23,7 +23,7 @@ thead th { background: #6b3d1e; color: white; padding: 7px 10px; font-weight: 50
 td { border: 1px solid #e0d5cc; padding: 5px 8px; text-align: center; }
 tr:nth-child(even) td { background: #faf6f2; }
 .type-W { color: #2c2c2c; }
-.type-P { color: #6c3483; font-weight: bold; }
+.type-P { color: #e74c3c; font-weight: bold; }
 input[type=number] { width: 72px; padding: 4px 6px; border: 1px solid #ccc; border-radius: 4px; text-align: center; font-size: 13px; }
 .btn { padding: 7px 18px; border: none; border-radius: 6px; cursor: pointer; font-size: 13px; font-family: inherit; margin: 3px; }
 .btn-primary { background: #6b3d1e; color: white; }
@@ -41,7 +41,7 @@ pre { background: #f8f5f2; padding: 12px; border-radius: 4px; font-size: 12px; w
 #output { display: none; }
 .flex-between { display: flex; justify-content: space-between; align-items: center; }
 .tag-W { background: #d6eaf8; color: #1a5276; border-radius: 3px; padding: 1px 5px; font-size: 11px; font-weight: bold; }
-.tag-P { background: #e8daef; color: #6c3483; border-radius: 3px; padding: 1px 5px; font-size: 11px; }
+.tag-P { background: #fde8e8; color: #e74c3c; border-radius: 3px; padding: 1px 5px; font-size: 11px; }
 </style>
 </head>
 <body>
@@ -297,7 +297,14 @@ function render(rolls) {
   // 分組相同排列
   let grouped = [];
   rolls.forEach(roll => {
-    let sorted = [...roll].sort((a,b) => b.size-a.size || a.type.localeCompare(b.type));
+    let wItems = roll.filter(h=>h.type==='W').sort((a,b)=>b.size-a.size);
+    let pItems = roll.filter(h=>h.type==='P').sort((a,b)=>b.size-a.size);
+    let sorted = [...wItems];
+    // 庫存插入孔2（index 1）或孔3（index 2）
+    pItems.forEach((p, i) => {
+      let insertAt = Math.min(1 + i, sorted.length);
+      sorted.splice(insertAt, 0, p);
+    });
     let key = sorted.map(h=>`${h.size}${h.type}`).join(',');
     let g = grouped.find(g=>g.key===key);
     if (g) g.count++;
