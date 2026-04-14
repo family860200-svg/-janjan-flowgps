@@ -6,7 +6,7 @@
 <title>PM2 配抄計算工具（英吋）</title>
 <style>
 * { box-sizing: border-box; }
-body { font-family: 'Microsoft JhengHei', 'PingFang TC', sans-serif; max-width: 980px; margin: 0 auto; padding: 16px; background: #f2ede8; color: #2c2c2c; font-size: 14px; }
+body { font-family: 'Microsoft JhengHei', 'PingFang TC', sans-serif; max-width: 980px; margin: 0 auto; padding: 16px; background: #f2ede8; color: #2c2c2c; font-size: 16px; }
 h1 { color: #4a2c1a; font-size: 20px; border-bottom: 2px solid #8b5e3c; padding-bottom: 8px; margin-bottom: 16px; }
 h2 { color: #4a2c1a; font-size: 15px; margin: 0 0 12px; }
 .card { background: white; border-radius: 8px; padding: 16px; margin-bottom: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
@@ -61,7 +61,7 @@ pre { background: #f8f5f2; padding: 12px; border-radius: 4px; font-size: 12px; w
     <div class="setting-item"><label>總寬下限（英吋）</label><input type="number" id="minTotal" value="128.3" step="0.1"></div>
     <div class="setting-item"><label>總寬上限（英吋）</label><input type="number" id="maxTotal" value="128.9" step="0.1"></div>
     <div class="setting-item"><label>單孔下限（英吋）</label><input type="number" id="minHole" value="19.1" step="0.1"></div>
-    <div class="setting-item"><label>單孔上限（英吋）</label><input type="number" id="maxHole" value="42.9" step="0.1"></div>
+    <div class="setting-item"><label>單孔上限（英吋）</label><input type="number" id="maxHole" value="42.94" step="0.01" readonly style="background:#f0f0f0;color:#888;cursor:not-allowed"></div>
   </div>
 </div>
 <div style="margin-bottom:12px">
@@ -97,13 +97,15 @@ pre { background: #f8f5f2; padding: 12px; border-radius: 4px; font-size: 12px; w
     </div>
     <pre id="textOutput"></pre>
   </div>
+
+  <div class="card">
+    <h2>🧻 備料清單</h2>
+    <div id="materialDiv"></div>
+  </div>
 </div>
 <script>
-// 黃金規格：台尺左欄 × 302.5 / 25.4，保留2位小數
-// 黃金規格（英吋，實際使用尺寸）
-const GOLDEN = [1.6,1.7,1.8,1.9,2.0,2.1,2.2,2.3,2.4,2.5,2.6,2.7,2.8,2.9,3.0,3.1,3.2,3.3,3.4,3.5,3.6].map(t=>Math.round(t*302.5/25.4*100)/100);
-// 修正：41.68 → 41.75
-GOLDEN[GOLDEN.indexOf(41.68)] = 41.75;
+// 黃金規格（英吋，精準對照表）
+const GOLDEN = [19.09,20.28,21.46,22.68,23.86,25.04,26.26,27.44,28.62,29.84,31.02,32.20,33.39,34.61,35.79,36.97,38.19,39.37,40.55,41.77,42.94];
 let _min,_max,_minH,_maxH;
 function r(n){return Math.round(n*100)/100;}
 function sum(arr){return arr.reduce((a,b)=>r(a+b),0);}
@@ -166,7 +168,18 @@ function render(rolls){
     let holeTxt=roll.map(h=>''+h.size);while(holeTxt.length<5)holeTxt.push('—');
     lines.push((idx+1)+'\t'+holeTxt.join('\t')+'\t'+total+'\t'+count+'\t'+note);
   });
-  document.getElementById('textOutput').textContent=lines.join('\n');document.getElementById('output').scrollIntoView({behavior:'smooth'});
+  document.getElementById('textOutput').textContent=lines.join('\n');
+  // 備料清單
+  let coreMap={};
+  rolls.forEach(roll=>roll.forEach(h=>{coreMap[h.size]=(coreMap[h.size]||0)+1;}));
+  let totalHoles=totalW+totalP;
+  let plugCount=totalHoles*2;
+  let coreEntries=Object.entries(coreMap).sort((a,b)=>Number(b[0])-Number(a[0]));
+  let totalCores=coreEntries.reduce((s,[,c])=>s+c,0);
+  let coreRows=coreEntries.map(([size,cnt])=>'<tr><td>'+size+' 吋</td><td><b>'+cnt+'</b> 支</td></tr>').join('');
+  let totalRow='<tr style="border-top:2px solid #ccc;background:#f5f5f5"><td><b>總計</b></td><td><b>'+totalCores+' 支</b></td></tr>';
+  document.getElementById('materialDiv').innerHTML='<table style="width:auto;min-width:220px;margin-bottom:12px;font-size:16px"><thead><tr><th>紙管尺寸</th><th>數量</th></tr></thead><tbody>'+coreRows+totalRow+'</tbody></table><div class="summary-box" style="border-color:#e67e22;font-size:15px">🔩 塞頭預估：（'+totalW+' 訂單 + '+totalP+' 庫存）× 2 = <b>'+plugCount+'</b> 個</div>';
+  document.getElementById('output').scrollIntoView({behavior:'smooth'});
 }
 function copyText(){navigator.clipboard.writeText(document.getElementById('textOutput').textContent).then(()=>alert('✅ 已複製！'));}
 function importPaste(){const text=document.getElementById('pasteArea').value.trim();if(!text){alert('請先貼上資料');return;}const rows=text.split('\n').map(l=>l.trim()).filter(l=>l);const parsed=[];for(const row of rows){const parts=row.split(/[\t \u3000]+/).map(s=>s.trim()).filter(s=>s);if(parts.length<2)continue;const size=parseFloat(parts[0]);const qty=parseInt(parts[1]);if(isNaN(size)||isNaN(qty)||qty<=0||size<=0)continue;parsed.push([size,qty]);}if(!parsed.length){alert('沒有讀到有效資料，請確認格式（每行：尺寸 粒數）');return;}document.getElementById('orderBody').innerHTML='';parsed.forEach(([s,q])=>addRow(s,q));document.getElementById('pasteArea').value='';alert('✅ 匯入 '+parsed.length+' 筆');}

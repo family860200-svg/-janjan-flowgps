@@ -6,7 +6,7 @@
 <title>PM2 配抄計算工具（MM）</title>
 <style>
 * { box-sizing: border-box; }
-body { font-family: 'Microsoft JhengHei', 'PingFang TC', sans-serif; max-width: 980px; margin: 0 auto; padding: 16px; background: #f2ede8; color: #2c2c2c; font-size: 14px; }
+body { font-family: 'Microsoft JhengHei', 'PingFang TC', sans-serif; max-width: 980px; margin: 0 auto; padding: 16px; background: #f2ede8; color: #2c2c2c; font-size: 16px; }
 h1 { color: #4a2c1a; font-size: 20px; border-bottom: 2px solid #8b5e3c; padding-bottom: 8px; margin-bottom: 16px; }
 h2 { color: #4a2c1a; font-size: 15px; margin: 0 0 12px; }
 .card { background: white; border-radius: 8px; padding: 16px; margin-bottom: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
@@ -16,6 +16,7 @@ td { border: 1px solid #e0d5cc; padding: 5px 8px; text-align: center; }
 tr:nth-child(even) td { background: #faf6f2; }
 .type-W { color: #2c2c2c; }
 .type-P { color: #6c3483; font-weight: bold; }
+.type-P2 { color: #e74c3c; font-weight: bold; }
 input[type=number] { width: 80px; padding: 4px 6px; border: 1px solid #ccc; border-radius: 4px; text-align: center; font-size: 13px; }
 .btn { padding: 7px 18px; border: none; border-radius: 6px; cursor: pointer; font-size: 13px; font-family: inherit; margin: 3px; }
 .btn-primary { background: #6b3d1e; color: white; }
@@ -33,6 +34,7 @@ pre { background: #f8f5f2; padding: 12px; border-radius: 4px; font-size: 12px; w
 .flex-between { display: flex; justify-content: space-between; align-items: center; }
 .tag-W { background: #d6eaf8; color: #1a5276; border-radius: 3px; padding: 1px 5px; font-size: 11px; font-weight: bold; }
 .tag-P { background: #e8daef; color: #6c3483; border-radius: 3px; padding: 1px 5px; font-size: 11px; }
+.tag-P2 { background: #fde8e8; color: #e74c3c; border-radius: 3px; padding: 1px 5px; font-size: 11px; }
 </style>
 </head>
 <body>
@@ -61,7 +63,7 @@ pre { background: #f8f5f2; padding: 12px; border-radius: 4px; font-size: 12px; w
     <div class="setting-item"><label>總寬下限（mm）</label><input type="number" id="minTotal" value="3257" step="1"></div>
     <div class="setting-item"><label>總寬上限（mm）</label><input type="number" id="maxTotal" value="3281" step="1"></div>
     <div class="setting-item"><label>單孔下限（mm）</label><input type="number" id="minHole" value="484" step="1"></div>
-    <div class="setting-item"><label>單孔上限（mm）</label><input type="number" id="maxHole" value="1089" step="1"></div>
+    <div class="setting-item"><label>單孔上限（mm）</label><input type="number" id="maxHole" value="1091" step="1" readonly style="background:#f0f0f0;color:#888;cursor:not-allowed"></div>
   </div>
 </div>
 <div style="margin-bottom:12px">
@@ -87,7 +89,7 @@ pre { background: #f8f5f2; padding: 12px; border-radius: 4px; font-size: 12px; w
       <tbody id="resultBody"></tbody>
     </table>
     <div style="margin-top:8px;font-size:12px;color:#666">
-      <span class="tag-W">W</span> 訂單　<span class="tag-P">P</span> 庫存填補（黃金規格）
+      <span class="tag-W">W</span> 訂單　<span class="tag-P">P</span> 主要庫存　<span class="tag-P2">P2</span> 備用庫存
     </div>
   </div>
   <div class="card">
@@ -97,10 +99,18 @@ pre { background: #f8f5f2; padding: 12px; border-radius: 4px; font-size: 12px; w
     </div>
     <pre id="textOutput"></pre>
   </div>
+
+  <div class="card">
+    <h2>🧻 備料清單</h2>
+    <div id="materialDiv"></div>
+  </div>
 </div>
 <script>
-// 黃金規格：台尺左欄 × 302.5 取整
-const GOLDEN = [1.6,1.7,1.8,1.9,2.0,2.1,2.2,2.3,2.4,2.5,2.6,2.7,2.8,2.9,3.0,3.1,3.2,3.3,3.4,3.5,3.6].map(t=>Math.round(t*302.5));
+// 左欄：主要庫存孔（精準對照表）
+const GOLDEN_PRIMARY = [485,515,545,576,606,636,667,697,727,758,788,818,848,879,909,939,970,1000,1030,1061,1091];
+// 右欄：備用庫存孔（非不得已才用）
+const GOLDEN_SECONDARY = [500,530,561,591,652,682,712,742,773,803,833,864,894,924,955,1046];
+const GOLDEN_ALL = [...GOLDEN_PRIMARY,...GOLDEN_SECONDARY].sort((a,b)=>a-b);
 let _min,_max,_minH,_maxH;
 function sum(arr){return arr.reduce((a,b)=>a+b,0);}
 function addRow(size='',qty=''){
@@ -118,10 +128,17 @@ function findOrderSubset(items,k,lo,hi,idx,chosen,cur){
   for(let i=idx;i<items.length;i++){let v=items[i];if(v<_minH||v>_maxH)continue;let ns=cur+v;if(ns+(left-1)*_minH>hi)continue;let res=findOrderSubset(items,k,lo,hi,i+1,[...chosen,v],ns);if(res)return res;}
   return null;
 }
-function findInvSubset(k,lo,hi,idx,chosen,cur){
+function findInvSubset(k,lo,hi,idx,chosen,cur,pool){
   if(chosen.length===k)return(cur>=lo&&cur<=hi)?[...chosen]:null;
   let left=k-chosen.length;
-  for(let i=idx;i<GOLDEN.length;i++){let v=GOLDEN[i];if(v<_minH||v>_maxH)continue;let ns=cur+v;if(ns+(left-1)*_minH>hi)continue;let res=findInvSubset(k,lo,hi,i,[...chosen,v],ns);if(res)return res;}
+  for(let i=idx;i<pool.length;i++){let v=pool[i];if(v<_minH||v>_maxH)continue;let ns=cur+v;if(ns+(left-1)*_minH>hi)continue;let res=findInvSubset(k,lo,hi,i,[...chosen,v],ns,pool);if(res)return res;}
+  return null;
+}
+function tryInv(k,lo,hi){
+  let r=findInvSubset(k,lo,hi,0,[],0,GOLDEN_PRIMARY);
+  if(r)return r.map(v=>({size:v,type:'P'}));
+  r=findInvSubset(k,lo,hi,0,[],0,GOLDEN_ALL);
+  if(r)return r.map(v=>({size:v,type:GOLDEN_PRIMARY.includes(v)?'P':'P2'}));
   return null;
 }
 function findRoll(available){
@@ -129,9 +146,9 @@ function findRoll(available){
   // 第一優先：純訂單，任何孔數（3→4→5）
   for(let n of[3,4,5]){if(available.length>=n){let c=findOrderSubset(available,n,_min,_max,0,[],0);if(c)return c.map(v=>({size:v,type:'W'}));}}
   // 第二優先：1孔庫存，最大化訂單孔（5→4→3）
-  for(let n of[5,4,3]){let on=n-1;if(on<1||available.length<on)continue;let lo=Math.max(_min-_maxH,on*_minH),hi=Math.min(_max-_minH,on*_maxH);if(lo>hi)continue;let oc=findOrderSubset(available,on,lo,hi,0,[],0);if(!oc)continue;let os=sum(oc);let ic=findInvSubset(1,_min-os,_max-os,0,[],0);if(ic)return[...oc.map(v=>({size:v,type:'W'})),...ic.map(v=>({size:v,type:'P'}))];  }
+  for(let n of[5,4,3]){let on=n-1;if(on<1||available.length<on)continue;let lo=Math.max(_min-_maxH,on*_minH),hi=Math.min(_max-_minH,on*_maxH);if(lo>hi)continue;let oc=findOrderSubset(available,on,lo,hi,0,[],0);if(!oc)continue;let os=sum(oc);let ic=tryInv(1,_min-os,_max-os);if(ic)return[...oc.map(v=>({size:v,type:'W'})),...ic];}
   // 第三優先：2孔庫存，最大化訂單孔（5→4→3）
-  for(let n of[5,4,3]){let on=n-2;if(on<1||available.length<on)continue;let lo=Math.max(_min-2*_maxH,on*_minH),hi=Math.min(_max-2*_minH,on*_maxH);if(lo>hi)continue;let oc=findOrderSubset(available,on,lo,hi,0,[],0);if(!oc)continue;let os=sum(oc);let ic=findInvSubset(2,_min-os,_max-os,0,[],0);if(ic)return[...oc.map(v=>({size:v,type:'W'})),...ic.map(v=>({size:v,type:'P'}))];  }
+  for(let n of[5,4,3]){let on=n-2;if(on<1||available.length<on)continue;let lo=Math.max(_min-2*_maxH,on*_minH),hi=Math.min(_max-2*_minH,on*_maxH);if(lo>hi)continue;let oc=findOrderSubset(available,on,lo,hi,0,[],0);if(!oc)continue;let os=sum(oc);let ic=tryInv(2,_min-os,_max-os);if(ic)return[...oc.map(v=>({size:v,type:'W'})),...ic];}
   return null;
 }
 function calculate(){
@@ -147,14 +164,16 @@ function render(rolls){
   document.getElementById('output').style.display='block';
   let totalW=rolls.reduce((a,r)=>a+r.filter(h=>h.type==='W').length,0);
   let totalP=rolls.reduce((a,r)=>a+r.filter(h=>h.type==='P').length,0);
-  document.getElementById('summaryDiv').innerHTML='<div class="summary-box">共 <b>'+rolls.length+'</b> 支捲筒 ｜ 訂單孔 <span class="type-W"><b>'+totalW+'</b></span> 粒 ／ 庫存填補 <span class="type-P"><b>'+totalP+'</b></span> 孔</div>';
+  let totalP2=rolls.reduce((a,r)=>a+r.filter(h=>h.type==='P2').length,0);
+  document.getElementById('summaryDiv').innerHTML='<div class="summary-box">共 <b>'+rolls.length+'</b> 支捲筒 ｜ 訂單孔 <span class="type-W"><b>'+totalW+'</b></span> 粒 ／ 庫存填補 <span class="type-P"><b>'+totalP+'</b></span> 孔'+(totalP2>0?' ／ 備用庫存 <span class="type-P2"><b>'+totalP2+'</b></span> 孔':'')+'</div>';
   let grouped=[];
   rolls.forEach(roll=>{let sorted=[...roll].sort((a,b)=>b.size-a.size||a.type.localeCompare(b.type));let key=sorted.map(h=>h.size+''+h.type).join(',');let g=grouped.find(g=>g.key===key);if(g)g.count++;else grouped.push({key,roll:sorted,count:1});});
   let tbody=document.getElementById('resultBody');tbody.innerHTML='';
   let lines=['PM2 配抄排程（MM）（'+new Date().toLocaleDateString('zh-TW')+'）','機台限制：'+_min+'～'+_max+' mm ／ 每孔 '+_minH+'～'+_maxH+' mm','','序號\t孔1\t孔2\t孔3\t孔4\t孔5\t總寬\t粒數\t說明'];
   grouped.forEach(({roll,count},idx)=>{
     let total=sum(roll.map(h=>h.size));let valid=total>=_min-1&&total<=_max+1;
-    let note=roll.every(h=>h.type==='W')?'全訂單':'含庫存×'+roll.filter(h=>h.type==='P').length;
+    let pCount=roll.filter(h=>h.type==='P').length,p2Count=roll.filter(h=>h.type==='P2').length;
+    let note=roll.every(h=>h.type==='W')?'全訂單':(p2Count>0?'含備用庫存×'+p2Count:'含庫存×'+pCount);
     let tr=document.createElement('tr');let cells=['<td><b>'+(idx+1)+'</b></td>'];
     for(let i=0;i<5;i++){if(i<roll.length){let h=roll[i];cells.push('<td class="type-'+h.type+'">'+h.size+'</td>');}else{cells.push('<td style="color:#ddd">—</td>');}}
     cells.push('<td class="'+(valid?'valid':'invalid')+'">'+total+'</td>');cells.push('<td><b>'+count+'</b></td>');cells.push('<td>'+note+(roll.some(h=>h.warn)?'<b style="color:orange"> ⚠</b>':'')+'</td>');
@@ -162,7 +181,19 @@ function render(rolls){
     let holeTxt=roll.map(h=>''+h.size);while(holeTxt.length<5)holeTxt.push('—');
     lines.push((idx+1)+'\t'+holeTxt.join('\t')+'\t'+total+'\t'+count+'\t'+note);
   });
-  document.getElementById('textOutput').textContent=lines.join('\n');document.getElementById('output').scrollIntoView({behavior:'smooth'});
+  document.getElementById('textOutput').textContent=lines.join('\n');
+  // 備料清單
+  let coreMap={};
+  rolls.forEach(roll=>roll.forEach(h=>{coreMap[h.size]=(coreMap[h.size]||0)+1;}));
+  let totalHoles=totalW+totalP+totalP2;
+  let plugCount=totalHoles*2;
+  let coreEntries=Object.entries(coreMap).sort((a,b)=>Number(b[0])-Number(a[0]));
+  let totalCores=coreEntries.reduce((s,[,c])=>s+c,0);
+  let coreRows=coreEntries.map(([size,cnt])=>'<tr><td>'+size+' mm</td><td><b>'+cnt+'</b> 支</td></tr>').join('');
+  let totalRow='<tr style="border-top:2px solid #ccc;background:#f5f5f5"><td><b>總計</b></td><td><b>'+totalCores+' 支</b></td></tr>';
+  let p2note=totalP2>0?' + '+totalP2+' 備用庫存':'';
+  document.getElementById('materialDiv').innerHTML='<table style="width:auto;min-width:220px;margin-bottom:12px;font-size:16px"><thead><tr><th>紙管尺寸</th><th>數量</th></tr></thead><tbody>'+coreRows+totalRow+'</tbody></table><div class="summary-box" style="border-color:#e67e22;font-size:15px">🔩 塞頭預估：（'+totalW+' 訂單 + '+totalP+' 庫存'+p2note+'）× 2 = <b>'+plugCount+'</b> 個</div>';
+  document.getElementById('output').scrollIntoView({behavior:'smooth'});
 }
 function copyText(){navigator.clipboard.writeText(document.getElementById('textOutput').textContent).then(()=>alert('✅ 已複製！'));}
 function importPaste(){const text=document.getElementById('pasteArea').value.trim();if(!text){alert('請先貼上資料');return;}const rows=text.split('\n').map(l=>l.trim()).filter(l=>l);const parsed=[];for(const row of rows){const parts=row.split(/[\t \u3000]+/).map(s=>s.trim()).filter(s=>s);if(parts.length<2)continue;const size=parseInt(parts[0]);const qty=parseInt(parts[1]);if(isNaN(size)||isNaN(qty)||qty<=0||size<=0)continue;parsed.push([size,qty]);}if(!parsed.length){alert('沒有讀到有效資料，請確認格式（每行：尺寸 粒數）');return;}document.getElementById('orderBody').innerHTML='';parsed.forEach(([s,q])=>addRow(s,q));document.getElementById('pasteArea').value='';alert('✅ 匯入 '+parsed.length+' 筆');}
