@@ -47,6 +47,13 @@ pre { background: #f8f5f2; padding: 12px; border-radius: 4px; font-size: 12px; w
     <button class="btn btn-primary" onclick="addRow()">＋ 新增規格</button>
     <button class="btn btn-gray" onclick="clearAll()">清除全部</button>
   </div>
+  <div style="margin-top:14px;border-top:1px dashed #e0d5cc;padding-top:12px">
+    <div style="font-size:12px;color:#555;margin-bottom:6px">📋 從 Excel 複製後貼上，點「匯入」自動填入（每行：cm 粒數，空格或 Tab 分隔）</div>
+    <div style="display:flex;gap:8px;align-items:flex-start">
+      <textarea id="pasteArea" rows="5" placeholder="例：&#10;69.6  2&#10;72.6  4&#10;74.1  5" style="flex:1;border:1px solid #ccc;border-radius:4px;padding:6px;font-size:13px;font-family:monospace;resize:vertical;min-width:0"></textarea>
+      <button class="btn btn-primary" onclick="importPaste()" style="white-space:nowrap">匯入</button>
+    </div>
+  </div>
 </div>
 <div class="card">
   <h2>⚙️ PM2 機台設定</h2>
@@ -120,24 +127,12 @@ function findInvSubset(k,lo,hi,idx,chosen,cur){
 }
 function findRoll(available){
   if(!available.length)return null;
-  const EPS=0.05;
-  let freq={};available.forEach(v=>freq[v]=(freq[v]||0)+1);
-  let dominant=[...new Set(available)].sort((a,b)=>b-a).filter(sz=>freq[sz]>=2);
-  for(let n of[4,5]){
-    // 1. 同尺寸純訂單
-    for(let sz of dominant){if(freq[sz]<n)continue;let t=r(sz*n);if(t>=_min-EPS&&t<=_max+EPS)return Array(n).fill(sz).map(v=>({size:v,type:'W'}));}
-    // 2. 大尺寸優先：k1個sz1 + k2個sz2 + 1P
-    for(let sz1 of dominant){
-      for(let k1=Math.min(freq[sz1],n-1);k1>=1;k1--){
-        let k2=n-1-k1;
-        if(k2===0){let oSum=r(sz1*k1);let ic=findInvSubset(1,r(_min-oSum),r(_max-oSum),0,[],0);if(ic)return[...Array(k1).fill(sz1).map(v=>({size:v,type:'W'})),...ic.map(v=>({size:v,type:'P'}))];
-        }else{for(let sz2 of dominant){if(sz2>=sz1||freq[sz2]<k2)continue;let oSum=r(sz1*k1+sz2*k2);if(oSum<r(_minH*(k1+k2))||oSum>r(_maxH*(k1+k2)))continue;let ic=findInvSubset(1,r(_min-oSum),r(_max-oSum),0,[],0);if(ic)return[...Array(k1).fill(sz1).map(v=>({size:v,type:'W'})),...Array(k2).fill(sz2).map(v=>({size:v,type:'W'})),...ic.map(v=>({size:v,type:'P'}))];}}
-      }
-    }
-    // 3. 混搭純訂單
-    if(available.length>=n){let c=findOrderSubset(available,n,_min,_max,0,[],0);if(c)return c.map(v=>({size:v,type:'W'}));}
-    // 4. 混搭訂單+庫存
-    for(let on=Math.min(n-1,available.length);on>=1;on--){let invN=n-on;let oc=findOrderSubset(available,on,Math.max(r(_min-invN*_maxH),r(on*_minH)),Math.min(r(_max-invN*_minH),r(on*_maxH)),0,[],0);if(!oc)continue;let oSum=sum(oc);let ic=findInvSubset(invN,r(_min-oSum),r(_max-oSum),0,[],0);if(ic)return[...oc.map(v=>({size:v,type:'W'})),...ic.map(v=>({size:v,type:'P'}))];}}
+  // 第一優先：純訂單，任何孔數（3→4→5）
+  for(let n of[3,4,5]){if(available.length>=n){let c=findOrderSubset(available,n,_min,_max,0,[],0);if(c)return c.map(v=>({size:v,type:'W'}));}}
+  // 第二優先：1孔庫存，最大化訂單孔（5→4→3）
+  for(let n of[5,4,3]){let on=n-1;if(on<1||available.length<on)continue;let lo=Math.max(r(_min-_maxH),r(on*_minH)),hi=Math.min(r(_max-_minH),r(on*_maxH));if(lo>hi)continue;let oc=findOrderSubset(available,on,lo,hi,0,[],0);if(!oc)continue;let os=sum(oc);let ic=findInvSubset(1,r(_min-os),r(_max-os),0,[],0);if(ic)return[...oc.map(v=>({size:v,type:'W'})),...ic.map(v=>({size:v,type:'P'}))];  }
+  // 第三優先：2孔庫存，最大化訂單孔（5→4→3）
+  for(let n of[5,4,3]){let on=n-2;if(on<1||available.length<on)continue;let lo=Math.max(r(_min-2*_maxH),r(on*_minH)),hi=Math.min(r(_max-2*_minH),r(on*_maxH));if(lo>hi)continue;let oc=findOrderSubset(available,on,lo,hi,0,[],0);if(!oc)continue;let os=sum(oc);let ic=findInvSubset(2,r(_min-os),r(_max-os),0,[],0);if(ic)return[...oc.map(v=>({size:v,type:'W'})),...ic.map(v=>({size:v,type:'P'}))];  }
   return null;
 }
 function calculate(){
@@ -171,6 +166,7 @@ function render(rolls){
   document.getElementById('textOutput').textContent=lines.join('\n');document.getElementById('output').scrollIntoView({behavior:'smooth'});
 }
 function copyText(){navigator.clipboard.writeText(document.getElementById('textOutput').textContent).then(()=>alert('✅ 已複製！'));}
+function importPaste(){const text=document.getElementById('pasteArea').value.trim();if(!text){alert('請先貼上資料');return;}const rows=text.split('\n').map(l=>l.trim()).filter(l=>l);const parsed=[];for(const row of rows){const parts=row.split(/[\t \u3000]+/).map(s=>s.trim()).filter(s=>s);if(parts.length<2)continue;const size=parseFloat(parts[0]);const qty=parseInt(parts[1]);if(isNaN(size)||isNaN(qty)||qty<=0||size<=0)continue;parsed.push([size,qty]);}if(!parsed.length){alert('沒有讀到有效資料，請確認格式（每行：尺寸 粒數）');return;}document.getElementById('orderBody').innerHTML='';parsed.forEach(([s,q])=>addRow(s,q));document.getElementById('pasteArea').value='';alert('✅ 匯入 '+parsed.length+' 筆');}
 addRow();addRow();addRow();
 </script>
 </body>

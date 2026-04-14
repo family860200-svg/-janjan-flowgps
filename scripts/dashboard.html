@@ -398,6 +398,64 @@
   .s2 { width: 50px; height: 50px; background: var(--lime); bottom: 200px; left: 30px; transform: rotate(15deg); }
   .s3 { width: 120px; height: 120px; background: var(--yellow); top: 60%; right: 60px; border-radius: 50%; }
 
+  /* Company OKR 2x2 */
+  .okr-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    border: var(--border);
+    box-shadow: var(--shadow);
+  }
+  .okr-q {
+    border: var(--border);
+    padding: 0;
+    min-height: 160px;
+    display: flex;
+    flex-direction: column;
+  }
+  .okr-q-label {
+    padding: 8px 14px;
+    font-size: 12px;
+    font-weight: 900;
+    letter-spacing: 0.5px;
+    border-bottom: 2px solid #000;
+  }
+  .okr-q-label.green  { background: #C8E6C9; }
+  .okr-q-label.blue   { background: #B3D9F7; }
+  .okr-q-label.yellow { background: #FFF9C4; }
+  .okr-textarea {
+    flex: 1;
+    width: 100%;
+    border: none;
+    outline: none;
+    padding: 12px 14px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 1.7;
+    resize: none;
+    background: transparent;
+    min-height: 130px;
+  }
+  .okr-todo-list { padding: 10px 14px; flex: 1; }
+  .okr-todo-item {
+    font-size: 13px;
+    font-weight: 600;
+    padding: 4px 0;
+    border-bottom: 1px dashed #ccc;
+    line-height: 1.5;
+  }
+  .okr-todo-item:last-child { border-bottom: none; }
+  .okr-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    font-size: 12px;
+    font-weight: 700;
+    color: #555;
+  }
+
   /* Refresh btn */
   .refresh-btn {
     background: var(--cyan);
@@ -459,9 +517,83 @@ function escHtml(s) {
   return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 }
 
+// ── 公司工作版 ──────────────────────────────────────────
+let _workOkr = { okr: '', healthMetrics: '', future: '' };
+
+async function loadWorkOkr() {
+  const res = await fetch('/api/work-okr');
+  _workOkr = await res.json();
+  const okrEl = document.getElementById('work-okr');
+  const healthEl = document.getElementById('work-health');
+  const futureEl = document.getElementById('work-future');
+  if (okrEl) okrEl.value = _workOkr.okr || '';
+  if (healthEl) healthEl.value = _workOkr.healthMetrics || '';
+  if (futureEl) futureEl.value = _workOkr.future || '';
+}
+
+async function saveWorkOkr() {
+  const data = {
+    okr: document.getElementById('work-okr').value,
+    healthMetrics: document.getElementById('work-health').value,
+    future: document.getElementById('work-future').value,
+  };
+  await fetch('/api/work-okr', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data)
+  });
+  const btn = document.getElementById('work-save-btn');
+  btn.textContent = '✅ 已儲存';
+  setTimeout(() => { btn.textContent = '💾 儲存'; }, 1500);
+}
+
+function renderWorkCard(todos) {
+  const workSection = todos.find(s => s.title === '🔴 四月主線（工作）');
+  const workItems = workSection ? workSection.items.filter(i => !i.done) : [];
+  const todosHtml = workItems.length
+    ? workItems.map(i => `<div class="okr-todo-item">· ${escHtml(i.text)}</div>`).join('')
+    : '<div class="okr-todo-item" style="color:#bbb">（空）</div>';
+
+  return `
+    <div class="card col-span-2" style="overflow:visible">
+      <div class="card-header" style="background:#B3D9F7">🏢 公司工作版</div>
+      <div class="card-body" style="padding:16px 20px 12px">
+        <div class="okr-header">
+          <span>姓名：JANJAN｜業務</span>
+          <span id="work-date">${new Date().toLocaleDateString('zh-TW',{year:'numeric',month:'long',day:'numeric'})}</span>
+        </div>
+        <div class="okr-grid">
+          <!-- Q1 top-left: 這週待辦 -->
+          <div class="okr-q">
+            <div class="okr-q-label green">3. 這週待辦事項（本週要做什麼）</div>
+            <div class="okr-todo-list">${todosHtml}</div>
+          </div>
+          <!-- Q2 top-right: OKR -->
+          <div class="okr-q">
+            <div class="okr-q-label blue">1. 目標與關鍵結果 Objective × Key Results</div>
+            <textarea class="okr-textarea" id="work-okr" placeholder="本月目標：&#10;KR1：&#10;KR2："></textarea>
+          </div>
+          <!-- Q3 bottom-left: 未來待辦 -->
+          <div class="okr-q">
+            <div class="okr-q-label yellow">4. 未來待辦事項（計畫要做什麼）</div>
+            <textarea class="okr-textarea" id="work-future" placeholder="下週、下月的計畫…"></textarea>
+          </div>
+          <!-- Q4 bottom-right: 健康指標 -->
+          <div class="okr-q">
+            <div class="okr-q-label yellow">2. 健康指標（相關目標與 KR 參考值）</div>
+            <textarea class="okr-textarea" id="work-health" placeholder="KR 量化指標、進度追蹤…"></textarea>
+          </div>
+        </div>
+        <div style="margin-top:12px;display:flex;justify-content:flex-end;">
+          <button class="btn" id="work-save-btn" onclick="saveWorkOkr()">💾 儲存</button>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
 // Eisenhower mapping by section title
 const eisenhowerMap = {
-  '🔴 四月主線（工作）': 'q1',
   '🔴 四月主線': 'q1',
   '💰 家庭財務': 'q2',
   '🟡 健康日常': 'q2',
@@ -517,7 +649,6 @@ function renderEisenhower(sections) {
 
 // Section color map
 const sectionColors = {
-  '🔴 四月主線（工作）': 'card-red',
   '🔴 四月主線': 'card-red',
   '💰 家庭財務': 'card-yellow',
   '🟡 健康日常': 'card-lime',
@@ -527,7 +658,7 @@ const sectionColors = {
 };
 
 function renderTodos(sections) {
-  return sections.filter(s => s.title !== '✅ 已完成' && s.items.length > 0).map(s => {
+  return sections.filter(s => s.title !== '✅ 已完成' && s.title !== '🔴 四月主線（工作）' && s.items.length > 0).map(s => {
     const color = sectionColors[s.title] || 'card-pink';
     const items = s.items.map(item => `
       <div class="todo-item ${item.done ? 'done' : ''} ${item.indent ? 'indent' : ''}">
@@ -611,6 +742,9 @@ function render(data) {
   }</div>`;
 
   const html = `
+    <!-- 公司工作版 -->
+    ${renderWorkCard(data.todos)}
+
     <!-- 手動記錄 -->
     <div class="card card-pink col-span-2">
       <div class="card-header">✏️ 隨手一記</div>
@@ -719,6 +853,8 @@ function render(data) {
 
   // 自動載入 FLOW 日誌（含日期選單）
   loadFlowJournal();
+  // 載入公司工作版
+  loadWorkOkr();
 }
 
 function formatDateKey(key) {

@@ -205,6 +205,34 @@ const server = http.createServer((req, res) => {
     return;
   }
 
+  if (url.pathname === '/api/work-okr' && req.method === 'GET') {
+    const file = path.join(ROOT, 'work-okr.json');
+    try {
+      const data = JSON.parse(fs.readFileSync(file, 'utf8'));
+      res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
+      res.end(JSON.stringify(data));
+    } catch {
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ okr: '', healthMetrics: '', future: '' }));
+    }
+    return;
+  }
+
+  if (url.pathname === '/api/work-okr' && req.method === 'POST') {
+    let body = '';
+    req.on('data', c => body += c);
+    req.on('end', () => {
+      try {
+        const data = JSON.parse(body);
+        data.updatedAt = new Date().toISOString().slice(0, 10);
+        fs.writeFileSync(path.join(ROOT, 'work-okr.json'), JSON.stringify(data, null, 2));
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ ok: true }));
+      } catch { res.writeHead(400); res.end(); }
+    });
+    return;
+  }
+
   res.writeHead(404); res.end();
 });
 
