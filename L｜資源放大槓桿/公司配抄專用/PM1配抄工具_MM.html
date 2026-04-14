@@ -6,7 +6,7 @@
 <title>PM1 配抄計算工具（MM）</title>
 <style>
 * { box-sizing: border-box; }
-body { font-family: 'Microsoft JhengHei', 'PingFang TC', sans-serif; max-width: 980px; margin: 0 auto; padding: 16px; background: #e8f0f5; color: #1a2c3a; font-size: 14px; }
+body { font-family: 'Microsoft JhengHei', 'PingFang TC', sans-serif; max-width: 980px; margin: 0 auto; padding: 16px; background: #e8f0f5; color: #1a2c3a; font-size: 16px; }
 h1 { color: #1a3a5c; font-size: 20px; border-bottom: 2px solid #2980b9; padding-bottom: 8px; margin-bottom: 16px; }
 h2 { color: #1a3a5c; font-size: 15px; margin: 0 0 12px; }
 .card { background: white; border-radius: 8px; padding: 16px; margin-bottom: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
@@ -187,9 +187,12 @@ function render(rolls){
   let totalP2=rolls.reduce((a,r)=>a+r.filter(h=>h.type==='P2').length,0);
   let totalHoles=totalW+totalP+totalP2;
   let plugCount=totalHoles*2;
-  let coreRows=Object.entries(coreMap).sort((a,b)=>Number(b[0])-Number(a[0])).map(([size,cnt])=>'<tr><td>'+size+' mm</td><td><b>'+cnt+'</b> 支</td></tr>').join('');
+  let coreEntries=Object.entries(coreMap).sort((a,b)=>Number(b[0])-Number(a[0]));
+  let totalCores=coreEntries.reduce((s,[,c])=>s+c,0);
+  let coreRows=coreEntries.map(([size,cnt])=>'<tr><td>'+size+' mm</td><td><b>'+cnt+'</b> 支</td></tr>').join('');
+  let totalRow='<tr style="border-top:2px solid #ccc;background:#f5f5f5"><td><b>總計</b></td><td><b>'+totalCores+' 支</b></td></tr>';
   let p2note=totalP2>0?' + '+totalP2+' 備用庫存':'';
-  document.getElementById('materialDiv').innerHTML='<table style="width:auto;min-width:220px;margin-bottom:12px"><thead><tr><th>紙管尺寸</th><th>數量</th></tr></thead><tbody>'+coreRows+'</tbody></table><div class="summary-box" style="border-color:#e67e22">🔩 塞頭預估：（'+totalW+' 訂單 + '+totalP+' 庫存'+p2note+'）× 2 = <b>'+plugCount+'</b> 個</div>';
+  document.getElementById('materialDiv').innerHTML='<table style="width:auto;min-width:220px;margin-bottom:12px;font-size:16px"><thead><tr><th>紙管尺寸</th><th>數量</th></tr></thead><tbody>'+coreRows+totalRow+'</tbody></table><div class="summary-box" style="border-color:#e67e22;font-size:15px">🔩 塞頭預估：（'+totalW+' 訂單 + '+totalP+' 庫存'+p2note+'）× 2 = <b>'+plugCount+'</b> 個</div>';
   document.getElementById('output').scrollIntoView({behavior:'smooth'});
 }
 function copyText(){navigator.clipboard.writeText(document.getElementById('textOutput').textContent).then(()=>alert('✅ 已複製！'));}
