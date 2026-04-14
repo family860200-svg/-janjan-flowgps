@@ -61,7 +61,7 @@ pre { background: #f0f7fc; padding: 12px; border-radius: 4px; font-size: 12px; w
     <div class="setting-item"><label>總寬下限（英吋）</label><input type="number" id="minTotal" value="108.4" step="0.1"></div>
     <div class="setting-item"><label>總寬上限（英吋）</label><input type="number" id="maxTotal" value="109.7" step="0.1"></div>
     <div class="setting-item"><label>單孔下限（英吋）</label><input type="number" id="minHole" value="19.1" step="0.1"></div>
-    <div class="setting-item"><label>單孔上限（英吋）</label><input type="number" id="maxHole" value="47.6" step="0.1"></div>
+    <div class="setting-item"><label>單孔上限（英吋）</label><input type="number" id="maxHole" value="42.94" step="0.1" readonly style="background:#f0f0f0;color:#888;cursor:not-allowed"></div>
   </div>
 </div>
 <div style="margin-bottom:12px">
@@ -96,6 +96,10 @@ pre { background: #f0f7fc; padding: 12px; border-radius: 4px; font-size: 12px; w
       <button class="btn btn-green" onclick="copyText()">📋 複製</button>
     </div>
     <pre id="textOutput"></pre>
+  </div>
+  <div class="card">
+    <h2>🧻 備料清單</h2>
+    <div id="materialDiv"></div>
   </div>
 </div>
 <script>
@@ -162,7 +166,12 @@ function render(rolls){
     let holeTxt=roll.map(h=>''+h.size);while(holeTxt.length<5)holeTxt.push('—');
     lines.push((idx+1)+'\t'+holeTxt.join('\t')+'\t'+total+'\t'+count+'\t'+note);
   });
-  document.getElementById('textOutput').textContent=lines.join('\n');document.getElementById('output').scrollIntoView({behavior:'smooth'});
+  document.getElementById('textOutput').textContent=lines.join('\n');
+  let coreMap={};rolls.forEach(roll=>roll.forEach(h=>{coreMap[h.size]=(coreMap[h.size]||0)+1;}));
+  let totalHoles=totalW+totalP,plugCount=totalHoles*2;
+  let coreRows=Object.entries(coreMap).sort((a,b)=>Number(b[0])-Number(a[0])).map(([size,cnt])=>'<tr><td>'+size+' 吋</td><td><b>'+cnt+'</b> 支</td></tr>').join('');
+  document.getElementById('materialDiv').innerHTML='<table style="width:auto;min-width:220px;margin-bottom:12px"><thead><tr><th>紙管尺寸</th><th>數量</th></tr></thead><tbody>'+coreRows+'</tbody></table><div class="summary-box" style="border-color:#e67e22">🔩 塞頭預估：（'+totalW+' 訂單 + '+totalP+' 庫存）× 2 = <b>'+plugCount+'</b> 個</div>';
+  document.getElementById('output').scrollIntoView({behavior:'smooth'});
 }
 function copyText(){navigator.clipboard.writeText(document.getElementById('textOutput').textContent).then(()=>alert('✅ 已複製！'));}
 function importPaste(){const text=document.getElementById('pasteArea').value.trim();if(!text){alert('請先貼上資料');return;}const rows=text.split('\n').map(l=>l.trim()).filter(l=>l);const parsed=[];for(const row of rows){const parts=row.split(/[\t \u3000]+/).map(s=>s.trim()).filter(s=>s);if(parts.length<2)continue;const size=parseFloat(parts[0]);const qty=parseInt(parts[1]);if(isNaN(size)||isNaN(qty)||qty<=0||size<=0)continue;parsed.push([size,qty]);}if(!parsed.length){alert('沒有讀到有效資料，請確認格式（每行：尺寸 粒數）');return;}document.getElementById('orderBody').innerHTML='';parsed.forEach(([s,q])=>addRow(s,q));document.getElementById('pasteArea').value='';alert('✅ 匯入 '+parsed.length+' 筆');}
