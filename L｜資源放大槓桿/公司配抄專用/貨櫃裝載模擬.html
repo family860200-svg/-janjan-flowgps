@@ -468,15 +468,26 @@ function drawDiagram(items, container, totalLen, unit) {
     svg += `<rect x="${curX}" y="${oy}" width="${blockW}" height="${drawH}"
       fill="${item.color}" fill-opacity="0.35" stroke="${item.color}" stroke-width="1"/>`;
 
-    // 畫每一格紙張
+    // 畫每一格紙張（疊層品項每格用雙矩形表示兩層）
     for (let row = 0; row < item.numRows; row++) {
       const rx = curX + row * pieceLenPx;
-      const remaining = item.qty - row * item.ppr;
-      const countInRow = Math.min(item.ppr, remaining);
-      for (let col = 0; col < countInRow; col++) {
+      // remaining 要算進 layers：每排實際消耗 ppr×layers 件
+      const remaining = item.qty - row * item.ppr * item.layers;
+      // floor positions（並排格數）= ceil(remaining / layers)，最多 ppr
+      const floorPos = Math.min(item.ppr, Math.ceil(remaining / item.layers));
+      for (let col = 0; col < floorPos; col++) {
         const ry = oy + col * pieceWidPx;
-        svg += `<rect x="${rx+1}" y="${ry+1}" width="${pieceLenPx-2}" height="${pieceWidPx-2}"
-          fill="${item.color}" fill-opacity="0.7" stroke="white" stroke-width="1" rx="1"/>`;
+        if (item.layers === 2) {
+          // 底層（稍微偏移，製造疊放深度感）
+          svg += `<rect x="${rx+4}" y="${ry+4}" width="${pieceLenPx-6}" height="${pieceWidPx-6}"
+            fill="${item.color}" fill-opacity="0.45" stroke="white" stroke-width="1" rx="1"/>`;
+          // 上層
+          svg += `<rect x="${rx+1}" y="${ry+1}" width="${pieceLenPx-6}" height="${pieceWidPx-6}"
+            fill="${item.color}" fill-opacity="0.85" stroke="white" stroke-width="1" rx="1"/>`;
+        } else {
+          svg += `<rect x="${rx+1}" y="${ry+1}" width="${pieceLenPx-2}" height="${pieceWidPx-2}"
+            fill="${item.color}" fill-opacity="0.7" stroke="white" stroke-width="1" rx="1"/>`;
+        }
       }
     }
 
