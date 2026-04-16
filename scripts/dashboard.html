@@ -1,0 +1,1001 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FlowGPS 日報</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --pink: #FF61D2;
+    --yellow: #FFE100;
+    --cyan: #00F0FF;
+    --lime: #B8FF3C;
+    --black: #000000;
+    --white: #FFFFFF;
+    --bg2: #FFB0E0;
+    --shadow: 6px 6px 0 #000;
+    --border: 3px solid #000;
+    --radius-pill: 9999px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Montserrat', sans-serif;
+    background: var(--white);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Background shapes */
+  body::before {
+    content: '';
+    position: fixed; inset: 0; z-index: -1;
+    background:
+      radial-gradient(circle 8px at 10% 15%, var(--black) 100%, transparent 0),
+      radial-gradient(circle 8px at 25% 80%, var(--black) 100%, transparent 0),
+      radial-gradient(circle 8px at 90% 20%, var(--black) 100%, transparent 0),
+      radial-gradient(circle 8px at 70% 90%, var(--black) 100%, transparent 0),
+      radial-gradient(circle 8px at 50% 50%, var(--black) 100%, transparent 0),
+      radial-gradient(circle 5px at 80% 55%, var(--black) 100%, transparent 0),
+      radial-gradient(circle 5px at 15% 45%, var(--black) 100%, transparent 0),
+      var(--white);
+  }
+
+  header {
+    background: var(--pink);
+    border-bottom: var(--border);
+    padding: 24px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 4px 0 #000;
+  }
+  .logo {
+    font-size: 28px;
+    font-weight: 900;
+    color: var(--black);
+    letter-spacing: -1px;
+  }
+  .logo span {
+    background: var(--yellow);
+    border: var(--border);
+    border-radius: var(--radius-pill);
+    padding: 2px 14px;
+    margin-left: 8px;
+    box-shadow: 3px 3px 0 #000;
+    font-size: 14px;
+    vertical-align: middle;
+  }
+  #clock {
+    font-size: 20px;
+    font-weight: 700;
+    background: var(--white);
+    border: var(--border);
+    border-radius: var(--radius-pill);
+    padding: 6px 20px;
+    box-shadow: var(--shadow);
+  }
+  #date-str {
+    font-size: 13px;
+    font-weight: 700;
+    color: #222;
+    margin-top: 4px;
+    text-align: right;
+  }
+
+  main {
+    max-width: 1120px;
+    margin: 0 auto;
+    padding: 32px 24px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+  }
+
+  @media (max-width: 768px) {
+    main { grid-template-columns: 1fr; }
+  }
+
+  .card {
+    background: var(--white);
+    border: var(--border);
+    border-radius: 0;
+    box-shadow: var(--shadow);
+    overflow: hidden;
+  }
+  .card-header {
+    padding: 14px 20px;
+    font-size: 15px;
+    font-weight: 900;
+    border-bottom: var(--border);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .card-body { padding: 20px; }
+
+  /* Colors per card */
+  .card-red .card-header { background: #FF4444; color: #fff; }
+  .card-yellow .card-header { background: var(--yellow); }
+  .card-cyan .card-header { background: var(--cyan); }
+  .card-lime .card-header { background: var(--lime); }
+  .card-pink .card-header { background: var(--pink); }
+  .card-purple .card-header { background: #CC88FF; }
+  .card-white .card-header { background: #f0f0f0; }
+
+  /* Todo items */
+  .todo-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 8px 0;
+    border-bottom: 1px dashed #ddd;
+    font-size: 14px;
+    font-weight: 600;
+  }
+  .todo-item:last-child { border-bottom: none; }
+  .todo-item.indent { padding-left: 20px; }
+  .todo-item.done { opacity: 0.4; text-decoration: line-through; }
+  .todo-dot {
+    width: 16px; height: 16px;
+    border: 2px solid #000;
+    border-radius: 3px;
+    flex-shrink: 0;
+    margin-top: 2px;
+    background: var(--white);
+  }
+  .todo-dot.checked {
+    background: var(--black);
+  }
+
+  /* FLOW 日誌 */
+  .flow-journal { display: flex; flex-direction: column; gap: 16px; }
+  .flow-section { display: flex; flex-direction: column; gap: 6px; }
+  .flow-label {
+    font-size: 11px; font-weight: 900; letter-spacing: 1px;
+    text-transform: uppercase; background: #000; color: #fff;
+    display: inline-block; padding: 2px 10px;
+  }
+  .flow-input {
+    width: 100%; border: 2px solid #000; padding: 10px 12px;
+    font-family: 'Montserrat', sans-serif; font-size: 13px;
+    font-weight: 500; resize: vertical; outline: none;
+    box-shadow: 3px 3px 0 #000; background: #fffef7;
+    line-height: 1.6;
+  }
+  .flow-input:focus { background: #fffbe6; }
+  .flow-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
+  }
+  .drip-row { display: flex; gap: 8px; margin-bottom: 8px; }
+  .drip-select {
+    border: 2px solid #000; padding: 8px 10px;
+    font-family: 'Montserrat', sans-serif; font-weight: 700;
+    font-size: 12px; box-shadow: 3px 3px 0 #000; cursor: pointer;
+  }
+  .drip-input {
+    flex: 1; border: 2px solid #000; padding: 8px 12px;
+    font-family: 'Montserrat', sans-serif; font-size: 13px;
+    font-weight: 500; outline: none; box-shadow: 3px 3px 0 #000;
+  }
+  .drip-item {
+    display: flex; align-items: center; gap: 8px;
+    padding: 6px 10px; border-bottom: 1px dashed #ccc;
+    font-size: 12px; font-weight: 600;
+  }
+  .drip-badge {
+    padding: 2px 8px; font-size: 10px; font-weight: 900;
+    border: 1.5px solid #000;
+  }
+
+  /* Section label */
+  .section-label {
+    font-size: 11px;
+    font-weight: 900;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    background: var(--black);
+    color: var(--white);
+    display: inline-block;
+    padding: 2px 8px;
+    margin-bottom: 10px;
+    margin-top: 6px;
+  }
+
+  /* Notes */
+  .note-form {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+  .note-form input {
+    flex: 1;
+    border: var(--border);
+    padding: 10px 14px;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 600;
+    font-size: 13px;
+    outline: none;
+    box-shadow: 3px 3px 0 #000;
+  }
+  .note-form input:focus { background: #fffbe6; }
+  .btn {
+    background: var(--yellow);
+    border: var(--border);
+    padding: 10px 18px;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 900;
+    font-size: 13px;
+    cursor: pointer;
+    box-shadow: 3px 3px 0 #000;
+    transition: transform 150ms, box-shadow 150ms;
+  }
+  .btn:hover { transform: translate(-2px, -2px); box-shadow: 5px 5px 0 #000; }
+  .btn:active { transform: translate(1px, 1px); box-shadow: 1px 1px 0 #000; }
+
+  .note-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 0;
+    border-bottom: 1px dashed #ddd;
+    font-size: 13px;
+    font-weight: 600;
+  }
+  .note-time {
+    color: #999;
+    font-size: 11px;
+    white-space: nowrap;
+    margin-top: 2px;
+  }
+  .note-text { flex: 1; }
+  .note-actions { display: flex; gap: 4px; margin-left: auto; }
+  .note-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 13px;
+    padding: 2px 4px;
+    opacity: 0.5;
+    line-height: 1;
+  }
+  .note-btn:hover { opacity: 1; }
+  .note-date-nav {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+    font-size: 12px;
+    font-weight: 700;
+  }
+  .note-date-nav select {
+    border: var(--border);
+    padding: 4px 8px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    background: #fff;
+    cursor: pointer;
+  }
+
+  /* Summary */
+  .summary-text {
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 1.8;
+    white-space: pre-wrap;
+    max-height: 300px;
+    overflow-y: auto;
+    color: #222;
+  }
+
+  /* Wealth scoreboard */
+  .wealth-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+  }
+  @media (max-width: 768px) { .wealth-grid { grid-template-columns: repeat(2, 1fr); } }
+  .wealth-card {
+    border: var(--border);
+    box-shadow: 4px 4px 0 #000;
+    text-align: center;
+    padding: 12px 8px;
+  }
+  .wealth-name {
+    font-size: 13px;
+    font-weight: 900;
+    margin-bottom: 8px;
+  }
+  .wealth-total {
+    font-size: 32px;
+    font-weight: 900;
+    line-height: 1;
+  }
+  .wealth-today {
+    font-size: 11px;
+    font-weight: 700;
+    margin-top: 4px;
+    color: #333;
+  }
+  .wealth-today-badge {
+    display: inline-block;
+    background: var(--black);
+    color: var(--yellow);
+    border-radius: var(--radius-pill);
+    padding: 1px 8px;
+    font-size: 11px;
+    font-weight: 900;
+  }
+
+  /* Eisenhower Matrix */
+  .matrix-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto auto;
+    gap: 0;
+    border: var(--border);
+    box-shadow: var(--shadow);
+  }
+  .matrix-q {
+    border: var(--border);
+    padding: 16px;
+    min-height: 140px;
+  }
+  .matrix-q-label {
+    font-size: 11px;
+    font-weight: 900;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .matrix-q-label span {
+    padding: 2px 8px;
+    border: 2px solid #000;
+    font-size: 10px;
+  }
+  .matrix-q1 { background: #FFE5E5; }
+  .matrix-q2 { background: #FFFBE6; }
+  .matrix-q3 { background: #E8F4FF; }
+  .matrix-q4 { background: #F0F0F0; }
+  .matrix-axis-h {
+    display: flex;
+    justify-content: space-between;
+    font-size: 10px;
+    font-weight: 900;
+    letter-spacing: 1px;
+    padding: 4px 8px;
+    background: #000;
+    color: #fff;
+    grid-column: span 2;
+  }
+  .matrix-item {
+    font-size: 12px;
+    font-weight: 600;
+    padding: 3px 0;
+    border-bottom: 1px dashed #ccc;
+    line-height: 1.4;
+  }
+  .matrix-item:last-child { border-bottom: none; }
+
+  /* Full width */
+  .col-span-2 { grid-column: span 2; }
+  @media (max-width: 768px) { .col-span-2 { grid-column: span 1; } }
+
+  .empty { color: #aaa; font-size: 13px; font-weight: 600; }
+
+  /* Floating shape */
+  .shape {
+    position: fixed;
+    z-index: -1;
+    border: 3px solid #000;
+  }
+  .shape-circle { border-radius: 50%; }
+  .s1 { width: 80px; height: 80px; background: var(--cyan); top: 120px; right: 40px; }
+  .s2 { width: 50px; height: 50px; background: var(--lime); bottom: 200px; left: 30px; transform: rotate(15deg); }
+  .s3 { width: 120px; height: 120px; background: var(--yellow); top: 60%; right: 60px; border-radius: 50%; }
+
+  /* Company OKR 2x2 */
+  .okr-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    border: var(--border);
+    box-shadow: var(--shadow);
+  }
+  .okr-q {
+    border: var(--border);
+    padding: 0;
+    min-height: 160px;
+    display: flex;
+    flex-direction: column;
+  }
+  .okr-q-label {
+    padding: 8px 14px;
+    font-size: 12px;
+    font-weight: 900;
+    letter-spacing: 0.5px;
+    border-bottom: 2px solid #000;
+  }
+  .okr-q-label.green  { background: #C8E6C9; }
+  .okr-q-label.blue   { background: #B3D9F7; }
+  .okr-q-label.yellow { background: #FFF9C4; }
+  .okr-textarea {
+    flex: 1;
+    width: 100%;
+    border: none;
+    outline: none;
+    padding: 12px 14px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 1.7;
+    resize: none;
+    background: transparent;
+    min-height: 130px;
+  }
+  .okr-todo-list { padding: 10px 14px; flex: 1; }
+  .okr-todo-item {
+    font-size: 13px;
+    font-weight: 600;
+    padding: 4px 0;
+    border-bottom: 1px dashed #ccc;
+    line-height: 1.5;
+  }
+  .okr-todo-item:last-child { border-bottom: none; }
+  .okr-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    font-size: 12px;
+    font-weight: 700;
+    color: #555;
+  }
+
+  /* Refresh btn */
+  .refresh-btn {
+    background: var(--cyan);
+    border: var(--border);
+    border-radius: var(--radius-pill);
+    padding: 6px 16px;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 900;
+    font-size: 12px;
+    cursor: pointer;
+    box-shadow: 3px 3px 0 #000;
+    margin-left: 12px;
+  }
+  .refresh-btn:hover { transform: translate(-1px, -1px); box-shadow: 4px 4px 0 #000; }
+</style>
+</head>
+<body>
+
+<div class="shape s1 shape-circle"></div>
+<div class="shape s2"></div>
+<div class="shape s3 shape-circle"></div>
+
+<header>
+  <div>
+    <div class="logo">FlowGPS <span>日報</span></div>
+  </div>
+  <div>
+    <div id="clock">--:--:--</div>
+    <div id="date-str">載入中…</div>
+  </div>
+</header>
+
+<main id="main">
+  <div class="card col-span-2 card-white">
+    <div class="card-header">⏳ 載入中…</div>
+    <div class="card-body"><p class="empty">正在讀取你的 FlowGPS 資料</p></div>
+  </div>
+</main>
+
+<script>
+let allData = null;
+
+// Clock
+function updateClock() {
+  document.getElementById('clock').textContent =
+    new Date().toLocaleTimeString('zh-TW');
+}
+setInterval(updateClock, 1000);
+updateClock();
+
+// Fetch data
+async function loadData() {
+  const res = await fetch('/api/data');
+  allData = await res.json();
+  render(allData);
+}
+
+function escHtml(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+// ── 公司工作版 ──────────────────────────────────────────
+let _workOkr = { okr: '', healthMetrics: '', future: '' };
+
+async function loadWorkOkr() {
+  const res = await fetch('/api/work-okr');
+  _workOkr = await res.json();
+  const okrEl = document.getElementById('work-okr');
+  const healthEl = document.getElementById('work-health');
+  const futureEl = document.getElementById('work-future');
+  if (okrEl) okrEl.value = _workOkr.okr || '';
+  if (healthEl) healthEl.value = _workOkr.healthMetrics || '';
+  if (futureEl) futureEl.value = _workOkr.future || '';
+}
+
+async function saveWorkOkr() {
+  const data = {
+    okr: document.getElementById('work-okr').value,
+    healthMetrics: document.getElementById('work-health').value,
+    future: document.getElementById('work-future').value,
+  };
+  await fetch('/api/work-okr', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data)
+  });
+  const btn = document.getElementById('work-save-btn');
+  btn.textContent = '✅ 已儲存';
+  setTimeout(() => { btn.textContent = '💾 儲存'; }, 1500);
+}
+
+function renderWorkCard(todos) {
+  const workSection = todos.find(s => s.title === '🔴 四月主線（工作）');
+  const workItems = workSection ? workSection.items.filter(i => !i.done) : [];
+  const todosHtml = workItems.length
+    ? workItems.map(i => `<div class="okr-todo-item">· ${escHtml(i.text)}</div>`).join('')
+    : '<div class="okr-todo-item" style="color:#bbb">（空）</div>';
+
+  return `
+    <div class="card col-span-2" style="overflow:visible">
+      <div class="card-header" style="background:#B3D9F7">🏢 公司工作版</div>
+      <div class="card-body" style="padding:16px 20px 12px">
+        <div class="okr-header">
+          <span>姓名：JANJAN｜業務</span>
+          <span id="work-date">${new Date().toLocaleDateString('zh-TW',{year:'numeric',month:'long',day:'numeric'})}</span>
+        </div>
+        <div class="okr-grid">
+          <!-- Q1 top-left: 這週待辦 -->
+          <div class="okr-q">
+            <div class="okr-q-label green">3. 這週待辦事項（本週要做什麼）</div>
+            <div class="okr-todo-list">${todosHtml}</div>
+          </div>
+          <!-- Q2 top-right: OKR -->
+          <div class="okr-q">
+            <div class="okr-q-label blue">1. 目標與關鍵結果 Objective × Key Results</div>
+            <textarea class="okr-textarea" id="work-okr" placeholder="本月目標：&#10;KR1：&#10;KR2："></textarea>
+          </div>
+          <!-- Q3 bottom-left: 未來待辦 -->
+          <div class="okr-q">
+            <div class="okr-q-label yellow">4. 未來待辦事項（計畫要做什麼）</div>
+            <textarea class="okr-textarea" id="work-future" placeholder="下週、下月的計畫…"></textarea>
+          </div>
+          <!-- Q4 bottom-right: 健康指標 -->
+          <div class="okr-q">
+            <div class="okr-q-label yellow">2. 健康指標（相關目標與 KR 參考值）</div>
+            <textarea class="okr-textarea" id="work-health" placeholder="KR 量化指標、進度追蹤…"></textarea>
+          </div>
+        </div>
+        <div style="margin-top:12px;display:flex;justify-content:flex-end;">
+          <button class="btn" id="work-save-btn" onclick="saveWorkOkr()">💾 儲存</button>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+// Eisenhower mapping by section title
+const eisenhowerMap = {
+  '🔴 四月主線': 'q1',
+  '💰 家庭財務': 'q2',
+  '🟡 健康日常': 'q2',
+  '🟠 系統維護': 'q3',
+  '🔵 支線任務（空檔推進）': 'q4',
+};
+
+function renderEisenhower(sections) {
+  const q = { q1: [], q2: [], q3: [], q4: [] };
+  for (const s of sections) {
+    const bucket = eisenhowerMap[s.title];
+    if (!bucket) continue;
+    for (const item of s.items) {
+      if (!item.done) q[bucket].push(item.text);
+    }
+  }
+
+  const renderItems = (items) => items.length
+    ? items.map(t => `<div class="matrix-item">· ${escHtml(t)}</div>`).join('')
+    : '<div class="matrix-item" style="color:#bbb">（空）</div>';
+
+  return `
+    <div class="card col-span-2" style="overflow:visible">
+      <div class="card-header" style="background:var(--yellow)">⚡ 艾森豪矩陣</div>
+      <div class="card-body" style="padding:0">
+        <div class="matrix-grid">
+          <div class="matrix-axis-h">
+            <span>← 不緊急</span>
+            <span style="font-size:12px">⬆ 重要度 ⬇</span>
+            <span>緊急 →</span>
+          </div>
+          <div class="matrix-q matrix-q1">
+            <div class="matrix-q-label">🔴 <span>重要 ＋ 緊急</span> 立刻做</div>
+            ${renderItems(q.q1)}
+          </div>
+          <div class="matrix-q matrix-q2">
+            <div class="matrix-q-label">🟡 <span>重要 ＋ 不緊急</span> 排時間</div>
+            ${renderItems(q.q2)}
+          </div>
+          <div class="matrix-q matrix-q3">
+            <div class="matrix-q-label">🟠 <span>不重要 ＋ 緊急</span> 快速處理</div>
+            ${renderItems(q.q3)}
+          </div>
+          <div class="matrix-q matrix-q4">
+            <div class="matrix-q-label">⚪ <span>不重要 ＋ 不緊急</span> 擱置</div>
+            ${renderItems(q.q4)}
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+// Section color map
+const sectionColors = {
+  '🔴 四月主線': 'card-red',
+  '💰 家庭財務': 'card-yellow',
+  '🟡 健康日常': 'card-lime',
+  '🟠 系統維護': 'card-cyan',
+  '🔵 支線任務（空檔推進）': 'card-purple',
+  '✅ 已完成': 'card-white',
+};
+
+function renderTodos(sections) {
+  return sections.filter(s => s.title !== '✅ 已完成' && s.title !== '🔴 四月主線（工作）' && s.items.length > 0).map(s => {
+    const color = sectionColors[s.title] || 'card-pink';
+    const items = s.items.map(item => `
+      <div class="todo-item ${item.done ? 'done' : ''} ${item.indent ? 'indent' : ''}">
+        <div class="todo-dot ${item.done ? 'checked' : ''}"></div>
+        <span>${escHtml(item.text)}</span>
+      </div>
+    `).join('');
+    return `
+      <div class="card ${color}">
+        <div class="card-header">${escHtml(s.title)}</div>
+        <div class="card-body">${items || '<p class="empty">沒有項目</p>'}</div>
+      </div>
+    `;
+  }).join('');
+}
+
+const TAG_STYLES = {
+  '行程':  { bg: '#00F0FF', color: '#000' },
+  '隨手記': { bg: '#FFE100', color: '#000' },
+  '重要':  { bg: '#FF4444', color: '#fff' },
+  '其他':  { bg: '#CC88FF', color: '#000' },
+};
+
+function tagBadge(tag) {
+  if (!tag) return '';
+  const s = TAG_STYLES[tag] || { bg: '#eee', color: '#333' };
+  return `<span style="background:${s.bg};color:${s.color};font-size:0.7rem;padding:1px 7px;border-radius:10px;font-weight:700;margin-right:6px;">${tag}</span>`;
+}
+
+function renderNotes(notes, dateKey) {
+  if (!notes.length) return '<p class="empty">這天還沒有手動記錄</p>';
+  return notes.map((n, i) => `
+    <div class="note-item" id="note-${i}">
+      <span class="note-time">${escHtml(n.time)}</span>
+      ${tagBadge(n.tag)}
+      <span class="note-text" id="note-text-${i}">${escHtml(n.text)}</span>
+      <span class="note-actions">
+        <button class="note-btn" onclick="editNote('${dateKey}',${i})" title="編輯">✏️</button>
+        <button class="note-btn" onclick="deleteNote('${dateKey}',${i})" title="刪除">✕</button>
+      </span>
+    </div>
+  `).join('');
+}
+
+function parseSummarySection(md, heading) {
+  if (!md) return null;
+  const lines = md.split('\n');
+  let capturing = false, result = [];
+  for (const line of lines) {
+    if (line.startsWith('## ') && line.includes(heading)) { capturing = true; continue; }
+    if (capturing && line.startsWith('## ')) break;
+    if (capturing) result.push(line);
+  }
+  return result.join('\n').trim() || null;
+}
+
+function render(data) {
+  document.getElementById('date-str').textContent = data.date;
+
+  const WEALTH_COLORS = [
+    '#FFE100','#B8FF3C','#00F0FF','#FF61D2',
+    '#FF9500','#CC88FF','#FF4444','#88DDFF'
+  ];
+  const WEALTH_ACCOUNTS = ["成長","健康","家庭","技藝","金錢","人脈","體驗","服務"];
+  const WEALTH_EMOJI = ["🌱","💊","👨‍👩‍👧","🎨","💰","🤝","🌴","🕊️"];
+
+  const wealthHtml = `<div class="wealth-grid">${
+    WEALTH_ACCOUNTS.map((name, i) => {
+      const total = (data.wealth_total || {})[name] || 0;
+      const today = (data.wealth_today || {})[name] || 0;
+      const todayBadge = today > 0
+        ? `<div class="wealth-today"><span class="wealth-today-badge">今日 +${today}</span></div>`
+        : `<div class="wealth-today" style="color:#bbb">今日 +0</div>`;
+      return `
+        <div class="wealth-card" style="background:${WEALTH_COLORS[i]}">
+          <div class="wealth-name">${WEALTH_EMOJI[i]} ${name}</div>
+          <div class="wealth-total">${total}</div>
+          ${todayBadge}
+        </div>`;
+    }).join('')
+  }</div>`;
+
+  const html = `
+    <!-- 公司工作版 -->
+    ${renderWorkCard(data.todos)}
+
+    <!-- 手動記錄 -->
+    <div class="card card-pink col-span-2">
+      <div class="card-header">✏️ 隨手一記</div>
+      <div class="card-body">
+        <div class="note-form">
+          <input type="text" id="note-input" placeholder="隨手記一筆…" />
+          <select id="note-tag" style="border:2px solid #000;padding:6px 8px;font-size:0.85rem;font-weight:700;border-radius:0;cursor:pointer;">
+            <option value="">無標籤</option>
+            <option value="行程">🗓 行程</option>
+            <option value="隨手記">📝 隨手記</option>
+            <option value="重要">🔴 重要</option>
+            <option value="其他">💬 其他</option>
+          </select>
+          <button class="btn" onclick="addNote()">加入</button>
+          <button class="refresh-btn" onclick="loadData()">重新整理</button>
+        </div>
+        <div class="note-date-nav">
+          📅 查看：
+          <select id="note-date-select" onchange="loadNotesByDate(this.value)">
+            ${(data.noteDates || []).map(d => `<option value="${d}" ${d === data.currentDate ? 'selected' : ''}>${formatDateKey(d)}</option>`).join('')}
+          </select>
+        </div>
+        <div id="notes-list">${renderNotes(data.notes, data.currentDate)}</div>
+      </div>
+    </div>
+
+    <!-- FLOW 日誌 -->
+    <div class="card card-cyan col-span-2">
+      <div class="card-header">🌊 FLOW 日誌</div>
+      <div class="card-body">
+        <div class="flow-journal">
+
+          <div class="flow-section">
+            <div class="flow-label">🎯 今日 Boss（The One Thing）</div>
+            <textarea class="flow-input" id="flow-boss" placeholder="今天最重要的一件事是什麼？" rows="2"></textarea>
+          </div>
+
+          <div class="flow-grid">
+            <div class="flow-section">
+              <div class="flow-label">F｜行動聚焦</div>
+              <textarea class="flow-input" id="flow-f" placeholder="今天要完成哪些行動？" rows="3"></textarea>
+            </div>
+            <div class="flow-section">
+              <div class="flow-label">L｜資源槓桿</div>
+              <textarea class="flow-input" id="flow-l" placeholder="學到什麼？哪些資源可複用？" rows="3"></textarea>
+            </div>
+            <div class="flow-section">
+              <div class="flow-label">O｜系統優化</div>
+              <textarea class="flow-input" id="flow-o" placeholder="流程有什麼可改進？" rows="3"></textarea>
+            </div>
+            <div class="flow-section">
+              <div class="flow-label">W｜財富積累</div>
+              <textarea class="flow-input" id="flow-w" placeholder="今天投資了哪些財富帳戶？" rows="3"></textarea>
+            </div>
+          </div>
+
+          <div class="flow-section">
+            <div class="flow-label">⚡ DRIP 能量</div>
+            <div class="drip-row">
+              <select class="drip-select" id="drip-type">
+                <option value="P">P 全力投入 ⚡</option>
+                <option value="I">I 充電保留 🔋</option>
+                <option value="R">R 替換自動化 🔄</option>
+                <option value="D">D 委派給AI 🤖</option>
+              </select>
+              <input type="text" class="drip-input" id="drip-activity" placeholder="這段時間做了什麼？" />
+              <button class="btn" onclick="addDrip()">加入</button>
+            </div>
+            <div id="drip-list"></div>
+          </div>
+
+          <div class="flow-section">
+            <div class="flow-label">💡 今日覆盤</div>
+            <textarea class="flow-input" id="flow-review" placeholder="最大收穫：&#10;明天改進：&#10;感恩一件事：" rows="4"></textarea>
+          </div>
+
+          <div style="margin-top:12px;display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+            <button class="btn" onclick="saveFlowJournal()" style="background:#B8FF3C;">💾 儲存</button>
+            <span style="font-size:12px;font-weight:700;">📅 查看：</span>
+            <select id="flow-date-select" onchange="loadFlowJournal(this.value)" style="border:2px solid #000;padding:6px 10px;font-weight:700;font-size:12px;box-shadow:2px 2px 0 #000;cursor:pointer;">
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 艾森豪矩陣 -->
+    ${renderEisenhower(data.todos)}
+
+    <!-- 待辦任務 -->
+    ${renderTodos(data.todos)}
+
+    <!-- 八大財富 -->
+    <div class="card card-lime col-span-2">
+      <div class="card-header">🏆 今日八大財富加分</div>
+      <div class="card-body">${wealthHtml}</div>
+    </div>
+  `;
+
+  document.getElementById('main').innerHTML = html;
+
+  // Enter key for note
+  document.getElementById('note-input').addEventListener('keydown', e => {
+    if (e.key === 'Enter') addNote();
+  });
+
+  // 自動載入 FLOW 日誌（含日期選單）
+  loadFlowJournal();
+  // 載入公司工作版
+  loadWorkOkr();
+}
+
+function formatDateKey(key) {
+  // "260404" → "26/04/04"
+  return `20${key.slice(0,2)}/${key.slice(2,4)}/${key.slice(4,6)}`;
+}
+
+let _currentNoteDate = null;
+
+async function loadNotesByDate(dateKey) {
+  _currentNoteDate = dateKey;
+  const res = await fetch(`/api/data?date=${dateKey}`);
+  const data = await res.json();
+  document.getElementById('notes-list').innerHTML = renderNotes(data.notes, dateKey);
+}
+
+async function addNote() {
+  const input = document.getElementById('note-input');
+  const note = input.value.trim();
+  if (!note) return;
+  const tag = document.getElementById('note-tag').value;
+  await fetch('/api/note', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ note, tag })
+  });
+  input.value = '';
+  await loadData();
+}
+
+async function deleteNote(dateKey, index) {
+  if (!confirm('確定刪除這筆記錄？')) return;
+  await fetch('/api/note/delete', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ date: dateKey, index })
+  });
+  await loadNotesByDate(dateKey);
+}
+
+async function editNote(dateKey, index) {
+  const el = document.getElementById(`note-text-${index}`);
+  const oldText = el.textContent;
+  const newText = prompt('修改內容：', oldText);
+  if (!newText || newText.trim() === oldText) return;
+  await fetch('/api/note/update', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ date: dateKey, index, text: newText.trim() })
+  });
+  await loadNotesByDate(dateKey);
+}
+
+// ── FLOW 日誌 ──────────────────────────────────────────
+let _dripItems = [];
+
+function addDrip() {
+  const type = document.getElementById('drip-type').value;
+  const activity = document.getElementById('drip-activity').value.trim();
+  if (!activity) return;
+  _dripItems.push({ type, activity });
+  document.getElementById('drip-activity').value = '';
+  renderDrip();
+}
+
+const DRIP_COLORS = { P: '#FFE100', I: '#B8FF3C', R: '#00F0FF', D: '#FF61D2' };
+
+function renderDrip() {
+  const el = document.getElementById('drip-list');
+  if (!el) return;
+  el.innerHTML = _dripItems.map((d, i) => `
+    <div class="drip-item">
+      <span class="drip-badge" style="background:${DRIP_COLORS[d.type]}">${d.type}</span>
+      <span style="flex:1">${escHtml(d.activity)}</span>
+      <button class="note-btn" onclick="_dripItems.splice(${i},1);renderDrip()">✕</button>
+    </div>
+  `).join('');
+}
+
+async function saveFlowJournal() {
+  const journal = {
+    boss: document.getElementById('flow-boss').value,
+    f: document.getElementById('flow-f').value,
+    l: document.getElementById('flow-l').value,
+    o: document.getElementById('flow-o').value,
+    w: document.getElementById('flow-w').value,
+    drip: _dripItems,
+    review: document.getElementById('flow-review').value,
+  };
+  await fetch('/api/flow-journal', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ journal })
+  });
+  alert('✅ FLOW 日誌已儲存！');
+}
+
+async function loadFlowJournal(dateKey) {
+  const url = dateKey ? `/api/flow-journal?date=${dateKey}` : '/api/flow-journal';
+  const res = await fetch(url);
+  const data = await res.json();
+
+  // 更新日期選單
+  const sel = document.getElementById('flow-date-select');
+  if (sel && data.dates) {
+    const today = getTodayKey();
+    const allDates = data.dates.includes(today) ? data.dates : [today, ...data.dates];
+    sel.innerHTML = allDates.map(d =>
+      `<option value="${d}" ${d === data.currentDate ? 'selected' : ''}>${formatDateKey(d)}</option>`
+    ).join('');
+  }
+
+  if (!data.journal) {
+    ['flow-boss','flow-f','flow-l','flow-o','flow-w','flow-review'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.value = '';
+    });
+    _dripItems = [];
+    renderDrip();
+    return;
+  }
+  const j = data.journal;
+  document.getElementById('flow-boss').value = j.boss || '';
+  document.getElementById('flow-f').value = j.f || '';
+  document.getElementById('flow-l').value = j.l || '';
+  document.getElementById('flow-o').value = j.o || '';
+  document.getElementById('flow-w').value = j.w || '';
+  document.getElementById('flow-review').value = j.review || '';
+  _dripItems = j.drip || [];
+  renderDrip();
+}
+
+function getTodayKey() {
+  const now = new Date();
+  const y = String(now.getFullYear()).slice(2);
+  const m = String(now.getMonth()+1).padStart(2,'0');
+  const d = String(now.getDate()).padStart(2,'0');
+  return `${y}${m}${d}`;
+}
+
+loadData();
+</script>
+</body>
+</html>

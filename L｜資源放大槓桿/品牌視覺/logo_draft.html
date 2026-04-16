@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<style>
+  body {
+    background: #F5F0E8;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    font-family: 'Georgia', serif;
+    gap: 60px;
+    padding: 40px;
+  }
+  .section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+  }
+  .label {
+    font-size: 13px;
+    color: #999;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+  .logo-wrap {
+    background: white;
+    padding: 40px 50px;
+    border-radius: 4px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 18px;
+  }
+</style>
+</head>
+<body>
+
+<!-- VERSION A: 書脊正面（主視覺） -->
+<div class="section">
+  <div class="label">Version A — 書脊線縫</div>
+  <div class="logo-wrap">
+    <svg width="220" height="200" viewBox="0 0 220 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <!-- 木板封面（側視圖俯視） -->
+      <rect x="30" y="20" width="160" height="12" rx="1" fill="#7A5230"/>
+      <!-- 書頁疊層 -->
+      <rect x="30" y="32" width="160" height="106" fill="#EDE8DF"/>
+      <!-- 書頁質感線條 -->
+      <line x1="30" y1="40" x2="190" y2="40" stroke="#D8D0C4" stroke-width="0.5"/>
+      <line x1="30" y1="48" x2="190" y2="48" stroke="#D8D0C4" stroke-width="0.5"/>
+      <line x1="30" y1="56" x2="190" y2="56" stroke="#D8D0C4" stroke-width="0.5"/>
+      <line x1="30" y1="64" x2="190" y2="64" stroke="#D8D0C4" stroke-width="0.5"/>
+      <line x1="30" y1="72" x2="190" y2="72" stroke="#D8D0C4" stroke-width="0.5"/>
+      <line x1="30" y1="80" x2="190" y2="80" stroke="#D8D0C4" stroke-width="0.5"/>
+      <line x1="30" y1="88" x2="190" y2="88" stroke="#D8D0C4" stroke-width="0.5"/>
+      <line x1="30" y1="96" x2="190" y2="96" stroke="#D8D0C4" stroke-width="0.5"/>
+      <line x1="30" y1="104" x2="190" y2="104" stroke="#D8D0C4" stroke-width="0.5"/>
+      <line x1="30" y1="112" x2="190" y2="112" stroke="#D8D0C4" stroke-width="0.5"/>
+      <line x1="30" y1="120" x2="190" y2="120" stroke="#D8D0C4" stroke-width="0.5"/>
+      <line x1="30" y1="128" x2="190" y2="128" stroke="#D8D0C4" stroke-width="0.5"/>
+      <!-- 木板封底 -->
+      <rect x="30" y="138" width="160" height="12" rx="1" fill="#7A5230"/>
+
+      <!-- 書脊縫線（左側） — 仿 coptic stitch -->
+      <!-- 縫線柱 -->
+      <line x1="30" y1="32" x2="30" y2="150" stroke="#5BA8A0" stroke-width="2.5"/>
+      <!-- 每個 station 的 X 型縫法 -->
+      <!-- Station 1 -->
+      <path d="M22,40 L30,44 L22,48" stroke="#5BA8A0" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      <!-- Station 2 -->
+      <path d="M22,56 L30,60 L22,64" stroke="#5BA8A0" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      <!-- Station 3 -->
+      <path d="M22,72 L30,76 L22,80" stroke="#5BA8A0" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      <!-- Station 4 -->
+      <path d="M22,88 L30,92 L22,96" stroke="#5BA8A0" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      <!-- Station 5 -->
+      <path d="M22,104 L30,108 L22,112" stroke="#5BA8A0" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      <!-- Station 6 -->
+      <path d="M22,120 L30,124 L22,128" stroke="#5BA8A0" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      <!-- Station 7 -->
+      <path d="M22,134 L30,138 L22,142" stroke="#5BA8A0" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+
+      <!-- 品牌名稱 -->
+      <text x="110" y="176" text-anchor="middle" font-family="Georgia, serif" font-size="15" letter-spacing="4" fill="#3D2B1A">JAN JAN'S</text>
+      <text x="110" y="195" text-anchor="middle" font-family="Georgia, serif" font-size="10" letter-spacing="5" fill="#7A5230">ARTISAN ATELIER</text>
+    </svg>
+  </div>
+</div>
+
+<!-- VERSION B: 極簡圓形徽章 -->
+<div class="section">
+  <div class="label">Version B — 徽章型</div>
+  <div class="logo-wrap">
+    <svg width="200" height="200" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <!-- 外圓 -->
+      <circle cx="100" cy="100" r="90" stroke="#7A5230" stroke-width="1.5"/>
+      <!-- 內圓 -->
+      <circle cx="100" cy="100" r="78" stroke="#7A5230" stroke-width="0.8"/>
+
+      <!-- 中央書本側視圖（極簡） -->
+      <!-- 木板 -->
+      <rect x="62" y="64" width="76" height="8" rx="1" fill="#7A5230"/>
+      <!-- 書頁 -->
+      <rect x="62" y="72" width="76" height="52" fill="#EDE8DF" stroke="#C8BFA8" stroke-width="0.8"/>
+      <!-- 幾條代表性書頁線 -->
+      <line x1="62" y1="83" x2="138" y2="83" stroke="#C8BFA8" stroke-width="0.8"/>
+      <line x1="62" y1="94" x2="138" y2="94" stroke="#C8BFA8" stroke-width="0.8"/>
+      <line x1="62" y1="105" x2="138" y2="105" stroke="#C8BFA8" stroke-width="0.8"/>
+      <line x1="62" y1="116" x2="138" y2="116" stroke="#C8BFA8" stroke-width="0.8"/>
+      <!-- 木板 -->
+      <rect x="62" y="124" width="76" height="8" rx="1" fill="#7A5230"/>
+
+      <!-- 縫線（左側） -->
+      <line x1="62" y1="72" x2="62" y2="132" stroke="#5BA8A0" stroke-width="2"/>
+      <path d="M55,78 L62,82 L55,86" stroke="#5BA8A0" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+      <path d="M55,95 L62,99 L55,103" stroke="#5BA8A0" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+      <path d="M55,112 L62,116 L55,120" stroke="#5BA8A0" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+
+      <!-- 文字環繞 -->
+      <text x="100" y="157" text-anchor="middle" font-family="Georgia, serif" font-size="11" letter-spacing="5" fill="#3D2B1A">JAN JAN'S</text>
+      <text x="100" y="172" text-anchor="middle" font-family="Georgia, serif" font-size="8" letter-spacing="4" fill="#7A5230">ARTISAN  ATELIER</text>
+
+      <!-- 上方小裝飾線 -->
+      <line x1="72" y1="52" x2="128" y2="52" stroke="#7A5230" stroke-width="0.8"/>
+      <circle cx="100" cy="52" r="2" fill="#7A5230"/>
+    </svg>
+  </div>
+</div>
+
+<!-- VERSION C: 文字為主，縫線為輔 -->
+<div class="section">
+  <div class="label">Version C — 文字型（社群適用）</div>
+  <div class="logo-wrap">
+    <svg width="260" height="120" viewBox="0 0 260 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <!-- 左側縫線符號 -->
+      <line x1="28" y1="15" x2="28" y2="105" stroke="#7A5230" stroke-width="2"/>
+      <path d="M18,25 L28,31 L18,37" stroke="#5BA8A0" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M18,47 L28,53 L18,59" stroke="#5BA8A0" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M18,69 L28,75 L18,81" stroke="#5BA8A0" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      <!-- 木板頂底 -->
+      <rect x="22" y="10" width="12" height="5" rx="1" fill="#7A5230"/>
+      <rect x="22" y="105" width="12" height="5" rx="1" fill="#7A5230"/>
+
+      <!-- 文字 -->
+      <text x="50" y="48" font-family="Georgia, serif" font-size="26" letter-spacing="2" fill="#3D2B1A">Jan Jan's</text>
+      <text x="50" y="72" font-family="Georgia, serif" font-size="14" letter-spacing="6" fill="#7A5230">ARTISAN</text>
+      <text x="50" y="88" font-family="Georgia, serif" font-size="14" letter-spacing="6" fill="#7A5230">ATELIER</text>
+
+      <!-- 細線裝飾 -->
+      <line x1="50" y1="56" x2="230" y2="56" stroke="#C8BFA8" stroke-width="0.8"/>
+    </svg>
+  </div>
+</div>
+
+</body>
+</html>

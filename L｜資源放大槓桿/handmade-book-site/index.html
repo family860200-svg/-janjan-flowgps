@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jan Jan's Atelier | Handbound Books</title>
+    <meta name="description" content="Jan Jan 手工裝幀工坊。每一本書，都是一場與紙張的深刻對話。">
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="assets/artisan_mascot.png">
+</head>
+<body>
+    <!-- Floating Navigation Bar -->
+    <nav class="floating-nav">
+        <a href="#welcome">Home</a>
+        <a href="#creations">作品</a>
+        <a href="#process">工藝</a>
+        <a href="#contact">洽詢</a>
+    </nav>
+
+    <div class="app-container">
+        <!-- Sidebar: The Artist -->
+        <aside class="sidebar">
+            <div class="mascot-container">
+                <img src="assets/artisan_mascot.png" alt="Jan Jan Artisan" class="artisan-mascot">
+                <p class="mascot-caption">Jan Jan's Atelier</p>
+            </div>
+
+            <div class="about-card">
+                <h3>關於工坊</h3>
+                <p>我是 Jan Jan，手工書裝幀師。每一本書的誕生，都是一次將記憶與情感縫進紙頁的儀式。</p>
+            </div>
+
+            <nav class="links-section">
+                <h3>追蹤動態</h3>
+                <a href="https://www.threads.com/@jan_92._" target="_blank" rel="noopener noreferrer" class="link-btn">
+                    <span class="icon">@</span> Threads
+                </a>
+                <a href="https://www.instagram.com/jan_92._/" target="_blank" rel="noopener noreferrer" class="link-btn">
+                    <span class="icon">📸</span> Instagram
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Main Content: The Collection -->
+        <main class="main-content">
+            <div class="welcome-label" id="welcome">
+                <h1>Handbound Books by</h1>
+                <span class="brand-name">Jan Jan's Atelier</span>
+                <span class="tagline">每一本書，都是一場與紙張的深刻對話</span>
+            </div>
+
+            <section class="atelier-gallery" id="creations">
+                <div class="section-header">
+                    <h2>作品集</h2>
+                    <div class="header-line"></div>
+                </div>
+                
+                <div class="scrapbook-grid" id="main-grid">
+                    <!-- Polaroid Cards Will Be Populated Here -->
+                </div>
+            </section>
+
+            <!-- Brand Philosophy: The Soul of Paper -->
+            <section class="philosophy-section">
+                <div class="letter-card">
+                    <p class="script-quote">"In a world moving so fast, hand-binding is a way to slow down time."</p>
+                    <div class="letter-body">
+                        在數位資訊爆炸的時代，我們已經太習慣指尖在玻璃螢幕上的冰冷觸碰。手工裝幀不僅僅是將紙張連結在一起，更是一種將當下的情緒、溫度與記憶封存的儀式。我希望透過每一本手工書，能帶給你一場指尖與紙張的溫柔對話。
+                    </div>
+                </div>
+            </section>
+
+            <section class="tutorials-section" id="process">
+                <div class="section-header">
+                    <h2>裝幀工藝</h2>
+                    <div class="header-line"></div>
+                </div>
+
+                <div class="process-steps" id="process-steps-grid">
+                    <!-- Tutorial Cards Populated by JS -->
+                </div>
+            </section>
+
+            <!-- Chapter 03: Atelier Moments -->
+            <section class="atelier-moments" id="gallery">
+                <div class="section-header">
+                    <h2>工坊日常</h2>
+                    <div class="header-line"></div>
+                </div>
+                <div class="moments-grid" id="moments-grid">
+                    <!-- Small polaroid moments -->
+                </div>
+            </section>
+
+            <!-- Chapter 04: Common Whispers (FAQ) -->
+            <section class="faq-section">
+                <div class="section-header">
+                    <h2>常見問題</h2>
+                    <div class="header-line"></div>
+                </div>
+                <div class="faq-accordion" id="faq-list">
+                    <!-- FAQ Items -->
+                </div>
+            </section>
+
+            <!-- Chapter 05: Atelier Enquiry (Contact) -->
+            <section class="contact-section" id="contact">
+                <div class="section-header">
+                    <h2>預約洽詢</h2>
+                    <div class="header-line"></div>
+                </div>
+                <form class="enquiry-form card">
+                    <div class="form-group">
+                        <label>姓名</label>
+                        <input type="text" placeholder="你的名字">
+                    </div>
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input type="email" placeholder="example@mail.com">
+                    </div>
+                    <div class="form-group">
+                        <label>想裝幀的故事</label>
+                        <textarea placeholder="告訴我你想要什麼樣的一本書..."></textarea>
+                    </div>
+                    <button type="submit" class="submit-btn">送出洽詢</button>
+                </form>
+            </section>
+
+            <footer class="footer">
+                <p class="footer-stamp">Jan Jan's Atelier</p>
+                <p>© 2026 Jan Jan's Atelier. All rights reserved.</p>
+            </footer>
+        </main>
+    </div>
+
+    <!-- Details Modal: The Secret Pages -->
+    <div class="modal-overlay" id="item-modal">
+        <div class="modal-content card">
+            <button class="modal-close" id="modal-close-btn">&times;</button>
+            <div class="modal-body">
+                <div class="modal-img-area" id="modal-img"></div>
+                <div class="modal-info">
+                    <h2 id="modal-title">Book Title</h2>
+                    <p class="modal-date" id="modal-date">Creation Date</p>
+                    <div class="modal-story" id="modal-story">Full Story goes here...</div>
+                    <div class="modal-materials">
+                        <h4>Materials Used</h4>
+                        <ul id="modal-materials-list">
+                            <!-- List steps -->
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="main.js"></script>
+</body>
+</html>

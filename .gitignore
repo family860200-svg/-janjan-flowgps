@@ -1,0 +1,13 @@
+# 系統檔
+.DS_Store
+
+# 敏感設定
+.env
+config.json
+scripts/scripts/config.json
+.claude/secrets/
+
+# 暫存與套件
+node_modules/
+__pycache__/
+*.pyc
