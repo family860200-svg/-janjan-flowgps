@@ -49,6 +49,16 @@ git commit -m "YYMMDD 時段存檔"
 git push
 ```
 
+push 完成後，**必須明確回報以下訊息**：
+
+```
+✅ 已推上 GitHub
+📌 最新 commit：[commit hash] [commit message]
+🕐 時間：[HH:MM]
+```
+
+若 push 失敗，**必須明確告知失敗原因**，不可靜默跳過。
+
 ---
 
 ## DRIP 分類速查
