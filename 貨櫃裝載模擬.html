@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>貨櫃裝載模擬工具 v1</title>
+<title>貨櫃裝載模擬工具 v3</title>
 <style>
 * { box-sizing: border-box; }
 body {
@@ -87,11 +87,37 @@ svg text { font-family: 'Microsoft JhengHei', sans-serif; }
 
 /* 貨櫃尺寸說明 */
 .container-dims { font-size: 12px; color: #555; background: #f0f4f8; border-radius: 4px; padding: 6px 10px; margin-top: 8px; }
+
+/* 列印按鈕 */
+.btn-print { background: #5d6d7e; color: white; font-size: 14px; padding: 8px 20px; border-radius: 6px; border: none; cursor: pointer; margin-top: 12px; display: none; }
+.btn-print:hover { background: #4a5568; }
+
+/* 列印樣式 */
+@media print {
+  @page { size: A4 landscape; margin: 10mm; }
+  body { background: white; max-width: 100%; padding: 0; font-size: 12px; }
+  .card:not(.print-results),
+  .btn-calc,
+  .btn-print,
+  h1 small { display: none !important; }
+  h1 { font-size: 15px; border-bottom: 1px solid #aaa; margin-bottom: 8px; padding-bottom: 4px; }
+  .print-results { display: block !important; box-shadow: none; padding: 0; margin: 0; }
+  #results h2 { font-size: 13px; margin-bottom: 6px; }
+  .result-ok, .result-ng { padding: 8px 12px; margin-bottom: 8px; }
+  .verdict { font-size: 16px; }
+  table { font-size: 11px; }
+  thead th { padding: 5px 8px; }
+  td { padding: 4px 8px; }
+  #visual-wrap { margin-top: 8px; overflow: visible; }
+  #visual-wrap svg { width: 100% !important; height: auto !important; max-width: 260mm; }
+  .print-meta { display: block !important; font-size: 11px; color: #888; margin-bottom: 6px; }
+}
+.print-meta { display: none; }
 </style>
 </head>
 <body>
 
-<h1>📦 貨櫃裝載模擬工具<small style="font-size:13px;color:#aaa;font-weight:normal"> v1</small></h1>
+<h1>📦 貨櫃裝載模擬工具<small style="font-size:13px;color:#aaa;font-weight:normal"> v3　<span style="font-size:11px;">260416 列印A4 ＋ MM單位</span></small></h1>
 
 <!-- 設定 -->
 <div class="card">
@@ -109,6 +135,7 @@ svg text { font-family: 'Microsoft JhengHei', sans-serif; }
       <select id="unit" onchange="updateUnitHints()">
         <option value="英吋">英吋（inch）</option>
         <option value="CM">公分（CM）</option>
+        <option value="MM">公釐（MM）</option>
         <option value="台尺">台尺</option>
       </select>
     </div>
@@ -122,7 +149,7 @@ svg text { font-family: 'Microsoft JhengHei', sans-serif; }
     </div>
   </div>
   <div class="container-dims" id="containerInfo"></div>
-  <div class="conv-ref">換算參考：1 英吋 = 2.54 CM ｜ 1 台尺 = 30.3 CM</div>
+  <div class="conv-ref">換算參考：1 英吋 = 2.54 CM ｜ 1 台尺 = 30.3 CM ｜ 1 CM = 10 MM（紙張常用 MM）</div>
 </div>
 
 <!-- 品項清單 -->
@@ -137,8 +164,12 @@ svg text { font-family: 'Microsoft JhengHei', sans-serif; }
 <button class="btn-calc" onclick="calculate()">計算裝載結果</button>
 
 <!-- 結果 -->
-<div id="results" class="card" style="margin-top:12px;">
-  <h2>裝載結果</h2>
+<div id="results" class="card print-results" style="margin-top:12px;">
+  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+    <h2 style="margin:0;">裝載結果</h2>
+    <button class="btn-print" id="printBtn" onclick="window.print()">🖨️ 列印 A4</button>
+  </div>
+  <div class="print-meta" id="printMeta"></div>
   <div id="verdictBox"></div>
   <table>
     <thead>
@@ -168,7 +199,7 @@ const CONTAINER_CM = {
   20: { L: 580,  W: 222, label: '20 呎：長 580 CM / 228 英吋 / 19.1 台尺，可用寬 222 CM / 87 英吋 / 7.3 台尺（兩件並排）' }
 };
 
-const TO_CM = { '英吋': 2.54, 'CM': 1, '台尺': 30.3 };
+const TO_CM = { '英吋': 2.54, 'CM': 1, 'MM': 0.1, '台尺': 30.3 };
 
 const COLORS = [
   '#aec6e8','#b5d5c0','#f7c8a8','#d4b8e0',
@@ -254,7 +285,8 @@ function fromCm(val, unit) { return val / TO_CM[unit]; }
 
 function fmt(val, unit) {
   const v = fromCm(val, unit);
-  return unit === 'CM' ? v.toFixed(1) + ' CM'
+  return unit === 'CM'   ? v.toFixed(1) + ' CM'
+       : unit === 'MM'   ? Math.round(v) + ' MM'
        : unit === '英吋' ? v.toFixed(1) + '"'
        : v.toFixed(2) + ' 台尺';
 }
@@ -410,6 +442,15 @@ function calculate() {
 
   // 視覺化
   drawDiagram(rows_data, container, totalLengthCm, unit);
+
+  // 顯示列印按鈕
+  document.getElementById('printBtn').style.display = 'inline-block';
+
+  // 列印 meta：時間 + 貨櫃規格
+  const now = new Date();
+  const dateStr = now.toLocaleDateString('zh-TW') + ' ' + now.toLocaleTimeString('zh-TW', { hour:'2-digit', minute:'2-digit' });
+  document.getElementById('printMeta').textContent =
+    `列印時間：${dateStr}　貨櫃規格：${cType} 呎　輸入單位：${unit}`;
 
   // 捲動到結果
   document.getElementById('results').scrollIntoView({ behavior: 'smooth', block: 'start' });

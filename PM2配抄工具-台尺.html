@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PM2 配抄計算工具 v1</title>
+<title>PM2 配抄計算工具（台尺）v2</title>
 <style>
 * { box-sizing: border-box; }
 body {
@@ -11,23 +11,23 @@ body {
   max-width: 980px;
   margin: 0 auto;
   padding: 16px;
-  background: #f2ede8;
+  background: #f3eef8;
   color: #2c2c2c;
   font-size: 16px;
 }
-h1 { color: #4a2c1a; font-size: 20px; border-bottom: 2px solid #8b5e3c; padding-bottom: 8px; margin-bottom: 16px; }
-h2 { color: #4a2c1a; font-size: 15px; margin: 0 0 12px; }
+h1 { color: #3a1a5c; font-size: 20px; border-bottom: 2px solid #8e44ad; padding-bottom: 8px; margin-bottom: 16px; }
+h2 { color: #3a1a5c; font-size: 15px; margin: 0 0 12px; }
 .card { background: white; border-radius: 8px; padding: 16px; margin-bottom: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
 table { border-collapse: collapse; width: 100%; }
-thead th { background: #6b3d1e; color: white; padding: 7px 10px; font-weight: 500; }
-td { border: 1px solid #e0d5cc; padding: 5px 8px; text-align: center; }
-tr:nth-child(even) td { background: #faf6f2; }
+thead th { background: #8e44ad; color: white; padding: 7px 10px; font-weight: 500; }
+td { border: 1px solid #dcc6ed; padding: 5px 8px; text-align: center; }
+tr:nth-child(even) td { background: #f8f0fc; }
 .type-W { color: #2c2c2c; }
 .type-P { color: #e74c3c; font-weight: bold; }
 input[type=number] { width: 72px; padding: 4px 6px; border: 1px solid #ccc; border-radius: 4px; text-align: center; font-size: 13px; }
 .btn { padding: 7px 18px; border: none; border-radius: 6px; cursor: pointer; font-size: 13px; font-family: inherit; margin: 3px; }
-.btn-primary { background: #6b3d1e; color: white; }
-.btn-primary:hover { background: #8b5e3c; }
+.btn-primary { background: #8e44ad; color: white; }
+.btn-primary:hover { background: #8e44ad; }
 .btn-success { background: #1e8449; color: white; font-size: 15px; padding: 11px 30px; }
 .btn-green { background: #27ae60; color: white; }
 .btn-gray { background: #95a5a6; color: white; }
@@ -35,18 +35,20 @@ input[type=number] { width: 72px; padding: 4px 6px; border: 1px solid #ccc; bord
 .summary-box { background: #eaf4fb; border-left: 4px solid #3498db; padding: 10px 14px; margin-bottom: 12px; border-radius: 0 4px 4px 0; }
 .valid { color: #1e8449; font-weight: bold; }
 .invalid { color: #c0392b; font-weight: bold; }
-pre { background: #f8f5f2; padding: 12px; border-radius: 4px; font-size: 12px; white-space: pre-wrap; border: 1px solid #e0d5cc; line-height: 1.7; }
+pre { background: #f8f0fc; padding: 12px; border-radius: 4px; font-size: 12px; white-space: pre-wrap; border: 1px solid #dcc6ed; line-height: 1.7; }
 .settings-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
 .setting-item label { display: block; font-size: 12px; color: #666; margin-bottom: 3px; }
 #output { display: none; }
 .flex-between { display: flex; justify-content: space-between; align-items: center; }
 .tag-W { background: #d6eaf8; color: #1a5276; border-radius: 3px; padding: 1px 5px; font-size: 11px; font-weight: bold; }
 .tag-P { background: #fde8e8; color: #e74c3c; border-radius: 3px; padding: 1px 5px; font-size: 11px; }
+.type-P2 { color: #e67e22; font-weight: bold; }
+.tag-P2 { background: #fef5e7; color: #e67e22; border-radius: 3px; padding: 1px 5px; font-size: 11px; }
 </style>
 </head>
 <body>
 
-<h1>⚙️ PM2 配抄計算工具 <small style="font-size:13px;color:#aaa;font-weight:normal">v1</small></h1>
+<h1>⚙️ PM2 配抄計算工具（台尺）<small style="font-size:13px;color:#aaa;font-weight:normal">v2</small></h1>
 
 <div class="card">
   <h2>📋 訂單輸入（台尺）</h2>
@@ -54,12 +56,13 @@ pre { background: #f8f5f2; padding: 12px; border-radius: 4px; font-size: 12px; w
     <thead><tr><th style="width:120px">台尺</th><th style="width:100px">粒數</th><th style="width:60px"></th></tr></thead>
     <tbody id="orderBody"></tbody>
   </table>
-  <div style="margin-top:10px">
+  <div style="margin-top:10px;display:flex;align-items:center;flex-wrap:wrap;gap:4px">
     <button class="btn btn-primary" onclick="addRow()">＋ 新增規格</button>
     <button class="btn btn-gray" onclick="loadSample()">載入範例</button>
     <button class="btn btn-gray" onclick="clearAll()">清除全部</button>
+    <span id="totalQtyDisplay" style="margin-left:10px;background:#fff3cd;border:1.5px solid #f0a500;border-radius:6px;padding:5px 14px;font-size:14px;font-weight:bold;color:#7d4e00;white-space:nowrap">目前總粒數：<span id="totalQtyVal">0</span> 粒</span>
   </div>
-  <div style="margin-top:14px;border-top:1px dashed #e0d5cc;padding-top:12px">
+  <div style="margin-top:14px;border-top:1px dashed #dcc6ed;padding-top:12px">
     <div style="font-size:12px;color:#555;margin-bottom:6px">📋 從 Excel 複製後貼上，點「匯入」自動填入（每行：台尺 粒數，空格或 Tab 分隔）</div>
     <div style="display:flex;gap:8px;align-items:flex-start">
       <textarea id="pasteArea" rows="5" placeholder="例：&#10;2.30  2&#10;2.40  4&#10;2.45  5" style="flex:1;border:1px solid #ccc;border-radius:4px;padding:6px;font-size:13px;font-family:monospace;resize:vertical;min-width:0"></textarea>
@@ -71,8 +74,8 @@ pre { background: #f8f5f2; padding: 12px; border-radius: 4px; font-size: 12px; w
 <div class="card">
   <h2>⚙️ PM2 機台設定</h2>
   <div class="settings-grid">
-    <div class="setting-item"><label>總寬下限（台尺）</label><input type="number" id="minTotal" value="10.77" step="0.01"></div>
-    <div class="setting-item"><label>總寬上限（台尺）</label><input type="number" id="maxTotal" value="10.82" step="0.01"></div>
+    <div class="setting-item"><label>總寬下限（台尺）</label><input type="number" id="minTotal" value="10.7" step="0.01"></div>
+    <div class="setting-item"><label>總寬上限（台尺）</label><input type="number" id="maxTotal" value="10.84" step="0.01"></div>
     <div class="setting-item"><label>單孔下限（台尺）</label><input type="number" id="minHole" value="1.6" step="0.1"></div>
     <div class="setting-item"><label>單孔上限（台尺）</label><input type="number" id="maxHole" value="3.6" step="0.1" readonly style="background:#f0f0f0;color:#888;cursor:not-allowed"></div>
   </div>
@@ -118,30 +121,56 @@ pre { background: #f8f5f2; padding: 12px; border-radius: 4px; font-size: 12px; w
     <h2>🧻 備料清單</h2>
     <div id="materialDiv"></div>
   </div>
+
+  <div style="text-align:center;margin:16px 0 8px">
+    <button class="btn" onclick="window.print()" style="background:#3a1a5c;color:white;font-size:15px;padding:11px 36px;border-radius:8px">🖨️ 列印本頁</button>
+  </div>
 </div>
 
+<style>
+@media print {
+  .btn, button, textarea, #pasteArea { display: none !important; }
+  #output { display: block !important; }
+  body { background: white; padding: 0; }
+  .card { box-shadow: none; border: 1px solid #ddd; break-inside: avoid; }
+  pre { font-size: 11px; }
+}
+</style>
+
 <script>
-// 黃金規格（左欄，每 0.1 台尺）
-const GOLDEN = [1.6,1.7,1.8,1.9,2.0,2.1,2.2,2.3,2.4,2.5,2.6,2.7,2.8,2.9,3.0,3.1,3.2,3.3,3.4,3.5,3.6];
+// 黃金規格（台尺）── 左欄主要規格，右欄備用規格
+const GOLDEN_PRIMARY   = [1.6,1.7,1.8,1.9,2.0,2.1,2.2,2.3,2.4,2.5,2.6,2.7,2.8,2.9,3.0,3.1,3.2,3.3,3.4,3.5,3.6];
+const GOLDEN_SECONDARY = [1.65,1.75,1.85,1.95,2.05,2.15,2.25,2.35,2.45,2.55,2.65,2.75,2.85,2.95,3.05,3.15,3.45];
 
 let _min, _max, _minH, _maxH;
 
 function r(n) { return Math.round(n * 100) / 100; }
 function sum(arr) { return arr.reduce((a,b) => r(a+b), 0); }
 
+function updateTotalQty() {
+  let total = [...document.querySelectorAll('#orderBody tr')].reduce((s, tr) => {
+    let inputs = tr.querySelectorAll('input');
+    let q = parseInt(inputs[1]?.value);
+    return s + (isNaN(q) || q < 1 ? 0 : q);
+  }, 0);
+  document.getElementById('totalQtyVal').textContent = total;
+}
+
 function addRow(size='', qty='') {
   let tr = document.createElement('tr');
   tr.innerHTML = `
     <td><input type="number" step="0.01" value="${size}" min="1.0" max="4.0" placeholder="例：2.45"></td>
     <td><input type="number" step="1" value="${qty}" min="1" placeholder="粒數"></td>
-    <td><button class="btn-del" onclick="this.closest('tr').remove()">刪除</button></td>`;
+    <td><button class="btn-del" onclick="this.closest('tr').remove();updateTotalQty()">刪除</button></td>`;
   document.getElementById('orderBody').appendChild(tr);
+  updateTotalQty();
 }
 
 function clearAll() {
   document.getElementById('orderBody').innerHTML = '';
   document.getElementById('output').style.display = 'none';
   addRow(); addRow(); addRow();
+  updateTotalQty();
 }
 
 function loadSample() {
@@ -149,6 +178,7 @@ function loadSample() {
   [[2.3,2],[2.4,4],[2.45,5],[2.5,4],[2.55,2],[2.6,1],[2.67,2],
    [2.7,3],[2.75,1],[2.8,2],[2.85,1],[2.9,2],[3.05,1],[3.3,2],[3.4,1],[3.45,1],[3.5,2]]
     .forEach(([s,q]) => addRow(s, q));
+  updateTotalQty();
 }
 
 function getOrders() {
@@ -179,22 +209,45 @@ function findOrderSubset(items, k, lo, hi, startIdx, chosen, curSum) {
 }
 
 // 找 k 個庫存品項（可重複），總寬在 [lo, hi]
-function findInvSubset(k, lo, hi, startIdx, chosen, curSum) {
+function findInvSubset(k, lo, hi, startIdx, chosen, curSum, pool) {
   if (chosen.length === k) {
     return (curSum >= lo-0.001 && curSum <= hi+0.001) ? [...chosen] : null;
   }
   let left = k - chosen.length;
-  for (let i = startIdx; i < GOLDEN.length; i++) {
-    let v = GOLDEN[i];
+  for (let i = startIdx; i < pool.length; i++) {
+    let v = pool[i];
     if (v < _minH-0.001 || v > _maxH+0.001) continue;
     let ns = r(curSum + v);
     if (r(ns + (left-1)*_minH) > hi+0.001) continue;
-    let res = findInvSubset(k, lo, hi, i, [...chosen, v], ns); // i（允許重複）
+    let res = findInvSubset(k, lo, hi, i, [...chosen, v], ns, pool); // i（允許重複）
     if (res) return res;
   }
   return null;
 }
 
+// 訂單+庫存聯合回溯：先試主要黃金規格，不行再試備用規格
+function findOrderWithInv(items, k, lo, hi, invN, startIdx, chosen, curSum) {
+  if (chosen.length === k) {
+    if (curSum >= lo-0.001 && curSum <= hi+0.001) {
+      let lo2 = r(_min - curSum), hi2 = r(_max - curSum);
+      let ic = findInvSubset(invN, lo2, hi2, 0, [], 0, GOLDEN_PRIMARY);
+      if (ic) return {oc: [...chosen], ic, icType: 'P'};
+      ic = findInvSubset(invN, lo2, hi2, 0, [], 0, GOLDEN_SECONDARY);
+      if (ic) return {oc: [...chosen], ic, icType: 'P2'};
+    }
+    return null;
+  }
+  let left = k - chosen.length;
+  for (let i = startIdx; i < items.length; i++) {
+    let v = items[i];
+    if (v < _minH-0.001 || v > _maxH+0.001) continue;
+    let ns = r(curSum + v);
+    if (r(ns + (left-1)*_minH) > hi+0.001) continue;
+    let res = findOrderWithInv(items, k, lo, hi, invN, i+1, [...chosen, v], ns);
+    if (res) return res;
+  }
+  return null;
+}
 function findRoll(available) {
   if (!available.length) return null;
   // 第一優先：純訂單，任何孔數（3→4→5）
@@ -211,11 +264,8 @@ function findRoll(available) {
     let lo = Math.max(r(_min - _maxH), r(on * _minH));
     let hi = Math.min(r(_max - _minH), r(on * _maxH));
     if (lo > hi) continue;
-    let oc = findOrderSubset(available, on, lo, hi, 0, [], 0);
-    if (!oc) continue;
-    let os = sum(oc);
-    let ic = findInvSubset(1, r(_min - os), r(_max - os), 0, [], 0);
-    if (ic) return [...oc.map(v => ({size:v, type:'W'})), ...ic.map(v => ({size:v, type:'P'}))];
+    let res = findOrderWithInv(available, on, lo, hi, 1, 0, [], 0);
+    if (res) return [...res.oc.map(v => ({size:v, type:'W'})), ...res.ic.map(v => ({size:v, type:res.icType}))];
   }
   // 第三優先：2孔庫存，最大化訂單孔（5→4→3）
   for (let n of [5, 4, 3]) {
@@ -224,11 +274,20 @@ function findRoll(available) {
     let lo = Math.max(r(_min - 2*_maxH), r(on * _minH));
     let hi = Math.min(r(_max - 2*_minH), r(on * _maxH));
     if (lo > hi) continue;
-    let oc = findOrderSubset(available, on, lo, hi, 0, [], 0);
-    if (!oc) continue;
-    let os = sum(oc);
-    let ic = findInvSubset(2, r(_min - os), r(_max - os), 0, [], 0);
-    if (ic) return [...oc.map(v => ({size:v, type:'W'})), ...ic.map(v => ({size:v, type:'P'}))];
+    let res = findOrderWithInv(available, on, lo, hi, 2, 0, [], 0);
+    if (res) return [...res.oc.map(v => ({size:v, type:'W'})), ...res.ic.map(v => ({size:v, type:res.icType}))];
+  }
+  // 第四優先：單孔訂單+多孔庫存（處理無法自組的大孔剩餘項目）
+  for (let n of [4, 5]) {
+    let maxOn = Math.min(n - 3, available.length);
+    for (let on = 1; on <= maxOn; on++) {
+      let invN = n - on;
+      let lo = Math.max(r(_min - invN * _maxH), r(on * _minH));
+      let hi = Math.min(r(_max - invN * _minH), r(on * _maxH));
+      if (lo > hi) continue;
+      let res = findOrderWithInv(available, on, lo, hi, invN, 0, [], 0);
+      if (res) return [...res.oc.map(v => ({size:v, type:'W'})), ...res.ic.map(v => ({size:v, type:res.icType}))];
+    }
   }
   return null;
 }
@@ -274,20 +333,21 @@ function render(rolls) {
   document.getElementById('output').style.display = 'block';
 
   let totalW = rolls.reduce((a,r)=>a+r.filter(h=>h.type==='W').length, 0);
-  let totalP = rolls.reduce((a,r)=>a+r.filter(h=>h.type==='P').length, 0);
+  let totalP = rolls.reduce((a,r)=>a+r.filter(h=>h.type==='P'||h.type==='P2').length, 0);
+  let hasP2 = rolls.some(r=>r.some(h=>h.type==='P2'));
 
   document.getElementById('summaryDiv').innerHTML = `
     <div class="summary-box">
       共 <b>${rolls.length}</b> 支捲筒 ｜
       訂單孔 <span class="type-W"><b>${totalW}</b></span> 粒 ／
-      庫存填補 <span class="type-P"><b>${totalP}</b></span> 孔
+      庫存填補 <span class="type-P"><b>${totalP}</b></span> 孔${hasP2?' <span class="type-P2">（含備用規格）</span>':''}
     </div>`;
 
   // 分組相同排列
   let grouped = [];
   rolls.forEach(roll => {
     let wItems = roll.filter(h=>h.type==='W').sort((a,b)=>b.size-a.size);
-    let pItems = roll.filter(h=>h.type==='P').sort((a,b)=>b.size-a.size);
+    let pItems = roll.filter(h=>h.type==='P'||h.type==='P2').sort((a,b)=>b.size-a.size);
     let sorted = [...wItems];
     // 庫存插入孔2（index 1）或孔3（index 2）
     pItems.forEach((p, i) => {
@@ -315,7 +375,7 @@ function render(rolls) {
     let valid = total >= _min-0.001 && total <= _max+0.001;
     let allW = roll.every(h=>h.type==='W');
     let pCount = roll.filter(h=>h.type==='P').length;
-    let note = allW ? '全訂單' : `含庫存×${pCount}`;
+    let note = roll.some(h=>h.warn) ? '未能配排' : (allW ? (roll.length >= 4 ? '全訂單' : `全訂（${roll.length}孔）`) : `含庫存×${pCount}`);
 
     let tr = document.createElement('tr');
     let cells = [`<td><b>${idx+1}</b></td>`];
@@ -356,7 +416,12 @@ function copyText() {
   let text = document.getElementById('textOutput').textContent;
   navigator.clipboard.writeText(text).then(() => alert('✅ 已複製！'));
 }
-function importPaste(){const text=document.getElementById('pasteArea').value.trim();if(!text){alert('請先貼上資料');return;}const rows=text.split('\n').map(l=>l.trim()).filter(l=>l);const parsed=[];for(const row of rows){const parts=row.split(/[\t \u3000]+/).map(s=>s.trim()).filter(s=>s);if(parts.length<2)continue;const size=parseFloat(parts[0]);const qty=parseInt(parts[1]);if(isNaN(size)||isNaN(qty)||qty<=0||size<=0)continue;parsed.push([size,qty]);}if(!parsed.length){alert('沒有讀到有效資料，請確認格式（每行：尺寸 粒數）');return;}document.getElementById('orderBody').innerHTML='';parsed.forEach(([s,q])=>addRow(s,q));document.getElementById('pasteArea').value='';alert('✅ 匯入 '+parsed.length+' 筆');}
+function importPaste(){const text=document.getElementById('pasteArea').value.trim();if(!text){alert('請先貼上資料');return;}const rows=text.split('\n').map(l=>l.trim()).filter(l=>l);const parsed=[];for(const row of rows){const parts=row.split(/[\t \u3000]+/).map(s=>s.trim()).filter(s=>s);if(parts.length<2)continue;const size=parseFloat(parts[0]);const qty=parseInt(parts[1]);if(isNaN(size)||isNaN(qty)||qty<=0||size<=0)continue;parsed.push([size,qty]);}if(!parsed.length){alert('沒有讀到有效資料，請確認格式（每行：尺寸 粒數）');return;}document.getElementById('orderBody').innerHTML='';parsed.forEach(([s,q])=>addRow(s,q));document.getElementById('pasteArea').value='';updateTotalQty();alert('✅ 匯入 '+parsed.length+' 筆');}
+
+// 即時更新總粒數（輸入時）
+document.getElementById('orderBody').addEventListener('input', e => {
+  if (e.target.type === 'number') updateTotalQty();
+});
 
 // 初始化空白列
 addRow(); addRow(); addRow();
