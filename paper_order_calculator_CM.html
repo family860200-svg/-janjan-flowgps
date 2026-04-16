@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>紙張訂單計算工具</title>
+<title>紙張訂單計算工具（CM）</title>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -523,7 +523,7 @@
 <body>
 
 <header>
-  <h1>紙張訂單計算工具</h1>
+  <h1>紙張訂單計算工具（CM）</h1>
   <span>單張重 = GSM × 長(m) × 寬(m)</span>
 </header>
 
@@ -554,8 +554,8 @@
         <tr>
           <th>#</th>
           <th>磅重<br>(GSM)</th>
-          <th>長<br>(mm)</th>
-          <th>寬<br>(mm)</th>
+          <th>長<br>(CM)</th>
+          <th>寬<br>(CM)</th>
           <th>張數/件</th>
           <th>單張重<br>(g)</th>
           <th>單件重<br>(kg)</th>
@@ -577,8 +577,8 @@
 <!-- Quick-add bar -->
 <div class="quick-add">
   <label>磅重 (GSM)<input type="number" id="qa-gsm" value="300" min="1" onkeydown="qaEnter(event)"></label>
-  <label>長 (mm)<input type="number" id="qa-l" value="800" min="1" onkeydown="qaEnter(event)"></label>
-  <label>寬 (mm)<input type="number" id="qa-w" value="1100" min="1" onkeydown="qaEnter(event)"></label>
+  <label>長 (CM)<input type="number" id="qa-l" value="80" min="1" onkeydown="qaEnter(event)"></label>
+  <label>寬 (CM)<input type="number" id="qa-w" value="110" min="1" onkeydown="qaEnter(event)"></label>
   <label>張數/件<input type="number" id="qa-pcs" value="2250" min="1" onkeydown="qaEnter(event)"></label>
   <label class="qa-need">客需 (kg)<input type="number" id="qa-need" value="" min="1" placeholder="輸入" onkeydown="qaEnter(event)"></label>
   <button class="qa-add" onclick="qaAdd()">＋ 新增</button>
@@ -589,10 +589,10 @@
 <div class="import-box">
   <div class="ib-header">
     <span class="ib-label">從 Excel 複製後貼上，點「匯入」自動填入</span>
-    <span class="ib-hint">每行：GSM　長(mm)　寬(mm)　張數/件　客需(kg)　空格或 Tab 分隔</span>
+    <span class="ib-hint">每行：GSM　長(CM)　寬(CM)　張數/件　客需(kg)　空格或 Tab 分隔</span>
   </div>
   <div class="ib-body">
-    <textarea id="ib-textarea" placeholder="例：&#10;300	710	1010	2250	3000&#10;350	800	1100	1900	4000&#10;450	640	740	3000	8000"></textarea>
+    <textarea id="ib-textarea" placeholder="例：&#10;300	71	101	2250	3000&#10;350	80	110	1900	4000&#10;450	64	74	3000	8000"></textarea>
     <button class="ib-btn" onclick="importRows()">匯入</button>
   </div>
   <div class="ib-msg" id="ib-msg"></div>
@@ -643,19 +643,19 @@
 </div>
 
 <script>
-const STORAGE_KEY = 'paper_order_v1';
+const STORAGE_KEY = 'paper_order_cm_v1';
 
 let rows = loadData() || [
-  {gsm:300, l:710,  w:1010, pcs:2250, need:3000, adj:null, stack:false},
-  {gsm:300, l:800,  w:1100, pcs:2250, need:3000, adj:null, stack:false},
-  {gsm:350, l:690,  w:752,  pcs:1900, need:4000, adj:10,   stack:false},
-  {gsm:400, l:800,  w:1100, pcs:1700, need:3000, adj:null, stack:false},
-  {gsm:450, l:640,  w:740,  pcs:3000, need:8000, adj:null, stack:false},
-  {gsm:450, l:800,  w:1100, pcs:1500, need:3000, adj:null, stack:false},
+  {gsm:300, l:71,  w:101, pcs:2250, need:3000, adj:null, stack:false},
+  {gsm:300, l:80,  w:110, pcs:2250, need:3000, adj:null, stack:false},
+  {gsm:350, l:69,  w:75,  pcs:1900, need:4000, adj:10,   stack:false},
+  {gsm:400, l:80,  w:110, pcs:1700, need:3000, adj:null, stack:false},
+  {gsm:450, l:64,  w:74,  pcs:3000, need:8000, adj:null, stack:false},
+  {gsm:450, l:80,  w:110, pcs:1500, need:3000, adj:null, stack:false},
 ];
 
 function calcRow(r) {
-  const wps = r.gsm * (r.l / 1000) * (r.w / 1000);       // g per sheet
+  const wps = r.gsm * (r.l / 100) * (r.w / 100);       // g per sheet
   const unitW = r.pcs * (wps / 1000);                      // kg per bundle
   const trial = r.need / unitW;
   const adjVal = (r.adj !== null && r.adj !== undefined) ? r.adj : Math.floor(trial);
@@ -808,7 +808,7 @@ function loadData() {
 }
 
 function exportCSV() {
-  const headers = ['#','磅重(GSM)','長(mm)','寬(mm)','張數/件','單張重(g)','單件重(kg)','客需(kg)','試算件數','整件數','實際重(kg)','達成率(%)'];
+  const headers = ['#','磅重(GSM)','長(CM)','寬(CM)','張數/件','單張重(g)','單件重(kg)','客需(kg)','試算件數','整件數','實際重(kg)','達成率(%)'];
   const lines = [headers.join(',')];
   rows.forEach((r, i) => {
     const c = calcRow(r);
@@ -872,7 +872,7 @@ function drawContainerSVG(conIdx, conItems, spec) {
   for (let i = 0; i < conItems.length; i++) {
     const item = conItems[i];
     const r = rows[item.rowIdx];
-    const l_cm = r.l / 10, w_cm = r.w / 10;
+    const l_cm = r.l, w_cm = r.w;
     const color = ROW_COLORS[item.rowIdx % ROW_COLORS.length];
     const pack = bestPack(l_cm, w_cm, item.pcs, spec.W, item.layers);
     totalLen += pack.sectionLen;
