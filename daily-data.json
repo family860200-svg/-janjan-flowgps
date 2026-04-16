@@ -1,45 +1,47 @@
 {
-  "generatedAt": "2026-04-15T19:08:00",
+  "generatedAt": "2026-04-15T22:32:12",
   "tasks": {
     "urgent": [
-      { "title": "拆線", "source": "FlowGPS", "dueDate": "2026-04-17", "note": "後天！" },
-      { "title": "女兒：十年備忘錄／社會影響力工作坊", "source": "FlowGPS", "dueDate": "2026-04-18", "note": "明天！" },
-      { "title": "每天晚餐後吃藥（胃潰瘍）", "source": "FlowGPS", "dueDate": "daily" },
-      { "title": "女兒：部分資料或成果整理 deadline", "source": "FlowGPS", "dueDate": "2026-04-30" }
+      { "title": "配抄演算法升級：3/4孔庫存 + P2", "source": "FlowGPS", "dueDate": "" },
+      { "title": "貨櫃裝載工具到公司 TEST", "source": "FlowGPS", "dueDate": "" },
+      { "title": "郵局寄診斷證明＋收據給素華姐（等地址）", "source": "FlowGPS", "dueDate": "" },
+      { "title": "童綜合回診－肝膽腸胃科", "source": "FlowGPS", "dueDate": "2026-04-30" },
+      { "title": "女兒：資料整理 deadline", "source": "FlowGPS", "dueDate": "2026-04-30" }
     ],
     "important": [
-      { "title": "客訴處理接手上軌道（拍照→Claude辨識→貼ERP）", "source": "FlowGPS" },
-      { "title": "趁交接前清楚業務小姐工作流程", "source": "FlowGPS" },
-      { "title": "動手製作樣品書，目標3本", "source": "FlowGPS" },
-      { "title": "Threads 衝1000+追蹤（每日3篇）", "source": "FlowGPS" },
-      { "title": "婦女培力計劃跟節奏推進", "source": "FlowGPS" }
+      { "title": "女兒：十年備忘錄工作坊", "source": "FlowGPS", "dueDate": "2026-04-18" },
+      { "title": "牙醫（已預約）", "source": "FlowGPS", "dueDate": "2026-04-19 15:00" },
+      { "title": "B款樣品書 3本（0/3）", "source": "FlowGPS", "dueDate": "" },
+      { "title": "Threads 衝到 1000+ 追蹤", "source": "FlowGPS", "dueDate": "" },
+      { "title": "婦女培力計劃跟節奏走", "source": "FlowGPS", "dueDate": "" }
     ],
     "quick": [
-      { "title": "配抄演算法升級（3/4孔庫存+P2備用庫存）", "source": "FlowGPS", "note": "進行中，到公司繼續" },
-      { "title": "貨櫃裝載模擬工具 TEST", "source": "FlowGPS", "note": "到公司後開 HTML 測試" },
-      { "title": "看牙醫（空檔安排）", "source": "FlowGPS" },
-      { "title": "看中醫（空檔安排）", "source": "FlowGPS" },
-      { "title": "童綜合回診—肝膽腸胃科（4月底前）", "source": "FlowGPS" }
+      { "title": "每天晚餐後吃藥（胃潰瘍）", "source": "FlowGPS", "dueDate": "" },
+      { "title": "看中醫（空檔安排）", "source": "FlowGPS", "dueDate": "" },
+      { "title": "姪子的車 MBC-XXXX 決定任意險", "source": "FlowGPS", "dueDate": "2026-06-16" },
+      { "title": "裕的小黑強制險續保", "source": "FlowGPS", "dueDate": "2026-06-17" },
+      { "title": "房租每月 $5,000（每月5號前）", "source": "FlowGPS", "dueDate": "" }
     ],
     "backlog": [
-      { "title": "Threads貼文優化（風格、結構、鉤子策略）", "source": "FlowGPS" },
-      { "title": "八大財富三個面向優化（人脈、服務、金錢）", "source": "FlowGPS" },
-      { "title": "手工書網站版面比例調整", "source": "FlowGPS" },
-      { "title": "高雄之旅計劃", "source": "FlowGPS" },
-      { "title": "車險：姪子MBC任意險決定（6/16前）", "source": "FlowGPS" },
-      { "title": "車險：裕小黑強制險續保（6/17前）", "source": "FlowGPS" }
+      { "title": "Threads 貼文優化", "source": "FlowGPS", "dueDate": "" },
+      { "title": "八大財富三個面向優化", "source": "FlowGPS", "dueDate": "" },
+      { "title": "手工書網站版面比例調整", "source": "FlowGPS", "dueDate": "" },
+      { "title": "高雄之旅計劃", "source": "FlowGPS", "dueDate": "" },
+      { "title": "微波烤箱購買評估", "source": "FlowGPS", "dueDate": "" },
+      { "title": "母親節餐會（與爸媽）", "source": "FlowGPS", "dueDate": "2026-05-06" }
     ]
   },
   "schedule": [
-    { "time": "04/17", "title": "拆線" },
     { "time": "04/18", "title": "女兒：十年備忘錄工作坊" },
+    { "time": "04/19 15:00", "title": "牙醫（已預約）" },
+    { "time": "04/30", "title": "女兒資料整理 deadline ＋ 童綜合回診" },
     { "time": "05/06", "title": "母親節餐會（與爸媽）" }
   ],
   "stats": {
-    "total": 19,
-    "done": 15,
-    "pending": 4,
-    "urgent": 4,
+    "total": 21,
+    "done": 24,
+    "pending": 21,
+    "urgent": 5,
     "important": 5,
     "quick": 5,
     "backlog": 6
