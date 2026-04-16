@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>紙張訂單計算工具</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f5f3ee;
+    --surface: #ffffff;
+    --surface2: #f0ede6;
+    --border: #dedad2;
+    --border2: #cac5bb;
+    --text: #1a1916;
+    --text2: #6b6660;
+    --text3: #9e9891;
+    --accent: #2b5ce6;
+    --accent-bg: #eef2fd;
+    --green: #1e7a46;
+    --green-bg: #e8f5ee;
+    --amber: #915200;
+    --amber-bg: #fef3e2;
+    --red: #b02020;
+    --red-bg: #fdeaea;
+    --radius: 10px;
+    --radius-sm: 6px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Noto Sans TC', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    padding: 2rem 1rem;
+  }
+  .mono { font-family: 'IBM Plex Mono', monospace; }
+
+  /* Header */
+  header {
+    max-width: 1100px;
+    margin: 0 auto 2rem;
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  header h1 { font-size: 22px; font-weight: 700; letter-spacing: -0.5px; }
+  header span { font-size: 12px; color: var(--text3); font-family: 'IBM Plex Mono', monospace; }
+
+  /* Summary cards */
+  .summary {
+    max-width: 1100px;
+    margin: 0 auto 1.5rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 10px;
+  }
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: .85rem 1rem;
+  }
+  .card .l { font-size: 11px; color: var(--text3); margin-bottom: 4px; text-transform: uppercase; letter-spacing: .5px; }
+  .card .v { font-size: 22px; font-weight: 700; font-family: 'IBM Plex Mono', monospace; }
+  .card .s { font-size: 11px; color: var(--text3); margin-top: 2px; }
+  .card.accent { border-color: var(--accent); background: var(--accent-bg); }
+  .card.accent .v { color: var(--accent); }
+
+  /* Table wrapper */
+  .table-wrap {
+    max-width: 1100px;
+    margin: 0 auto 1.5rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+  .table-scroll { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  thead tr { background: var(--surface2); }
+  th {
+    padding: 10px 10px;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--text2);
+    text-align: right;
+    white-space: nowrap;
+    border-bottom: 1px solid var(--border);
+    letter-spacing: .3px;
+  }
+  th:nth-child(1) { text-align: center; width: 40px; }
+  th:nth-child(2),th:nth-child(3),th:nth-child(4),th:nth-child(5) { text-align: right; }
+  td {
+    padding: 8px 10px;
+    border-bottom: 1px solid var(--border);
+    text-align: right;
+    vertical-align: middle;
+  }
+  td:first-child { text-align: center; }
+  tbody tr:last-child td { border-bottom: none; }
+  tbody tr:hover { background: var(--surface2); }
+
+  /* Inputs inside table */
+  td input[type=number] {
+    width: 72px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 5px 7px;
+    font-size: 13px;
+    font-family: 'IBM Plex Mono', monospace;
+    background: var(--bg);
+    color: var(--text);
+    text-align: right;
+    transition: border-color .15s;
+  }
+  td input[type=number]:focus { outline: none; border-color: var(--accent); background: var(--accent-bg); }
+  td input.adj-input {
+    width: 60px;
+    font-weight: 700;
+    background: var(--surface);
+    border: 1.5px solid var(--border2);
+  }
+  td input.adj-input:focus { border-color: var(--accent); background: var(--accent-bg); }
+
+  /* Computed cells */
+  .mono-cell { font-family: 'IBM Plex Mono', monospace; }
+  .rate-high { color: var(--green); font-weight: 700; background: var(--green-bg); padding: 2px 8px; border-radius: 20px; font-family: 'IBM Plex Mono', monospace; font-size: 12px; }
+  .rate-mid  { color: var(--amber); font-weight: 700; background: var(--amber-bg); padding: 2px 8px; border-radius: 20px; font-family: 'IBM Plex Mono', monospace; font-size: 12px; }
+  .rate-low  { color: var(--red);   font-weight: 700; background: var(--red-bg);   padding: 2px 8px; border-radius: 20px; font-family: 'IBM Plex Mono', monospace; font-size: 12px; }
+
+  /* Del btn */
+  .del-btn {
+    background: none;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 4px 8px;
+    cursor: pointer;
+    color: var(--text3);
+    font-size: 12px;
+    transition: all .15s;
+  }
+  .del-btn:hover { background: var(--red-bg); color: var(--red); border-color: var(--red); }
+
+  /* Row num */
+  .row-num {
+    font-size: 11px;
+    color: var(--text3);
+    font-family: 'IBM Plex Mono', monospace;
+    background: var(--surface2);
+    border-radius: 4px;
+    padding: 2px 6px;
+  }
+
+  /* Footer toolbar */
+  .toolbar {
+    max-width: 1100px;
+    margin: 0 auto;
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .btn {
+    font-family: 'Noto Sans TC', sans-serif;
+    font-size: 13px;
+    padding: 8px 18px;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--text);
+    transition: all .15s;
+    font-weight: 500;
+  }
+  .btn:hover { background: var(--surface2); border-color: var(--border2); }
+  .btn.primary { background: var(--accent); color: #fff; border-color: var(--accent); }
+  .btn.primary:hover { background: #2050cc; }
+  .btn.danger { color: var(--red); }
+  .btn.danger:hover { background: var(--red-bg); border-color: var(--red); }
+
+  /* Total row */
+  tfoot td {
+    padding: 9px 10px;
+    background: var(--surface2);
+    font-weight: 700;
+    border-top: 1.5px solid var(--border2);
+    font-family: 'IBM Plex Mono', monospace;
+  }
+  tfoot td:first-child { text-align: left; }
+
+  /* Quick-add bar */
+  .quick-add {
+    max-width: 1100px;
+    margin: 0 auto 1.5rem;
+    background: var(--surface);
+    border: 1.5px dashed var(--border2);
+    border-radius: var(--radius);
+    padding: 14px 16px;
+    display: flex;
+    gap: 10px;
+    align-items: flex-end;
+    flex-wrap: wrap;
+  }
+  .quick-add label {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    font-size: 11px;
+    color: var(--text3);
+    letter-spacing: .3px;
+  }
+  .quick-add input[type=number] {
+    width: 84px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 7px 9px;
+    font-size: 14px;
+    font-family: 'IBM Plex Mono', monospace;
+    background: var(--bg);
+    color: var(--text);
+    text-align: right;
+    transition: border-color .15s;
+  }
+  .quick-add input[type=number]:focus { outline: none; border-color: var(--accent); background: var(--accent-bg); }
+  .quick-add .qa-need input { width: 96px; }
+  .quick-add .qa-add {
+    font-family: 'Noto Sans TC', sans-serif;
+    font-size: 13px;
+    padding: 8px 20px;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    border: none;
+    background: var(--accent);
+    color: #fff;
+    font-weight: 500;
+    transition: background .15s;
+    align-self: flex-end;
+  }
+  .quick-add .qa-add:hover { background: #2050cc; }
+  .quick-add .qa-hint {
+    font-size: 11px;
+    color: var(--text3);
+    align-self: flex-end;
+    padding-bottom: 9px;
+  }
+
+  /* Notice */
+  .notice {
+    max-width: 1100px;
+    margin: 1rem auto 0;
+    font-size: 11px;
+    color: var(--text3);
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .notice span::before { content: '· '; }
+
+  @media(max-width:600px){
+    body { padding: 1rem .5rem; }
+    .card .v { font-size: 18px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>紙張訂單計算工具</h1>
+  <span>單張重 = GSM × 長(m) × 寬(m)</span>
+</header>
+
+<div class="summary">
+  <div class="card accent">
+    <div class="l">貨棧總重</div>
+    <div class="v mono" id="s-weight">—</div>
+    <div class="s" id="s-weight-t">—</div>
+  </div>
+  <div class="card">
+    <div class="l">總件數</div>
+    <div class="v mono" id="s-items">—</div>
+  </div>
+  <div class="card">
+    <div class="l">料號數</div>
+    <div class="v mono" id="s-rows">—</div>
+  </div>
+  <div class="card">
+    <div class="l">平均達成率</div>
+    <div class="v mono" id="s-rate">—</div>
+  </div>
+</div>
+
+<div class="table-wrap">
+  <div class="table-scroll">
+    <table>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>磅重<br>(GSM)</th>
+          <th>長<br>(mm)</th>
+          <th>寬<br>(mm)</th>
+          <th>張數/件</th>
+          <th>單張重<br>(g)</th>
+          <th>單件重<br>(kg)</th>
+          <th>客需<br>(kg)</th>
+          <th>試算件數</th>
+          <th>整件數<br>▼可調整</th>
+          <th>實際重<br>(kg)</th>
+          <th>達成率</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody id="tbody"></tbody>
+      <tfoot id="tfoot"></tfoot>
+    </table>
+  </div>
+</div>
+
+<!-- Quick-add bar -->
+<div class="quick-add">
+  <label>磅重 (GSM)<input type="number" id="qa-gsm" value="300" min="1" onkeydown="qaEnter(event)"></label>
+  <label>長 (mm)<input type="number" id="qa-l" value="800" min="1" onkeydown="qaEnter(event)"></label>
+  <label>寬 (mm)<input type="number" id="qa-w" value="1100" min="1" onkeydown="qaEnter(event)"></label>
+  <label>張數/件<input type="number" id="qa-pcs" value="2250" min="1" onkeydown="qaEnter(event)"></label>
+  <label class="qa-need">客需 (kg)<input type="number" id="qa-need" value="" min="1" placeholder="輸入" onkeydown="qaEnter(event)"></label>
+  <button class="qa-add" onclick="qaAdd()">＋ 新增</button>
+  <span class="qa-hint">Enter 快速新增</span>
+</div>
+
+<div class="toolbar">
+  <div style="display:flex;gap:8px;flex-wrap:wrap;">
+    <button class="btn danger" onclick="clearAll()">清除全部</button>
+  </div>
+  <div style="display:flex;gap:8px;flex-wrap:wrap;">
+    <button class="btn" onclick="exportCSV()">匯出 CSV</button>
+    <button class="btn" onclick="window.print()">列印</button>
+  </div>
+</div>
+
+<div class="notice">
+  <span>整件數欄位可手動調整，其餘欄位自動計算</span>
+  <span>達成率 ≥98% 綠色、≥90% 橙色、&lt;90% 紅色</span>
+  <span>資料儲存於瀏覽器，重新整理不會遺失</span>
+</div>
+
+<script>
+const STORAGE_KEY = 'paper_order_v1';
+
+let rows = loadData() || [
+  {gsm:300, l:710,  w:1010, pcs:2250, need:3000, adj:null},
+  {gsm:300, l:800,  w:1100, pcs:2250, need:3000, adj:null},
+  {gsm:350, l:690,  w:752,  pcs:1900, need:4000, adj:10},
+  {gsm:400, l:800,  w:1100, pcs:1700, need:3000, adj:null},
+  {gsm:450, l:640,  w:740,  pcs:3000, need:8000, adj:null},
+  {gsm:450, l:800,  w:1100, pcs:1500, need:3000, adj:null},
+];
+
+function calcRow(r) {
+  const wps = r.gsm * (r.l / 1000) * (r.w / 1000);       // g per sheet
+  const unitW = r.pcs * (wps / 1000);                      // kg per bundle
+  const trial = r.need / unitW;
+  const adjVal = (r.adj !== null && r.adj !== undefined) ? r.adj : Math.floor(trial);
+  const actual = adjVal * unitW;
+  const rate = (actual / r.need) * 100;
+  return { wps, unitW, trial, adjVal, actual, rate };
+}
+
+function rateSpan(rate) {
+  const cls = rate >= 98 ? 'rate-high' : rate >= 90 ? 'rate-mid' : 'rate-low';
+  return `<span class="${cls}">${rate.toFixed(2)}%</span>`;
+}
+
+function fmt(n, d=2) {
+  return Number(n.toFixed(d)).toLocaleString('zh-TW', { minimumFractionDigits: d, maximumFractionDigits: d });
+}
+
+function render() {
+  const tb = document.getElementById('tbody');
+  tb.innerHTML = '';
+  let totalW = 0, totalItems = 0, rateSum = 0;
+
+  rows.forEach((r, i) => {
+    const c = calcRow(r);
+    totalW += c.actual;
+    totalItems += c.adjVal;
+    rateSum += c.rate;
+
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td><span class="row-num">${i + 1}</span></td>
+      <td><input type="number" value="${r.gsm}" min="1" oninput="update(${i},'gsm',+this.value)"></td>
+      <td><input type="number" value="${r.l}"   min="1" oninput="update(${i},'l',+this.value)"></td>
+      <td><input type="number" value="${r.w}"   min="1" oninput="update(${i},'w',+this.value)"></td>
+      <td><input type="number" value="${r.pcs}" min="1" oninput="update(${i},'pcs',+this.value)"></td>
+      <td class="mono-cell">${fmt(c.wps, 3)}</td>
+      <td class="mono-cell">${fmt(c.unitW, 2)}</td>
+      <td><input type="number" value="${r.need}" min="1" style="width:78px;" oninput="update(${i},'need',+this.value)"></td>
+      <td class="mono-cell" style="color:var(--text2);">${c.trial.toFixed(4)}</td>
+      <td><input type="number" class="adj-input" value="${c.adjVal}" min="0" oninput="updateAdj(${i},+this.value)"></td>
+      <td class="mono-cell"><strong>${fmt(c.actual, 0)}</strong></td>
+      <td>${rateSpan(c.rate)}</td>
+      <td><button class="del-btn" onclick="delRow(${i})">✕</button></td>
+    `;
+    tb.appendChild(tr);
+  });
+
+  // Footer
+  const tf = document.getElementById('tfoot');
+  tf.innerHTML = `<tr>
+    <td colspan="6" style="text-align:left;font-size:12px;color:var(--text2);font-family:'Noto Sans TC',sans-serif;">合計</td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td style="color:var(--accent);">${totalItems} 件</td>
+    <td style="color:var(--accent);">${fmt(totalW, 0)} kg</td>
+    <td></td>
+    <td></td>
+  </tr>`;
+
+  // Summary
+  document.getElementById('s-weight').textContent = fmt(totalW, 0) + ' kg';
+  document.getElementById('s-weight-t').textContent = (totalW / 1000).toFixed(3) + ' T';
+  document.getElementById('s-items').textContent = totalItems + ' 件';
+  document.getElementById('s-rows').textContent = rows.length + ' 項';
+  document.getElementById('s-rate').textContent = rows.length ? (rateSum / rows.length).toFixed(1) + '%' : '—';
+
+  saveData();
+}
+
+function update(i, key, val) {
+  rows[i][key] = val;
+  rows[i].adj = null; // reset adj when specs change
+  render();
+}
+
+function updateAdj(i, val) {
+  rows[i].adj = val;
+  render();
+}
+
+function addRow() {
+  rows.push({ gsm: 300, l: 800, w: 1100, pcs: 2250, need: 3000, adj: null });
+  render();
+}
+
+/* ── 快速新增列 ── */
+function qaAdd() {
+  const gsm  = +document.getElementById('qa-gsm').value;
+  const l    = +document.getElementById('qa-l').value;
+  const w    = +document.getElementById('qa-w').value;
+  const pcs  = +document.getElementById('qa-pcs').value;
+  const need = +document.getElementById('qa-need').value;
+
+  if ([gsm, l, w, pcs, need].some(v => !v || v <= 0)) {
+    document.getElementById('qa-need').focus();
+    document.getElementById('qa-need').style.borderColor = 'var(--red)';
+    setTimeout(() => document.getElementById('qa-need').style.borderColor = '', 1200);
+    return;
+  }
+
+  rows.push({ gsm, l, w, pcs, need, adj: null });
+  render();
+
+  // 清空客需，其餘保留方便連續輸入相似規格
+  const needEl = document.getElementById('qa-need');
+  needEl.value = '';
+  needEl.focus();
+  setTimeout(() => window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' }), 50);
+}
+
+function qaEnter(e) {
+  if (e.key === 'Enter') qaAdd();
+}
+
+function delRow(i) {
+  if (rows.length <= 1) { alert('至少保留一行'); return; }
+  rows.splice(i, 1);
+  render();
+}
+
+function clearAll() {
+  if (!confirm('確定要清除全部資料？')) return;
+  rows = [{ gsm: 300, l: 800, w: 1100, pcs: 2250, need: 3000, adj: null }];
+  render();
+}
+
+function saveData() {
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(rows)); } catch(e) {}
+}
+
+function loadData() {
+  try {
+    const d = localStorage.getItem(STORAGE_KEY);
+    return d ? JSON.parse(d) : null;
+  } catch(e) { return null; }
+}
+
+function exportCSV() {
+  const headers = ['#','磅重(GSM)','長(mm)','寬(mm)','張數/件','單張重(g)','單件重(kg)','客需(kg)','試算件數','整件數','實際重(kg)','達成率(%)'];
+  const lines = [headers.join(',')];
+  rows.forEach((r, i) => {
+    const c = calcRow(r);
+    lines.push([
+      i+1, r.gsm, r.l, r.w, r.pcs,
+      c.wps.toFixed(3), c.unitW.toFixed(2),
+      r.need, c.trial.toFixed(4), c.adjVal,
+      c.actual.toFixed(0), c.rate.toFixed(2)
+    ].join(','));
+  });
+  const blob = new Blob(['\uFEFF' + lines.join('\n')], { type: 'text/csv;charset=utf-8' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = '紙張訂單_' + new Date().toISOString().slice(0,10) + '.csv';
+  a.click();
+}
+
+
+render();
+</script>
+</body>
+</html>

@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>嘜頭資料產生器 v1</title>
+<style>
+* { box-sizing: border-box; }
+body { font-family: 'Microsoft JhengHei', 'PingFang TC', sans-serif; max-width: 780px; margin: 0 auto; padding: 16px; background: #eef2f7; color: #1a2c3a; font-size: 16px; }
+h1 { color: #1a3a5c; font-size: 20px; border-bottom: 2px solid #2980b9; padding-bottom: 8px; margin-bottom: 16px; }
+h2 { color: #1a3a5c; font-size: 15px; margin: 0 0 12px; }
+.card { background: white; border-radius: 8px; padding: 16px; margin-bottom: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+.grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.field { display: flex; flex-direction: column; gap: 4px; }
+.field label { font-size: 12px; color: #666; font-weight: bold; }
+.field input { padding: 8px 10px; border: 1.5px solid #ccc; border-radius: 6px; font-size: 15px; font-family: inherit; transition: border-color 0.2s; }
+.field input:focus { outline: none; border-color: #2980b9; }
+.btn { padding: 10px 24px; border: none; border-radius: 6px; cursor: pointer; font-size: 14px; font-family: inherit; margin: 3px; font-weight: bold; }
+.btn-primary { background: #2980b9; color: white; font-size: 16px; padding: 12px 32px; }
+.btn-primary:hover { background: #2471a3; }
+.btn-gray { background: #95a5a6; color: white; }
+.summary-box { background: #eaf4fb; border-left: 4px solid #2980b9; padding: 10px 14px; margin-bottom: 12px; border-radius: 0 4px 4px 0; font-size: 14px; }
+.label-preview {
+  border: 2px solid #aaa;
+  padding: 20px 24px;
+  font-family: 'Times New Roman', 'DFKai-SB', serif;
+  font-size: 22px;
+  line-height: 2;
+  display: inline-block;
+  background: white;
+  min-width: 300px;
+}
+.field-val { color: #c0392b; font-weight: bold; }
+.num-field { color: #7d4e00; font-weight: bold; background: #fef9c3; padding: 0 4px; border-radius: 2px; }
+.note { font-size: 12px; color: #888; margin-top: 6px; }
+.result-row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-top: 12px; }
+</style>
+</head>
+<body>
+
+<h1>🏷️ 嘜頭資料產生器 <small style="font-size:13px;color:#aaa;font-weight:normal">v1</small></h1>
+
+<div class="card">
+  <h2>📋 訂單資訊</h2>
+  <div class="grid">
+    <div class="field">
+      <label>PO NO</label>
+      <input type="text" id="poNo" placeholder="例：M2602020" oninput="updatePreview()">
+    </div>
+    <div class="field">
+      <label>SAP PO</label>
+      <input type="text" id="sapPo" placeholder="例：4590008090" oninput="updatePreview()">
+    </div>
+    <div class="field">
+      <label>KY 批號</label>
+      <input type="text" id="kyNo" placeholder="例：KY3394/2026" oninput="updatePreview()">
+    </div>
+    <div class="field">
+      <label>PA NO</label>
+      <input type="text" id="paNo" placeholder="例：PR0080" oninput="updatePreview()">
+    </div>
+    <div class="field">
+      <label>粒數（序號從 1 到 N）</label>
+      <input type="number" id="qty" placeholder="例：2000" min="1" max="9999" oninput="updatePreview()">
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <h2>👁️ 嘜頭預覽</h2>
+  <div class="label-preview">
+    TECKWAH PHARMAPACK<br>
+    PO NO:<span class="field-val" id="prev-po">———</span><br>
+    SAP PO : <span class="field-val" id="prev-sap">———</span><br>
+    <span class="field-val" id="prev-ky">———</span><br>
+    PA NO:<span class="field-val" id="prev-pa">———</span><br>
+    MADE IN TAIWAN<br>
+    NO .<span class="num-field">1 ~ <span id="prev-qty">N</span></span>
+  </div>
+  <p class="note">實際列印為 A4 橫向，字體 36pt，一頁一張</p>
+</div>
+
+<div class="card">
+  <h2>🖨️ 列印</h2>
+  <div class="summary-box" id="summaryBox">請填入上方訂單資訊</div>
+  <div class="result-row">
+    <button class="btn btn-primary" onclick="printLabels()">🖨️ 產生並列印</button>
+    <button class="btn btn-gray" onclick="clearAll()">清除</button>
+  </div>
+  <p class="note" style="margin-top:10px">點擊後會開啟列印預覽視窗，確認後直接印出</p>
+</div>
+
+<script>
+function val(id) { return document.getElementById(id).value.trim(); }
+
+function updatePreview() {
+  document.getElementById('prev-po').textContent  = val('poNo')  || '———';
+  document.getElementById('prev-sap').textContent = val('sapPo') || '———';
+  document.getElementById('prev-ky').textContent  = val('kyNo')  || '———';
+  document.getElementById('prev-pa').textContent  = val('paNo')  || '———';
+  const q = parseInt(document.getElementById('qty').value);
+  document.getElementById('prev-qty').textContent = (!isNaN(q) && q > 0) ? q : 'N';
+
+  const ready = val('poNo') && val('sapPo') && val('kyNo') && val('paNo') && !isNaN(q) && q > 0;
+  document.getElementById('summaryBox').innerHTML = ready
+    ? `✅ 準備列印　<b>${val('poNo')}</b>　共 <b>${q.toLocaleString()}</b> 張（序號 1 ～ ${q.toLocaleString()}）`
+    : '請填入上方訂單資訊';
+}
+
+function printLabels() {
+  const poNo  = val('poNo');
+  const sapPo = val('sapPo');
+  const kyNo  = val('kyNo');
+  const paNo  = val('paNo');
+  const qty   = parseInt(document.getElementById('qty').value);
+
+  if (!poNo || !sapPo || !kyNo || !paNo) { alert('請填寫所有欄位'); return; }
+  if (isNaN(qty) || qty < 1)             { alert('請輸入正確粒數'); return; }
+  if (qty > 9999)                        { alert('粒數上限 9,999'); return; }
+
+  // 產生每張嘜頭的 HTML
+  let labels = '';
+  for (let i = 1; i <= qty; i++) {
+    const pageBreak = i < qty ? 'page-break-after:always;' : '';
+    labels += `
+      <div class="page" style="${pageBreak}">
+        <div class="content">
+          TECKWAH PHARMAPACK<br>
+          PO NO:${poNo}<br>
+          SAP PO : ${sapPo}<br>
+          ${kyNo}<br>
+          PA NO:${paNo}<br>
+          MADE IN TAIWAN<br>
+          NO .${i}
+        </div>
+      </div>`;
+  }
+
+  const win = window.open('', '_blank');
+  win.document.write(`<!DOCTYPE html>
+<html><head>
+<meta charset="UTF-8">
+<title>嘜頭 ${poNo} 共${qty}張</title>
+<style>
+  @page { size: A4 landscape; margin: 0; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: white; }
+  .page {
+    width: 297mm;
+    height: 210mm;
+    display: flex;
+    align-items: flex-start;
+    padding: 75mm 15mm 10mm 65mm;
+  }
+  .content {
+    font-family: 'Times New Roman', serif;
+    font-size: 28pt;
+    line-height: 1.75;
+  }
+</style>
+</head><body>${labels}</body></html>`);
+  win.document.close();
+  win.focus();
+  setTimeout(() => win.print(), 500);
+}
+
+function clearAll() {
+  ['poNo','sapPo','kyNo','paNo','qty'].forEach(id => document.getElementById(id).value = '');
+  updatePreview();
+}
+
+updatePreview();
+</script>
+</body>
+</html>
