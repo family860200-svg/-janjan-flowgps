@@ -11,3 +11,9 @@ scripts/scripts/config.json
 node_modules/
 __pycache__/
 *.pyc
+
+# 子 repo（獨立管理，不在此追蹤）
+L｜資源放大槓桿/公司配抄專用/
+
+# Windows 捷徑
+*.lnk
