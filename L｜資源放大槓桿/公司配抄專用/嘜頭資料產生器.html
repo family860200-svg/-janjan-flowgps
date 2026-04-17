@@ -143,12 +143,38 @@ select.big:focus { outline: none; }
     <button class="btn btn-gray" style="font-size:12px;padding:5px 14px" onclick="resetPreview()">↺ 重新套入欄位值</button>
     <span class="note" style="margin:0"><b>{序號}</b> = 流水號位置，列印時自動替換</span>
   </div>
-  <p class="note">實際列印：A4 橫向，字體 28pt，一頁一張</p>
+  <p class="note">實際列印：A4 橫向，一頁一張</p>
 </div>
 
-<!-- STEP 5: Print -->
+<!-- STEP 5: Layout -->
+<div class="card" id="layoutCard" style="display:none">
+  <h2>⑤ 版面微調 <span style="font-size:11px;color:#888;font-weight:normal">（設定後自動記住）</span></h2>
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px">
+    <div class="field">
+      <label>上方距離（mm）</label>
+      <input type="number" id="layoutTop" value="60" min="0" max="150" oninput="saveLayout()">
+    </div>
+    <div class="field">
+      <label>左方距離（mm）</label>
+      <input type="number" id="layoutLeft" value="60" min="0" max="200" oninput="saveLayout()">
+    </div>
+    <div class="field">
+      <label>字體大小（pt）</label>
+      <input type="number" id="layoutFont" value="32" min="8" max="72" oninput="saveLayout()">
+    </div>
+    <div class="field">
+      <label>行距</label>
+      <input type="number" id="layoutLine" value="1.8" min="1" max="3" step="0.05" oninput="saveLayout()">
+    </div>
+  </div>
+  <div style="margin-top:8px">
+    <button class="btn btn-gray" style="font-size:12px;padding:5px 14px" onclick="resetLayout()">↺ 回復預設值</button>
+  </div>
+</div>
+
+<!-- STEP 6: Print -->
 <div class="card" id="printCard" style="display:none">
-  <h2>⑤ 列印</h2>
+  <h2>⑥ 列印</h2>
   <div class="summary-box" id="summaryBox">請完成上方設定</div>
   <div class="result-row">
     <button class="btn btn-primary" onclick="printLabels()">🖨️ 產生並列印</button>
@@ -654,10 +680,11 @@ function selectTemplate() {
   const fc = document.getElementById('fieldsCard');
   const sc = document.getElementById('seqCard');
   const pc = document.getElementById('previewCard');
+  const lc = document.getElementById('layoutCard');
   const prc = document.getElementById('printCard');
 
   if (!currentTpl) {
-    fc.style.display = sc.style.display = pc.style.display = prc.style.display = 'none';
+    fc.style.display = sc.style.display = pc.style.display = lc.style.display = prc.style.display = 'none';
     return;
   }
 
@@ -683,8 +710,9 @@ function selectTemplate() {
     fc.style.display = 'block';
   }
 
-  sc.style.display = pc.style.display = prc.style.display = 'block';
-  setSeqMode(1, true); // reset mode without re-rendering seq buttons
+  sc.style.display = pc.style.display = lc.style.display = prc.style.display = 'block';
+  loadLayout();
+  setSeqMode(1, true);
   updatePreview();
 }
 
@@ -794,6 +822,11 @@ function printLabels() {
     pages += `<div class="page" style="${pb}"><div class="content">${lines.join('<br>')}</div></div>`;
   }
 
+  const top  = parseFloat(document.getElementById('layoutTop')?.value)  || 60;
+  const left = parseFloat(document.getElementById('layoutLeft')?.value) || 60;
+  const font = parseFloat(document.getElementById('layoutFont')?.value) || 32;
+  const line = parseFloat(document.getElementById('layoutLine')?.value) || 1.8;
+
   const win = window.open('', '_blank');
   const tplName = document.getElementById('templateSelect').options[document.getElementById('templateSelect').selectedIndex].text;
   win.document.write(`<!DOCTYPE html>
@@ -808,18 +841,52 @@ body { background: white; }
   width: 297mm; height: 210mm;
   display: flex;
   align-items: flex-start;
-  padding: 75mm 15mm 10mm 65mm;
+  padding: ${top}mm 10mm 10mm ${left}mm;
 }
 .content {
   font-family: 'Times New Roman', serif;
-  font-size: 28pt;
-  line-height: 1.75;
+  font-size: ${font}pt;
+  line-height: ${line};
 }
 </style>
 </head><body>${pages}</body></html>`);
   win.document.close();
   win.focus();
   setTimeout(() => win.print(), 500);
+}
+
+const LAYOUT_DEFAULTS = { top: 60, left: 60, font: 32, line: 1.8 };
+
+function saveLayout() {
+  const s = {
+    top:  document.getElementById('layoutTop')?.value,
+    left: document.getElementById('layoutLeft')?.value,
+    font: document.getElementById('layoutFont')?.value,
+    line: document.getElementById('layoutLine')?.value,
+  };
+  try { localStorage.setItem('mkLabel_layout', JSON.stringify(s)); } catch(e){}
+}
+
+function loadLayout() {
+  let s = LAYOUT_DEFAULTS;
+  try {
+    const saved = localStorage.getItem('mkLabel_layout');
+    if (saved) s = { ...LAYOUT_DEFAULTS, ...JSON.parse(saved) };
+  } catch(e){}
+  const set = (id, val) => { const el = document.getElementById(id); if(el) el.value = val; };
+  set('layoutTop',  s.top);
+  set('layoutLeft', s.left);
+  set('layoutFont', s.font);
+  set('layoutLine', s.line);
+}
+
+function resetLayout() {
+  const set = (id, val) => { const el = document.getElementById(id); if(el) el.value = val; };
+  set('layoutTop',  LAYOUT_DEFAULTS.top);
+  set('layoutLeft', LAYOUT_DEFAULTS.left);
+  set('layoutFont', LAYOUT_DEFAULTS.font);
+  set('layoutLine', LAYOUT_DEFAULTS.line);
+  try { localStorage.removeItem('mkLabel_layout'); } catch(e){}
 }
 
 function clearAll() {
