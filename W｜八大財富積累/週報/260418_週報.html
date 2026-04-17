@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FlowGPS 週報｜2026 年 4 月第三週</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;700;900&family=Noto+Sans+TC:wght@400;500;700&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --ink: #1a1a1a;
+    --red: #c0392b;
+    --gold: #b8860b;
+    --cream: #f9f5ef;
+    --gray: #6b6b6b;
+    --light: #e8e2d8;
+  }
+
+  body {
+    background: var(--cream);
+    color: var(--ink);
+    font-family: 'Noto Serif TC', serif;
+    font-size: 14px;
+    line-height: 1.6;
+  }
+
+  /* ─── MASTHEAD ─── */
+  .masthead {
+    text-align: center;
+    padding: 24px 40px 16px;
+    border-bottom: 3px double var(--ink);
+  }
+  .masthead-date {
+    font-family: 'Noto Sans TC', sans-serif;
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--gray);
+    margin-bottom: 6px;
+  }
+  .masthead h1 {
+    font-size: 42px;
+    font-weight: 900;
+    letter-spacing: -1px;
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+  .masthead-sub {
+    font-size: 13px;
+    color: var(--gray);
+    font-style: italic;
+  }
+  .masthead-rule {
+    border: none;
+    border-top: 1px solid var(--ink);
+    margin: 10px 0 6px;
+  }
+  .masthead-tagline {
+    font-size: 11px;
+    letter-spacing: 4px;
+    color: var(--gray);
+    font-family: 'Noto Sans TC', sans-serif;
+  }
+
+  /* ─── BREAKING BAR ─── */
+  .breaking-bar {
+    background: var(--ink);
+    color: white;
+    padding: 6px 40px;
+    font-family: 'Noto Sans TC', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    display: flex;
+    gap: 20px;
+    align-items: center;
+  }
+  .breaking-bar span.label {
+    background: var(--red);
+    padding: 2px 8px;
+    font-size: 11px;
+  }
+
+  /* ─── LAYOUT ─── */
+  .newspaper {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 20px 40px 40px;
+  }
+
+  .columns-3 {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 24px;
+    border-top: 2px solid var(--ink);
+    padding-top: 20px;
+  }
+  .columns-2 {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 24px;
+  }
+  .full-width {
+    border-top: 2px solid var(--ink);
+    padding-top: 16px;
+    margin-top: 20px;
+  }
+  .col { border-right: 1px solid var(--light); padding-right: 20px; }
+  .col:last-child { border-right: none; padding-right: 0; }
+
+  /* ─── SECTION LABELS ─── */
+  .section-label {
+    font-family: 'Noto Sans TC', sans-serif;
+    font-size: 10px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--gray);
+    border-bottom: 1px solid var(--light);
+    padding-bottom: 4px;
+    margin-bottom: 10px;
+  }
+
+  /* ─── HEADLINES ─── */
+  h2.headline {
+    font-size: 20px;
+    font-weight: 900;
+    line-height: 1.2;
+    margin-bottom: 8px;
+  }
+  h2.headline.big {
+    font-size: 28px;
+  }
+  h3.sub-headline {
+    font-size: 15px;
+    font-weight: 700;
+    margin-bottom: 6px;
+    line-height: 1.3;
+  }
+  .deck {
+    font-style: italic;
+    color: var(--gray);
+    font-size: 13px;
+    margin-bottom: 10px;
+    border-left: 3px solid var(--red);
+    padding-left: 8px;
+  }
+  p { margin-bottom: 8px; font-size: 13.5px; }
+
+  /* ─── PULLQUOTE ─── */
+  .pullquote {
+    font-size: 17px;
+    font-weight: 700;
+    font-style: italic;
+    color: var(--ink);
+    border-top: 2px solid var(--ink);
+    border-bottom: 2px solid var(--ink);
+    padding: 12px 0;
+    margin: 16px 0;
+    text-align: center;
+    line-height: 1.4;
+  }
+
+  /* ─── STATS BOX ─── */
+  .stats-box {
+    background: var(--ink);
+    color: white;
+    padding: 14px;
+    margin: 12px 0;
+  }
+  .stats-box .label {
+    font-family: 'Noto Sans TC', sans-serif;
+    font-size: 10px;
+    letter-spacing: 2px;
+    opacity: 0.7;
+    margin-bottom: 4px;
+  }
+  .stats-box .number {
+    font-size: 36px;
+    font-weight: 900;
+    line-height: 1;
+  }
+  .stats-box .unit {
+    font-size: 13px;
+    opacity: 0.8;
+  }
+
+  /* ─── PILL TAGS ─── */
+  .tags { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0; }
+  .tag {
+    font-family: 'Noto Sans TC', sans-serif;
+    font-size: 11px;
+    padding: 2px 8px;
+    border: 1px solid var(--ink);
+    border-radius: 2px;
+  }
+  .tag.gold { border-color: var(--gold); color: var(--gold); }
+  .tag.red { border-color: var(--red); color: var(--red); }
+
+  /* ─── WEALTH TABLE ─── */
+  .wealth-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12.5px;
+    margin-top: 8px;
+  }
+  .wealth-table th {
+    background: var(--ink);
+    color: white;
+    padding: 6px 8px;
+    text-align: left;
+    font-family: 'Noto Sans TC', sans-serif;
+    font-weight: 500;
+    font-size: 11px;
+  }
+  .wealth-table td {
+    padding: 6px 8px;
+    border-bottom: 1px solid var(--light);
+    vertical-align: top;
+  }
+  .wealth-table tr:nth-child(even) td { background: rgba(0,0,0,0.03); }
+  .stars { color: var(--gold); letter-spacing: -2px; }
+
+  /* ─── DIVIDER ─── */
+  .divider {
+    text-align: center;
+    margin: 16px 0;
+    color: var(--gray);
+    font-size: 18px;
+    letter-spacing: 8px;
+  }
+
+  /* ─── FOOTER ─── */
+  .footer {
+    border-top: 3px double var(--ink);
+    padding-top: 12px;
+    margin-top: 24px;
+    text-align: center;
+    font-family: 'Noto Sans TC', sans-serif;
+    font-size: 11px;
+    color: var(--gray);
+    letter-spacing: 1px;
+  }
+
+  /* ─── CHECKLIST ─── */
+  .checklist { list-style: none; margin: 8px 0; }
+  .checklist li { padding: 3px 0; font-size: 13px; padding-left: 18px; position: relative; }
+  .checklist li::before { content: '✓'; position: absolute; left: 0; color: var(--gold); font-weight: 700; }
+  .checklist li.pending::before { content: '○'; color: var(--gray); }
+
+  .badge {
+    display: inline-block;
+    background: var(--red);
+    color: white;
+    font-family: 'Noto Sans TC', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 2px 7px;
+    margin-right: 4px;
+    border-radius: 2px;
+  }
+  .badge.green { background: #27ae60; }
+  .badge.gold { background: var(--gold); }
+  .badge.blue { background: #2980b9; }
+
+  @media print {
+    body { font-size: 12px; }
+    .masthead h1 { font-size: 36px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- MASTHEAD -->
+<div class="masthead">
+  <div class="masthead-date">2026 年 4 月 13 日 ─ 4 月 18 日　Vol. 3　No. 4</div>
+  <h1>FlowGPS 週報</h1>
+  <div class="masthead-sub">JANJAN 的個人管理系統週刊　by 阿助</div>
+  <hr class="masthead-rule">
+  <div class="masthead-tagline">工具大豐收週 · 拆線完成 · 女兒備忘錄工作坊</div>
+</div>
+
+<!-- BREAKING BAR -->
+<div class="breaking-bar">
+  <span class="label">本週焦點</span>
+  <span>🔧 8 項工具全面升級 v2 ── 配抄 ✦ 貨櫃裝載 ✦ 嘜頭產生器 34 客戶模板</span>
+  <span>🪡 拆線順利完成（4/15）</span>
+  <span>🦷 牙醫 4/19 15:00</span>
+</div>
+
+<div class="newspaper">
+
+  <!-- ROW 1: 3 COLUMNS -->
+  <div class="columns-3" style="margin-top: 20px;">
+
+    <!-- COL 1: LEAD STORY -->
+    <div class="col" style="grid-column: span 2;">
+      <div class="section-label">頭版要聞</div>
+      <h2 class="headline big">嘜頭產生器 v2 誕生<br>34 個客戶模板一鍵切換</h2>
+      <div class="deck">取代 Word 合併列印，6 個國家地區悉數整合，令序模式解決分批印製難題。</div>
+
+      <div class="columns-2">
+        <div>
+          <p>這週最大的里程碑，是嘜頭資料產生器從 v1 的單一 TECKWAH 格式，一躍升級為支援<strong>馬來西亞、泰國、越南、菲律賓、印尼、巴基斯坦、中東、歐洲及台灣</strong>共 34 個客戶模板的完整系統。</p>
+          <p>阿工解壓縮所有原始 Word 模板（.docx = .zip），直接讀取 XML 內容後精確還原版面——這意味著往後新增模板不再需要逐字排版，效率大幅提升。</p>
+          <p>新增三種序號模式：<strong>從 1 開始、令序（每令 2000 張自動算範圍）、自訂起止號碼</strong>，徹底解決了分批印製無法對齊編號的舊問題。</p>
+
+          <div class="tags">
+            <span class="tag gold">34 個模板</span>
+            <span class="tag gold">6 個國家地區</span>
+            <span class="tag">令序模式</span>
+            <span class="tag">即時預覽</span>
+          </div>
+        </div>
+        <div>
+          <div class="stats-box">
+            <div class="label">本週新建 / 升級工具</div>
+            <div class="number">8</div>
+            <div class="unit">個工具全面更新</div>
+          </div>
+          <div class="stats-box" style="background: var(--gold); margin-top: 8px;">
+            <div class="label">21 天習慣計畫進度</div>
+            <div class="number">15<span style="font-size:18px">/21</span></div>
+            <div class="unit">天　本週主題：知識卡片</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- COL 3: HEALTH / LIFE -->
+    <div class="col">
+      <div class="section-label">生活快訊</div>
+      <h3 class="sub-headline">🪡 拆線順利完成</h3>
+      <p>4/15 回診，醫生確認傷口癒合良好，提早拆線。今天起告別換藥行程，身體正式進入修復後期。</p>
+
+      <div class="pullquote">「回家後<br>不痛了」</div>
+
+      <h3 class="sub-headline">🦷 牙醫預約確認</h3>
+      <p>4/19（六）下午 15:00，看完牙醫這週的健康帳戶就能全部劃勾。</p>
+
+      <div class="divider">— ✦ —</div>
+
+      <h3 class="sub-headline">👧 女兒備忘錄工作坊</h3>
+      <p>4/18 今日，女兒參加「十年備忘錄／社會影響力工作坊」，家庭財富帳戶持續加分。</p>
+
+      <div class="section-label" style="margin-top: 16px;">代辦提醒</div>
+      <ul class="checklist">
+        <li class="pending">母親節餐廳訂位（4/25 前）</li>
+        <li class="pending">診斷證明寄給素華姐（等地址）</li>
+        <li class="pending">童綜合回診（4 月底前）</li>
+      </ul>
+    </div>
+
+  </div>
+
+  <!-- DIVIDER -->
+  <div class="divider" style="margin: 20px 0 0;">—————————————————————————</div>
+
+  <!-- ROW 2: 3 COLUMNS -->
+  <div class="columns-3" style="border-top: 1px solid var(--light); padding-top: 16px;">
+
+    <!-- COL 1: 配抄工具 -->
+    <div class="col">
+      <div class="section-label">工具深度報導</div>
+      <h3 class="sub-headline">配抄工具全面升至 v2<br>主備分級 ＋ P2 橘色警示</h3>
+      <p>PM1 ＋ PM2 共 8 個工具完成黃金規格主備分級升級。演算法先試主要庫存（P），找不到才啟用備用庫存（P2），並以橘色高亮提示。</p>
+      <p>同步完成版本號管理，全系列標記 v2，貨櫃裝載工具標記 v1，版本軌跡從此清晰。</p>
+      <div class="tags">
+        <span class="tag">PM1 ×4 版本</span>
+        <span class="tag">PM2 ×4 版本</span>
+        <span class="tag red">P2 備用警示</span>
+      </div>
+    </div>
+
+    <!-- COL 2: 貨櫃 + 紙張 -->
+    <div class="col">
+      <div class="section-label">工具深度報導</div>
+      <h3 class="sub-headline">貨櫃裝載 ＋ 紙張訂單<br>兩大計算工具出爐</h3>
+      <p><strong>貨櫃裝載模擬工具 v1</strong>：SVG 俯視圖、多品項彩色顯示、上下疊選項、超出警示。英吋 / CM / 台尺三單位切換。</p>
+      <p><strong>紙張訂單計算工具</strong>：Excel 貼入匯入、按重量自動分配貨櫃（22,400–22,900 kg）、俯視 SVG、MM / CM / 台尺 / 英吋四版本。</p>
+      <p>兩套工具尚待到公司用真實資料 TEST 後交給阿娟二號。</p>
+    </div>
+
+    <!-- COL 3: 阿娟二號 + Skill -->
+    <div class="col">
+      <div class="section-label">系統 ＆ 人員更新</div>
+      <h3 class="sub-headline">阿娟二號訓練 ＋<br>save-progress Skill 升級</h3>
+      <p>本週完成阿娟二號 FAX 客戶文件存檔 SOP，外銷 PI 整理完畢，5 月初物料可下單。新客訴 5 件送出、4 件入 ERP。</p>
+      <p>save-progress Skill 升級：push 後強制顯示 commit hash ＋ 時間，避免再次發生「以為存了但沒推上 GitHub」的問題。</p>
+      <div class="tags">
+        <span class="tag">FAX SOP ✓</span>
+        <span class="tag">外銷 PI ✓</span>
+        <span class="tag gold">Skill 升級</span>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ROW 3: WEALTH TABLE + NEXT WEEK -->
+  <div class="full-width">
+    <div class="columns-2">
+
+      <!-- WEALTH ACCOUNTS -->
+      <div>
+        <div class="section-label">本週八大財富帳戶結算</div>
+        <table class="wealth-table">
+          <thead>
+            <tr>
+              <th>帳戶</th>
+              <th>本週亮點</th>
+              <th>評分</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>⚒️ 技能</td>
+              <td>8 個工具全面升級，嘜頭 v2 覆蓋 34 模板</td>
+              <td><span class="stars">★★★</span></td>
+            </tr>
+            <tr>
+              <td>💰 金錢</td>
+              <td>工具簡化業務流程，間接降低出錯成本；外銷 PI 備妥</td>
+              <td><span class="stars">★★</span></td>
+            </tr>
+            <tr>
+              <td>🌱 成長</td>
+              <td>Cassie 課程、老陳課程筆記、知識卡片 Day15</td>
+              <td><span class="stars">★★</span></td>
+            </tr>
+            <tr>
+              <td>💪 健康</td>
+              <td>拆線完成、牙醫預約、每日服藥持續</td>
+              <td><span class="stars">★★</span></td>
+            </tr>
+            <tr>
+              <td>🫶 服務</td>
+              <td>客訴 9 件處理完成，阿娟二號工具更完整</td>
+              <td><span class="stars">★★</span></td>
+            </tr>
+            <tr>
+              <td>🏠 家庭</td>
+              <td>女兒備忘錄工作坊、母親節餐會確認</td>
+              <td><span class="stars">★</span></td>
+            </tr>
+            <tr>
+              <td>🤝 人脈</td>
+              <td>保險理賠進行中（素華姐）</td>
+              <td><span class="stars">★</span></td>
+            </tr>
+            <tr>
+              <td>✨ 體驗</td>
+              <td>—（主線任務集中，體驗帳戶暫緩）</td>
+              <td><span class="stars" style="color:#ccc">★</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- NEXT WEEK -->
+      <div>
+        <div class="section-label">下週作戰計畫</div>
+        <h3 class="sub-headline">🎯 四月最終衝刺週</h3>
+        <p>進入四月最後一週，幾個關鍵任務需要在月底前落地。</p>
+
+        <div style="margin: 12px 0;">
+          <div><span class="badge red">P0</span> 工具實際測試（公司）</div>
+          <p style="font-size: 12px; color: var(--gray); margin: 4px 0 8px 50px;">嘜頭 v2 印一張確認 TECKWAH G106 版面；紙張訂單計算工具實際訂單 TEST</p>
+
+          <div><span class="badge red">P0</span> 母親節訂位（4/25 前）</div>
+          <p style="font-size: 12px; color: var(--gray); margin: 4px 0 8px 50px;">5/6（三）與爸媽，早點訂早點放心</p>
+
+          <div><span class="badge gold">P1</span> 童綜合肝膽腸胃科回診</div>
+          <p style="font-size: 12px; color: var(--gray); margin: 4px 0 8px 50px;">4 月底前完成，胃潰瘍追蹤不能拖</p>
+
+          <div><span class="badge blue">P2</span> 配抄演算法升級（3/4 孔庫存）</div>
+          <p style="font-size: 12px; color: var(--gray); margin: 4px 0 8px 50px;">英吋版 P2 備用庫存邏輯已備妥，等公司環境實作</p>
+
+          <div><span class="badge blue">P2</span> B 款樣品書動手製作</div>
+          <p style="font-size: 12px; color: var(--gray); margin: 4px 0 8px 50px;">目標 3 本，先求有；五月市集資訊陸續到位</p>
+        </div>
+
+        <div class="pullquote" style="font-size: 14px;">
+          工具已就位<br>下一步：讓工具<br>在現實中被驗證
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="footer">
+    <p>FlowGPS Weekly Report　Vol. 3 No. 4　2026.04.18</p>
+    <p style="margin-top: 4px;">由阿助自動生成，每週六製作，建議週日發佈 🗞️</p>
+  </div>
+
+</div>
+</body>
+</html>
