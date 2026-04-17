@@ -22,19 +22,19 @@ select.big:focus { outline: none; }
 .seq-btn { padding: 6px 14px; border: 1.5px solid #bbb; border-radius: 20px; background: white; cursor: pointer; font-size: 13px; font-family: inherit; color: #555; transition: all .15s; }
 .seq-btn.active { border-color: #2980b9; background: #2980b9; color: white; font-weight: bold; }
 .seq-inline { display: flex; gap: 8px; margin-top: 8px; flex-wrap: wrap; }
-.preview-box {
-  border: 2px solid #aaa;
+.preview-textarea {
+  border: 2px solid #2980b9;
   padding: 16px 20px;
   font-family: 'Times New Roman', serif;
   font-size: 22px;
   line-height: 1.9;
-  background: white;
-  min-height: 60px;
-  white-space: pre-line;
+  background: #fffef8;
+  width: 100%;
+  resize: vertical;
+  min-height: 120px;
+  border-radius: 4px;
 }
-.preview-fixed { color: #222; }
-.preview-var { color: #c0392b; font-weight: bold; }
-.preview-num { color: #7d4e00; font-weight: bold; background: #fef9c3; padding: 0 3px; border-radius: 2px; }
+.preview-textarea:focus { outline: none; border-color: #1a6fa8; }
 .btn { padding: 10px 24px; border: none; border-radius: 6px; cursor: pointer; font-size: 14px; font-family: inherit; margin: 3px; font-weight: bold; }
 .btn-primary { background: #2980b9; color: white; font-size: 16px; padding: 12px 32px; }
 .btn-primary:hover { background: #2471a3; }
@@ -137,8 +137,12 @@ select.big:focus { outline: none; }
 
 <!-- STEP 4: Preview -->
 <div class="card" id="previewCard" style="display:none">
-  <h2>④ 嘜頭預覽</h2>
-  <div class="preview-box" id="labelPreview"></div>
+  <h2>④ 嘜頭預覽 <span style="font-size:11px;color:#888;font-weight:normal">（可直接編輯微調，每行一列）</span></h2>
+  <textarea class="preview-textarea" id="labelPreview" oninput="updateSummary()"></textarea>
+  <div style="margin-top:8px;display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+    <button class="btn btn-gray" style="font-size:12px;padding:5px 14px" onclick="resetPreview()">↺ 重新套入欄位值</button>
+    <span class="note" style="margin:0"><b>{序號}</b> = 流水號位置，列印時自動替換</span>
+  </div>
   <p class="note">實際列印：A4 橫向，字體 28pt，一頁一張</p>
 </div>
 
@@ -233,8 +237,7 @@ const TEMPLATES = {
     ],
     render(d,n){ return [
       'PERCETAKAN MUN SUN SDN BHD',
-      'DL MUNSUN',
-      v(d,'kyDate'),
+      'DL MUNSUN '+v(d,'kyDate'),
       'PORT KLANG',
       'MALAYSIA',
       'NO .'+n,
@@ -696,13 +699,13 @@ function setSeqMode(mode, silent) {
     inp.innerHTML = `
       <div class="field">
         <label>總數量（張）</label>
-        <input type="number" id="seqTotal" placeholder="例：2000" min="1" max="99999" oninput="updatePreview()">
+        <input type="number" id="seqTotal" placeholder="例：2000" min="1" max="99999" oninput="updateSummary()">
       </div>`;
   } else if (mode === 2) {
     inp.innerHTML = `
       <div class="field">
         <label>令序</label>
-        <select id="seqRealm" onchange="updatePreview()" style="padding:8px 10px;border:1.5px solid #ccc;border-radius:6px;font-size:15px;font-family:inherit">
+        <select id="seqRealm" onchange="updateSummary()" style="padding:8px 10px;border:1.5px solid #ccc;border-radius:6px;font-size:15px;font-family:inherit">
           <option value="1">第一令（1 ～ 2,000）</option>
           <option value="2">第二令（2,001 ～ 4,000）</option>
           <option value="3">第三令（4,001 ～ 6,000）</option>
@@ -714,14 +717,14 @@ function setSeqMode(mode, silent) {
     inp.innerHTML = `
       <div class="field">
         <label>起始號碼</label>
-        <input type="number" id="seqStart" placeholder="例：4001" min="1" oninput="updatePreview()">
+        <input type="number" id="seqStart" placeholder="例：4001" min="1" oninput="updateSummary()">
       </div>
       <div class="field">
         <label>結束號碼</label>
-        <input type="number" id="seqEnd" placeholder="例：6000" min="1" oninput="updatePreview()">
+        <input type="number" id="seqEnd" placeholder="例：6000" min="1" oninput="updateSummary()">
       </div>`;
   }
-  if (!silent) updatePreview();
+  if (!silent) updateSummary();
 }
 
 function getSeqRange() {
@@ -748,29 +751,37 @@ function getFieldData() {
   return d;
 }
 
+// updatePreview：重新從模板 + 欄位值產生內容，寫入 textarea（會覆蓋手動編輯）
 function updatePreview() {
   if (!currentTpl) return;
   const d = getFieldData();
-  const range = getSeqRange();
-  const n = range ? `<span class="preview-num">${range.start} ～ ${range.end}</span>` : '<span class="preview-num">?</span>';
-  const lines = currentTpl.render(d, n);
-  document.getElementById('labelPreview').innerHTML = lines.join('\n');
+  const lines = currentTpl.render(d, '{序號}');
+  document.getElementById('labelPreview').value = lines.join('\n');
+  updateSummary();
+}
 
-  // Summary
-  const total = range ? (range.end - range.start + 1) : 0;
+// updateSummary：只更新下方狀態列，不動 textarea
+function updateSummary() {
+  const range = getSeqRange();
   const box = document.getElementById('summaryBox');
-  if (range && total > 0) {
-    box.innerHTML = `✅ 準備列印　共 <b>${total.toLocaleString()}</b> 張（NO. ${range.start.toLocaleString()} ～ ${range.end.toLocaleString()}）`;
-  } else {
-    box.innerHTML = '請完成上方序號設定';
-  }
+  const content = (document.getElementById('labelPreview')?.value || '').trim();
+  if (!content) { box.innerHTML = '請先填寫訂單資訊'; return; }
+  if (!range) { box.innerHTML = '請完成序號設定'; return; }
+  const total = range.end - range.start + 1;
+  box.innerHTML = `✅ 準備列印　共 <b>${total.toLocaleString()}</b> 張（NO. ${range.start.toLocaleString()} ～ ${range.end.toLocaleString()}）`;
+}
+
+// resetPreview：重新套入欄位值，覆蓋手動編輯
+function resetPreview() {
+  updatePreview();
 }
 
 function printLabels() {
-  if (!currentTpl) return;
-  const d = getFieldData();
-  const range = getSeqRange();
+  const content = (document.getElementById('labelPreview')?.value || '').trim();
+  if (!content) { alert('預覽內容為空，請先選擇模板並填寫資訊'); return; }
+  if (!content.includes('{序號}')) { alert('預覽內容中找不到 {序號}，請確認序號位置正確'); return; }
 
+  const range = getSeqRange();
   if (!range) { alert('請完成序號設定'); return; }
   const total = range.end - range.start + 1;
   if (total > 99999) { alert('數量過大（上限 99,999）'); return; }
@@ -778,7 +789,8 @@ function printLabels() {
   let pages = '';
   for (let i = range.start; i <= range.end; i++) {
     const pb = i < range.end ? 'page-break-after:always;' : '';
-    const lines = currentTpl.render(d, i);
+    const labelContent = content.replace(/\{序號\}/g, i);
+    const lines = labelContent.split('\n').map(l => l.trim()).filter(l => l);
     pages += `<div class="page" style="${pb}"><div class="content">${lines.join('<br>')}</div></div>`;
   }
 
@@ -817,13 +829,13 @@ function clearAll() {
       if (el) el.value = '';
     });
   }
-  const total = document.getElementById('seqTotal');
-  if (total) total.value = '';
-  const start = document.getElementById('seqStart');
-  if (start) start.value = '';
-  const end = document.getElementById('seqEnd');
-  if (end) end.value = '';
-  updatePreview();
+  ['seqTotal','seqStart','seqEnd'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = '';
+  });
+  const ta = document.getElementById('labelPreview');
+  if (ta) ta.value = '';
+  updateSummary();
 }
 </script>
 </body>
