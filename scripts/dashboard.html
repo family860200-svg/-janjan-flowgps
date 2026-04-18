@@ -782,6 +782,11 @@ function render(data) {
             <textarea class="flow-input" id="flow-boss" placeholder="今天最重要的一件事是什麼？" rows="2"></textarea>
           </div>
 
+          <div class="flow-section">
+            <div class="flow-label">💡 今天閃過的念頭</div>
+            <textarea class="flow-input" id="flow-idea" placeholder="靈感、直覺、突然想到的…關鍵字就好，不用完整句子" rows="2"></textarea>
+          </div>
+
           <div class="flow-grid">
             <div class="flow-section">
               <div class="flow-label">F｜行動聚焦</div>
@@ -937,6 +942,7 @@ function renderDrip() {
 async function saveFlowJournal() {
   const journal = {
     boss: document.getElementById('flow-boss').value,
+    idea: document.getElementById('flow-idea').value,
     f: document.getElementById('flow-f').value,
     l: document.getElementById('flow-l').value,
     o: document.getElementById('flow-o').value,
@@ -968,7 +974,7 @@ async function loadFlowJournal(dateKey) {
   }
 
   if (!data.journal) {
-    ['flow-boss','flow-f','flow-l','flow-o','flow-w','flow-review'].forEach(id => {
+    ['flow-boss','flow-idea','flow-f','flow-l','flow-o','flow-w','flow-review'].forEach(id => {
       const el = document.getElementById(id);
       if (el) el.value = '';
     });
@@ -978,6 +984,7 @@ async function loadFlowJournal(dateKey) {
   }
   const j = data.journal;
   document.getElementById('flow-boss').value = j.boss || '';
+  document.getElementById('flow-idea').value = j.idea || '';
   document.getElementById('flow-f').value = j.f || '';
   document.getElementById('flow-l').value = j.l || '';
   document.getElementById('flow-o').value = j.o || '';

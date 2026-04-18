@@ -244,7 +244,7 @@ server.listen(PORT, () => {
 schedule.scheduleJob('0 0 * * *', () => {
   const file = getFlowJournalFile();
   if (!fs.existsSync(file)) {
-    const blank = { boss: '', f: '', l: '', o: '', w: '', drip: [], review: '' };
+    const blank = { boss: '', idea: '', f: '', l: '', o: '', w: '', drip: [], review: '' };
     fs.writeFileSync(file, JSON.stringify(blank, null, 2));
     console.log(`✅ 新的一天，日誌已重置：${file}`);
   }
