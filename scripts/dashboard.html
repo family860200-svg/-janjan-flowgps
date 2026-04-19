@@ -783,6 +783,20 @@ function render(data) {
           </div>
 
           <div class="flow-section">
+            <div class="flow-label">💊 今日吃藥</div>
+            <div style="display:flex;gap:16px;align-items:center;flex-wrap:wrap;">
+              <label style="display:flex;align-items:center;gap:8px;font-weight:700;cursor:pointer;">
+                <input type="checkbox" id="med-morning" onchange="saveMed()" style="width:22px;height:22px;cursor:pointer;">
+                早餐後
+              </label>
+              <label style="display:flex;align-items:center;gap:8px;font-weight:700;cursor:pointer;">
+                <input type="checkbox" id="med-evening" onchange="saveMed()" style="width:22px;height:22px;cursor:pointer;">
+                晚餐後
+              </label>
+            </div>
+          </div>
+
+          <div class="flow-section">
             <div class="flow-label">💡 今天閃過的念頭</div>
             <textarea class="flow-input" id="flow-idea" placeholder="靈感、直覺、突然想到的…關鍵字就好，不用完整句子" rows="2"></textarea>
           </div>
@@ -949,6 +963,8 @@ async function saveFlowJournal() {
     w: document.getElementById('flow-w').value,
     drip: _dripItems,
     review: document.getElementById('flow-review').value,
+    med_morning: document.getElementById('med-morning').checked,
+    med_evening: document.getElementById('med-evening').checked,
   };
   await fetch('/api/flow-journal', {
     method: 'POST',
@@ -992,6 +1008,28 @@ async function loadFlowJournal(dateKey) {
   document.getElementById('flow-review').value = j.review || '';
   _dripItems = j.drip || [];
   renderDrip();
+  document.getElementById('med-morning').checked = j.med_morning || false;
+  document.getElementById('med-evening').checked = j.med_evening || false;
+}
+
+async function saveMed() {
+  const j = {
+    boss: document.getElementById('flow-boss').value,
+    idea: document.getElementById('flow-idea').value,
+    f: document.getElementById('flow-f').value,
+    l: document.getElementById('flow-l').value,
+    o: document.getElementById('flow-o').value,
+    w: document.getElementById('flow-w').value,
+    drip: _dripItems,
+    review: document.getElementById('flow-review').value,
+    med_morning: document.getElementById('med-morning').checked,
+    med_evening: document.getElementById('med-evening').checked,
+  };
+  await fetch('/api/flow-journal', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ journal: j })
+  });
 }
 
 function getTodayKey() {

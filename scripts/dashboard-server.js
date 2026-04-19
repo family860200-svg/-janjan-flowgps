@@ -36,8 +36,9 @@ function parseTodos(md) {
     } else if (current && (line.startsWith('- [ ]') || line.startsWith('  - [ ]'))) {
       const indent = line.startsWith('  ') ? 1 : 0;
       current.items.push({ done: false, text: line.replace(/\s*- \[ \]\s*/, '').trim(), indent });
-    } else if (current && (line.startsWith('- [x]') || line.startsWith('- ~~'))) {
-      current.items.push({ done: true, text: line.replace(/- \[x\]\s*|~~|~~/g, '').trim(), indent: 0 });
+    } else if (current && (line.startsWith('- [x]') || line.startsWith('  - [x]') || line.startsWith('- ~~') || line.startsWith('  - ~~'))) {
+      const indent = line.startsWith('  ') ? 1 : 0;
+      current.items.push({ done: true, text: line.replace(/\s*- \[x\]\s*|~~|~~/g, '').trim(), indent });
     }
   }
   if (current) sections.push(current);

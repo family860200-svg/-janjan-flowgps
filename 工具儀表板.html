@@ -6,11 +6,12 @@
   <title>業務工具箱</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 18px; }
     body {
       font-family: -apple-system, "PingFang TC", "Noto Sans TC", sans-serif;
       background: #f5f0eb;
       min-height: 100vh;
-      padding: 32px 24px 60px;
+      padding: 40px 32px 60px;
       color: #333;
     }
 
@@ -20,14 +21,14 @@
       margin-bottom: 40px;
     }
     header h1 {
-      font-size: 28px;
+      font-size: 2rem;
       font-weight: 700;
       letter-spacing: 2px;
       color: #2c2c2c;
     }
     header p {
       color: #888;
-      font-size: 14px;
+      font-size: 0.85rem;
       margin-top: 6px;
     }
 
@@ -45,74 +46,81 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      width: 40px;
-      height: 40px;
+      width: 2.4rem;
+      height: 2.4rem;
       border-radius: 12px;
-      font-size: 18px;
+      font-size: 1.1rem;
       font-weight: 900;
       color: #fff;
       flex-shrink: 0;
     }
     .section-title {
-      font-size: 18px;
+      font-size: 1.1rem;
       font-weight: 700;
       color: #2c2c2c;
     }
+    .en-title {
+      font-size: 0.72rem;
+      font-weight: 500;
+      color: #aaa;
+      letter-spacing: 0.5px;
+      margin-left: 4px;
+    }
     .section-desc {
-      font-size: 13px;
+      font-size: 0.78rem;
       color: #999;
     }
 
     /* ── 卡片格線 ── */
     .cards {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-      gap: 14px;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 16px;
     }
 
     /* ── 工具卡片 ── */
     .card {
       background: #fff;
       border-radius: 16px;
-      padding: 20px;
+      padding: 24px;
       box-shadow: 0 2px 8px rgba(0,0,0,0.06);
       transition: transform 0.15s, box-shadow 0.15s;
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      gap: 12px;
     }
     .card:hover {
       transform: translateY(-3px);
       box-shadow: 0 6px 20px rgba(0,0,0,0.10);
     }
     .card-icon {
-      width: 44px;
-      height: 44px;
-      border-radius: 12px;
+      width: 52px;
+      height: 52px;
+      border-radius: 14px;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 22px;
+      font-size: 26px;
     }
     .card-name {
-      font-size: 15px;
+      font-size: 1rem;
       font-weight: 700;
       color: #2c2c2c;
       line-height: 1.3;
     }
     .card-desc {
-      font-size: 12px;
+      font-size: 0.78rem;
       color: #aaa;
       flex: 1;
-      line-height: 1.5;
+      line-height: 1.6;
     }
 
     /* ── 單按鈕（直接開） ── */
     .btn-open {
       display: inline-block;
-      padding: 8px 16px;
+      padding: 10px 20px;
       border-radius: 8px;
-      font-size: 13px;
+      font-size: 0.85rem;
       font-weight: 600;
       text-decoration: none;
       text-align: center;
@@ -121,16 +129,22 @@
     }
     .btn-open:hover { opacity: 0.85; }
 
+    /* row-three 區的按鈕不要全寬 */
+    .row-three .btn-open {
+      align-self: flex-start;
+      padding: 8px 20px;
+    }
+
     /* ── 單位選擇按鈕群（算類用） ── */
     .unit-buttons {
       display: flex;
       flex-wrap: wrap;
-      gap: 6px;
+      gap: 8px;
     }
     .unit-btn {
-      padding: 6px 12px;
+      padding: 7px 14px;
       border-radius: 8px;
-      font-size: 12px;
+      font-size: 0.78rem;
       font-weight: 600;
       text-decoration: none;
       color: #fff;
@@ -177,6 +191,21 @@
       box-shadow: none;
     }
 
+    /* ── 訂・寫・收 橫向三欄 ── */
+    .row-three {
+      display: flex;
+      gap: 20px;
+      align-items: flex-start;
+    }
+    .row-three .section {
+      flex: 1;
+      min-width: 0;
+      margin-bottom: 0;
+    }
+    .row-three .cards {
+      grid-template-columns: 1fr;
+    }
+
     /* ── 分隔線 ── */
     hr.divider {
       border: none;
@@ -200,7 +229,7 @@
   <div class="section-header">
     <div class="section-badge c-orange">算</div>
     <div>
-      <div class="section-title">配抄計算</div>
+      <div class="section-title">規格試算 <span class="en-title">Spec Calculator</span></div>
       <div class="section-desc">PM1／PM2 配抄工具・訂單計算・束數查詢</div>
     </div>
   </div>
@@ -266,7 +295,7 @@
   <div class="section-header">
     <div class="section-badge c-blue">K</div>
     <div>
-      <div class="section-title">KEY 模擬</div>
+      <div class="section-title">裝載模擬 <span class="en-title">Load Simulator</span></div>
       <div class="section-desc">裝載模擬・數量試算</div>
     </div>
   </div>
@@ -293,82 +322,77 @@
 
 
 <!-- ══════════════════════════════
-     訂  訂單系統
+     訂・寫・收  橫向並排
 ══════════════════════════════ -->
-<div class="section">
-  <div class="section-header">
-    <div class="section-badge c-green">訂</div>
-    <div>
-      <div class="section-title">訂單系統</div>
-      <div class="section-desc">Google Sheet 狀態追蹤</div>
+<div class="row-three">
+
+  <!-- 訂 -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-badge c-green">訂</div>
+      <div>
+        <div class="section-title">訂單管理 <span class="en-title">Order Management</span></div>
+        <div class="section-desc">Google Sheet 狀態追蹤</div>
+      </div>
+    </div>
+    <div class="cards">
+
+      <div class="card">
+        <div class="card-icon c-green-light">📋</div>
+        <div class="card-name">v3.13 訂單自動產出模板</div>
+        <div class="card-desc">主訂單系統，點擊開啟 Google Sheet</div>
+        <a class="btn-open c-green" href="https://docs.google.com/spreadsheets/d/12kZuDuVruPlOH2FlYSA92hcEV-hmxZ6XpRCgGNDU9qs/edit?gid=1368881347#gid=1368881347" target="_blank" id="sheet-link">開啟 →</a>
+      </div>
+
     </div>
   </div>
-  <div class="cards">
 
-    <div class="card">
-      <div class="card-icon c-green-light">📋</div>
-      <div class="card-name">v3.13 訂單自動產出模板</div>
-      <div class="card-desc">主訂單系統，點擊開啟 Google Sheet</div>
-      <a class="btn-open c-green" href="https://docs.google.com/spreadsheets/d/12kZuDuVruPlOH2FlYSA92hcEV-hmxZ6XpRCgGNDU9qs/edit?gid=1368881347#gid=1368881347" target="_blank" id="sheet-link">開啟 →</a>
+  <!-- 寫 -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-badge c-purple">寫</div>
+      <div>
+        <div class="section-title">單據產出 <span class="en-title">Document Generator</span></div>
+        <div class="section-desc">嘜頭資料自動產生與排版</div>
+      </div>
     </div>
+    <div class="cards">
 
-  </div>
-</div>
+      <div class="card">
+        <div class="card-icon c-purple-light">🏷️</div>
+        <div class="card-name">嘜頭資料產生器</div>
+        <div class="card-desc">輸入資料自動排版嘜頭格式</div>
+        <a class="btn-open c-purple" href="嘜頭資料產生器.html" target="_blank">開啟 →</a>
+      </div>
 
-<hr class="divider">
-
-
-<!-- ══════════════════════════════
-     寫  嘜頭產生器
-══════════════════════════════ -->
-<div class="section">
-  <div class="section-header">
-    <div class="section-badge c-purple">寫</div>
-    <div>
-      <div class="section-title">嘜頭產生</div>
-      <div class="section-desc">嘜頭資料自動產生與排版</div>
     </div>
   </div>
-  <div class="cards">
 
-    <div class="card">
-      <div class="card-icon c-purple-light">🏷️</div>
-      <div class="card-name">嘜頭資料產生器</div>
-      <div class="card-desc">輸入資料自動排版嘜頭格式</div>
-      <a class="btn-open c-purple" href="嘜頭資料產生器.html" target="_blank">開啟 →</a>
+  <!-- 收 -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-badge c-pink">收</div>
+      <div>
+        <div class="section-title">售後服務 <span class="en-title">After-Sales Support</span></div>
+        <div class="section-desc">客訴處理・收款追蹤（持續擴充）</div>
+      </div>
     </div>
+    <div class="cards">
 
+      <div class="card">
+        <div class="card-icon c-pink-light">🤖</div>
+        <div class="card-name">客訴處理機器人</div>
+        <div class="card-desc">快速處理客訴、產出回覆草稿</div>
+        <a class="btn-open c-pink" href="客訴處理機器人.html" target="_blank">開啟 →</a>
+      </div>
+
+      <div class="card placeholder-card">
+        ＋ 待補充…
+      </div>
+
+    </div>
   </div>
-</div>
 
-<hr class="divider">
-
-
-<!-- ══════════════════════════════
-     收  收件 / 客訴
-══════════════════════════════ -->
-<div class="section">
-  <div class="section-header">
-    <div class="section-badge c-pink">收</div>
-    <div>
-      <div class="section-title">收 / 客訴</div>
-      <div class="section-desc">客訴處理・收款追蹤（持續擴充）</div>
-    </div>
-  </div>
-  <div class="cards">
-
-    <div class="card">
-      <div class="card-icon c-pink-light">🤖</div>
-      <div class="card-name">客訴處理機器人</div>
-      <div class="card-desc">快速處理客訴、產出回覆草稿</div>
-      <a class="btn-open c-pink" href="客訴處理機器人.html" target="_blank">開啟 →</a>
-    </div>
-
-    <div class="card placeholder-card">
-      ＋ 待補充…
-    </div>
-
-  </div>
 </div>
 
 
