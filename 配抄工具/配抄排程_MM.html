@@ -1,0 +1,882 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>捲筒配抄工具</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #f5f3ee;
+  --surface: #ffffff;
+  --surface2: #f0ede6;
+  --border: #dedad2;
+  --border2: #cac5bb;
+  --text: #1a1916;
+  --text2: #6b6660;
+  --text3: #9e9891;
+  --green: #1e6b3c;
+  --green-light: #27ae60;
+  --green-bg: #e8f5ee;
+  --amber: #915200;
+  --amber-bg: #fef3e2;
+  --red: #b02020;
+  --red-bg: #fdeaea;
+  --radius: 10px;
+  --radius-sm: 6px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Noto Sans TC', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  padding: 2rem 1rem;
+}
+.mono { font-family: 'IBM Plex Mono', monospace; }
+
+/* ── Header ── */
+header { max-width: 920px; margin: 0 auto 1.5rem; }
+.brand { font-size: 10px; color: var(--green); letter-spacing: 2px; text-transform: uppercase; font-family: 'IBM Plex Mono', monospace; margin-bottom: 4px; opacity: .75; }
+header h1 { font-size: 22px; font-weight: 700; letter-spacing: -.5px; margin-bottom: 14px; }
+
+/* ── PM Toggle ── */
+.pm-toggle { display: flex; width: fit-content; border: 1.5px solid var(--border2); border-radius: var(--radius-sm); overflow: hidden; }
+.pm-btn {
+  padding: 8px 32px; font-family: 'Noto Sans TC', sans-serif;
+  font-size: 14px; font-weight: 700; border: none;
+  background: var(--surface); color: var(--text2);
+  cursor: pointer; transition: all .15s; letter-spacing: 1px;
+}
+.pm-btn + .pm-btn { border-left: 1.5px solid var(--border2); }
+.pm-btn.active { background: var(--green); color: #fff; }
+.pm-btn:not(.active):hover { background: var(--surface2); }
+
+/* ── Card ── */
+.card {
+  max-width: 920px; margin: 0 auto 1rem;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); overflow: hidden;
+}
+.card-head {
+  padding: 11px 16px; background: var(--surface2);
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: wrap; gap: 8px;
+}
+.card-head h2 { font-size: 13px; font-weight: 700; color: var(--text); letter-spacing: .3px; }
+.card-body { padding: 16px; }
+
+/* ── Table ── */
+.table-scroll { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+thead tr { background: var(--surface2); }
+th {
+  padding: 8px 10px; font-size: 11px; font-weight: 500;
+  color: var(--text2); text-align: right; white-space: nowrap;
+  border-bottom: 1px solid var(--border); letter-spacing: .3px;
+}
+th:first-child { text-align: center; width: 36px; }
+td {
+  padding: 7px 10px; border-bottom: 1px solid var(--border);
+  text-align: right; vertical-align: middle;
+}
+td:first-child { text-align: center; }
+tbody tr:last-child td { border-bottom: none; }
+tbody tr:hover { background: var(--surface2); }
+tfoot td {
+  padding: 8px 10px; background: var(--surface2);
+  font-weight: 700; border-top: 1.5px solid var(--border2);
+  font-family: 'IBM Plex Mono', monospace;
+}
+
+td input[type=number] {
+  width: 80px; border: 1px solid var(--border);
+  border-radius: var(--radius-sm); padding: 5px 7px;
+  font-size: 13px; font-family: 'IBM Plex Mono', monospace;
+  background: var(--bg); color: var(--text);
+  text-align: right; transition: border-color .15s;
+}
+td input[type=number]:focus { outline: none; border-color: var(--green-light); background: var(--green-bg); }
+td input.adj {
+  width: 64px; font-weight: 700;
+  background: var(--surface); border: 1.5px solid var(--border2);
+}
+td input.adj:focus { border-color: var(--green-light); background: var(--green-bg); }
+.row-num {
+  font-size: 11px; color: var(--text3); font-family: 'IBM Plex Mono', monospace;
+  background: var(--surface2); border-radius: 4px; padding: 2px 6px;
+}
+.computed { font-family: 'IBM Plex Mono', monospace; color: var(--text2); }
+.del-btn {
+  background: none; border: 1px solid var(--border);
+  border-radius: var(--radius-sm); padding: 3px 8px;
+  cursor: pointer; color: var(--text3); font-size: 12px; transition: all .15s;
+}
+.del-btn:hover { background: var(--red-bg); color: var(--red); border-color: var(--red); }
+
+/* ── Quick Add ── */
+.quick-add {
+  margin-top: 1rem; padding: 12px 14px;
+  background: var(--green-bg); border: 1.5px dashed #6bbf8c;
+  border-radius: var(--radius);
+  display: flex; gap: 10px; align-items: flex-end; flex-wrap: wrap;
+}
+.quick-add label { display: flex; flex-direction: column; gap: 4px; font-size: 11px; color: var(--green); letter-spacing: .3px; }
+.quick-add input[type=number] {
+  width: 90px; border: 1px solid #6bbf8c;
+  border-radius: var(--radius-sm); padding: 7px 9px;
+  font-size: 14px; font-family: 'IBM Plex Mono', monospace;
+  background: var(--surface); color: var(--text);
+  text-align: right; transition: border-color .15s;
+}
+.quick-add input[type=number]:focus { outline: none; border-color: var(--green); background: var(--green-bg); }
+.qa-add {
+  font-family: 'Noto Sans TC', sans-serif; font-size: 13px;
+  padding: 8px 18px; border-radius: var(--radius-sm);
+  cursor: pointer; border: none; background: var(--green);
+  color: #fff; font-weight: 500; transition: background .15s; align-self: flex-end;
+}
+.qa-add:hover { background: #145c2c; }
+.qty-badge {
+  background: #fff3cd; border: 1.5px solid #f0a500;
+  border-radius: var(--radius-sm); padding: 5px 14px;
+  font-size: 13px; font-weight: bold; color: #7d4e00;
+  font-family: 'IBM Plex Mono', monospace; white-space: nowrap; margin-left: auto;
+}
+
+/* ── Import Box ── */
+.import-box { margin-top: 1rem; padding-top: 1rem; border-top: 1px dashed var(--border); }
+.import-box .hint { font-size: 11px; color: var(--text3); margin-bottom: 6px; }
+.import-box .row { display: flex; gap: 8px; align-items: flex-start; }
+.import-box textarea {
+  flex: 1; height: 76px; border: 1px solid var(--border);
+  border-radius: var(--radius-sm); padding: 7px 10px;
+  font-size: 13px; font-family: 'IBM Plex Mono', monospace;
+  background: var(--bg); color: var(--text);
+  resize: vertical; transition: border-color .15s;
+}
+.import-box textarea:focus { outline: none; border-color: var(--green-light); }
+.import-box textarea::placeholder { color: var(--text3); }
+
+/* ── Settings ── */
+.settings-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; }
+.setting-item label { display: block; font-size: 11px; color: var(--text3); margin-bottom: 4px; letter-spacing: .3px; }
+.setting-item input {
+  width: 100%; border: 1px solid var(--border);
+  border-radius: var(--radius-sm); padding: 7px 10px;
+  font-size: 14px; font-family: 'IBM Plex Mono', monospace;
+  background: var(--bg); color: var(--text);
+  text-align: right; transition: border-color .15s;
+}
+.setting-item input:focus { outline: none; border-color: var(--green-light); }
+.setting-item input[readonly] { background: var(--surface2); color: var(--text3); cursor: not-allowed; }
+.rolllen-wrap { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--text3); }
+.rolllen-wrap input {
+  width: 76px; border: 1px solid var(--border);
+  border-radius: var(--radius-sm); padding: 5px 8px;
+  font-size: 13px; font-family: 'IBM Plex Mono', monospace;
+  background: var(--bg); color: var(--text); text-align: right;
+}
+.rolllen-wrap input:focus { outline: none; border-color: var(--green-light); }
+
+/* ── Buttons ── */
+.btn {
+  font-family: 'Noto Sans TC', sans-serif; font-size: 13px;
+  padding: 8px 18px; border-radius: var(--radius-sm);
+  cursor: pointer; border: 1px solid var(--border);
+  background: var(--surface); color: var(--text);
+  transition: all .15s; font-weight: 500;
+}
+.btn:hover { background: var(--surface2); border-color: var(--border2); }
+.btn.primary { background: var(--green); color: #fff; border-color: var(--green); font-size: 15px; padding: 12px 40px; }
+.btn.primary:hover { background: #145c2c; }
+.btn.sm { font-size: 12px; padding: 5px 12px; }
+.btn.danger { color: var(--red); }
+.btn.danger:hover { background: var(--red-bg); border-color: var(--red); }
+
+.calc-bar { max-width: 920px; margin: 0 auto 1rem; display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+
+/* ── Result styles ── */
+.summary-box {
+  background: var(--green-bg); border-left: 3px solid var(--green-light);
+  padding: 10px 14px; border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  font-size: 14px; margin-bottom: 12px;
+}
+.type-W { color: #1a2c3a; font-weight: 600; }
+.type-P { color: #6c3483; font-weight: bold; }
+.type-P2 { color: #e67e22; font-weight: bold; }
+.valid { color: var(--green); font-weight: bold; }
+.invalid { color: var(--red); font-weight: bold; }
+.tag-W { background: #d6eaf8; color: #1a5276; border-radius: 3px; padding: 1px 6px; font-size: 11px; font-weight: bold; }
+.tag-P { background: #e8daef; color: #6c3483; border-radius: 3px; padding: 1px 6px; font-size: 11px; }
+.tag-P2 { background: #fef5e7; color: #e67e22; border-radius: 3px; padding: 1px 6px; font-size: 11px; }
+pre {
+  background: var(--surface2); padding: 12px;
+  border-radius: var(--radius-sm); font-size: 12px;
+  white-space: pre-wrap; border: 1px solid var(--border);
+  line-height: 1.8; font-family: 'IBM Plex Mono', monospace;
+}
+#output { display: none; }
+
+/* ── 裝載模擬 ── */
+.sim-controls { display:flex; gap:10px; align-items:flex-end; flex-wrap:wrap; margin-bottom:1rem; }
+.sim-controls label { display:flex; flex-direction:column; gap:4px; font-size:11px; color:var(--text3); letter-spacing:.3px; }
+.sim-controls select, .sim-controls input[type=number] {
+  border:1px solid var(--border); border-radius:var(--radius-sm); padding:6px 10px;
+  font-size:13px; font-family:'Noto Sans TC',sans-serif; background:var(--bg); color:var(--text); cursor:pointer;
+}
+.sim-controls input[type=number] { width:80px; font-family:'IBM Plex Mono',monospace; text-align:right; }
+.sim-verdict-ok { background:var(--green-bg); border-left:3px solid var(--green-light); padding:10px 14px; border-radius:0 var(--radius-sm) var(--radius-sm) 0; font-size:14px; margin-bottom:8px; }
+.sim-verdict-ng { background:var(--red-bg);   border-left:3px solid var(--red);         padding:10px 14px; border-radius:0 var(--radius-sm) var(--radius-sm) 0; font-size:14px; margin-bottom:8px; }
+.color-dot { display:inline-block; width:9px; height:9px; border-radius:50%; margin-right:4px; vertical-align:middle; }
+#sim-visual { overflow-x:auto; margin-top:12px; }
+#sim-visual svg text { font-family:'Noto Sans TC',sans-serif; }
+
+@media(max-width: 600px) {
+  body { padding: 1rem .5rem; }
+  header h1 { font-size: 18px; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>捲筒配抄工具</h1>
+  <div class="pm-toggle">
+    <button class="pm-btn active" id="btn-pm1" onclick="selectPM('PM1')">PM1</button>
+    <button class="pm-btn" id="btn-pm2" onclick="selectPM('PM2')">PM2</button>
+  </div>
+</header>
+
+<!-- ── 訂單輸入 ── -->
+<div class="card">
+  <div class="card-head">
+    <h2>訂單輸入</h2>
+    <div class="rolllen-wrap">
+      捲長
+      <input type="number" id="roll-length" value="3650" oninput="renderOrderTable()">
+      m
+    </div>
+  </div>
+  <div class="card-body">
+    <div class="table-scroll">
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>基重<br>(GSM)</th>
+            <th>寬度<br>(mm)</th>
+            <th>客需<br>(kg)</th>
+            <th>單粒重<br>(kg)</th>
+            <th>試算粒數</th>
+            <th>整粒數<br>▼可調</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="orderBody"></tbody>
+        <tfoot id="orderFoot"></tfoot>
+      </table>
+    </div>
+
+    <div class="quick-add">
+      <label>基重 (GSM)<input type="number" id="qa-gsm" value="270" min="1" onkeydown="qaEnter(event)"></label>
+      <label>寬度 (mm)<input type="number" id="qa-w" value="889" min="1" onkeydown="qaEnter(event)"></label>
+      <label>客需 (kg)<input type="number" id="qa-need" value="" min="1" placeholder="輸入" onkeydown="qaEnter(event)"></label>
+      <button class="qa-add" onclick="qaAdd()">＋ 新增</button>
+      <span style="font-size:11px;color:var(--text3);align-self:flex-end;padding-bottom:8px;">Enter 快速新增</span>
+      <div class="qty-badge">總粒數：<span id="totalQty">0</span> 粒</div>
+    </div>
+
+    <div class="import-box">
+      <p class="hint">從 Excel 複製後貼上（每行：GSM 寬度mm 客需kg，Tab 或空格分隔）</p>
+      <div class="row">
+        <textarea id="pasteArea" placeholder="例：&#10;270	889	33295&#10;270	787	6205&#10;270	686	6085"></textarea>
+        <button class="btn sm" onclick="importPaste()">匯入</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── 機台設定 ── -->
+<div class="card">
+  <div class="card-head"><h2 id="machine-label">PM1 機台設定</h2></div>
+  <div class="card-body">
+    <div class="settings-grid">
+      <div class="setting-item"><label>總寬下限（mm）</label><input type="number" id="minTotal" value="2757" step="1"></div>
+      <div class="setting-item"><label>總寬上限（mm）</label><input type="number" id="maxTotal" value="2791" step="1"></div>
+      <div class="setting-item"><label>單孔下限（mm）</label><input type="number" id="minHole" value="485" step="1"></div>
+      <div class="setting-item"><label>單孔上限（mm）</label><input type="number" id="maxHole" value="1091" step="1" readonly></div>
+    </div>
+  </div>
+</div>
+
+<div class="calc-bar">
+  <button class="btn primary" onclick="calculate()">🔢 開始計算配抄</button>
+  <button class="btn danger" onclick="clearAll()">清除全部</button>
+</div>
+
+<!-- ── 結果 ── -->
+<div id="output">
+  <div class="card">
+    <div class="card-head">
+      <h2>📊 配抄排程結果</h2>
+      <button class="btn sm" onclick="copyText()">📋 複製文字</button>
+    </div>
+    <div class="card-body">
+      <div id="summaryDiv"></div>
+      <div class="table-scroll">
+        <table>
+          <thead>
+            <tr>
+              <th style="width:50px;text-align:center;">#</th>
+              <th>孔1</th><th>孔2</th><th>孔3</th><th>孔4</th><th>孔5</th>
+              <th style="width:90px">總寬(mm)</th>
+              <th style="width:60px">粒數</th>
+              <th>說明</th>
+            </tr>
+          </thead>
+          <tbody id="resultBody"></tbody>
+        </table>
+      </div>
+      <div style="margin-top:8px;font-size:11px;color:var(--text3);display:flex;gap:12px;flex-wrap:wrap;">
+        <span><span class="tag-W">W</span> 訂單</span>
+        <span><span class="tag-P">P</span> 庫存（主）</span>
+        <span><span class="tag-P2">P2</span> 庫存（備用）</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-head">
+      <h2>📝 生管格式</h2>
+      <button class="btn sm" onclick="copyText()">📋 複製</button>
+    </div>
+    <div class="card-body"><pre id="textOutput"></pre></div>
+  </div>
+
+  <div class="card">
+    <div class="card-head"><h2>🧻 備料清單</h2></div>
+    <div class="card-body" id="materialDiv"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-head"><h2>📦 貨櫃裝載模擬</h2></div>
+    <div class="card-body">
+      <div class="sim-controls">
+        <label>貨櫃規格
+          <select id="sim-ctype">
+            <option value="40">40 呎貨櫃</option>
+            <option value="20">20 呎貨櫃</option>
+          </select>
+        </label>
+        <label>捲筒直徑
+          <select id="sim-dia" onchange="toggleCustomDia()">
+            <option value="134">大粒　134 CM</option>
+            <option value="114">小粒　114 CM</option>
+            <option value="0">自訂</option>
+          </select>
+        </label>
+        <label id="sim-dia-custom-wrap" style="display:none;">自訂直徑 (CM)
+          <input type="number" id="sim-dia-custom" value="130" min="50" max="200">
+        </label>
+        <button class="btn primary" style="font-size:13px;padding:9px 22px;" onclick="calculateSim()">計算裝載</button>
+      </div>
+      <div id="sim-result" style="display:none;">
+        <div id="sim-verdict"></div>
+        <div id="sim-visual"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const PM_CONFIG = {
+  PM1: { label: 'PM1', min: 2757, max: 2791, minH: 485, maxH: 1091, rollLen: 3650 },
+  PM2: { label: 'PM2', min: 3242, max: 3285, minH: 485, maxH: 1091, rollLen: 3650 }
+};
+const GOLDEN_PRIMARY   = [485,515,545,576,606,636,667,697,727,758,788,818,848,879,909,939,970,1000,1030,1061,1091];
+const GOLDEN_SECONDARY = [500,530,561,591,621,652,682,712,742,773,803,833,864,894,924,955,1046];
+const GOLDEN_ALL = [...GOLDEN_PRIMARY,...GOLDEN_SECONDARY].sort((a,b)=>a-b);
+
+let currentPM = 'PM1';
+let orders = []; // [{gsm, w, need, adj}]
+let _min, _max, _minH, _maxH;
+
+function fmt(n, d=2) {
+  return Number(n.toFixed(d)).toLocaleString('zh-TW', {minimumFractionDigits:d, maximumFractionDigits:d});
+}
+function getRollLen() { return +document.getElementById('roll-length').value || 3650; }
+
+function calcOrder(o) {
+  const unitW = o.gsm * (o.w / 1000) * getRollLen() / 1000;
+  const trial = o.need / unitW;
+  const adj   = (o.adj != null) ? o.adj : Math.ceil(trial);
+  return { unitW, trial, adj };
+}
+
+function selectPM(pm) {
+  currentPM = pm;
+  document.getElementById('btn-pm1').classList.toggle('active', pm === 'PM1');
+  document.getElementById('btn-pm2').classList.toggle('active', pm === 'PM2');
+  const cfg = PM_CONFIG[pm];
+  document.getElementById('minTotal').value    = cfg.min;
+  document.getElementById('maxTotal').value    = cfg.max;
+  document.getElementById('minHole').value     = cfg.minH;
+  document.getElementById('maxHole').value     = cfg.maxH;
+  document.getElementById('roll-length').value = cfg.rollLen;
+  document.getElementById('machine-label').textContent = `${cfg.label} 機台設定`;
+  renderOrderTable();
+}
+
+function renderOrderTable() {
+  const tb = document.getElementById('orderBody');
+  const tf = document.getElementById('orderFoot');
+  tb.innerHTML = '';
+  let totPcs = 0;
+
+  orders.forEach((o, i) => {
+    const c = calcOrder(o);
+    totPcs += c.adj;
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td><span class="row-num">${i+1}</span></td>
+      <td><input type="number" value="${o.gsm}" min="1" oninput="updOrder(${i},'gsm',+this.value)"></td>
+      <td><input type="number" value="${o.w}"   min="1" oninput="updOrder(${i},'w',+this.value)"></td>
+      <td><input type="number" value="${o.need}" min="1" style="width:92px;" oninput="updOrder(${i},'need',+this.value)"></td>
+      <td class="computed">${fmt(c.unitW, 2)}</td>
+      <td class="computed" style="color:var(--text3);">${c.trial.toFixed(3)}</td>
+      <td><input type="number" class="adj" value="${c.adj}" min="0" oninput="updOrderAdj(${i},+this.value)"></td>
+      <td><button class="del-btn" onclick="delOrder(${i})">✕</button></td>`;
+    tb.appendChild(tr);
+  });
+
+  tf.innerHTML = orders.length ? `<tr>
+    <td colspan="5" style="text-align:left;font-size:12px;color:var(--text2);font-family:'Noto Sans TC',sans-serif;">合計</td>
+    <td></td>
+    <td style="color:var(--green);">${totPcs} 粒</td>
+    <td></td></tr>` : '';
+
+  document.getElementById('totalQty').textContent = totPcs;
+}
+
+function updOrder(i, k, v) { orders[i][k]=v; orders[i].adj=null; renderOrderTable(); }
+function updOrderAdj(i, v) { orders[i].adj=v; renderOrderTable(); }
+function delOrder(i)       { orders.splice(i,1); renderOrderTable(); }
+
+function qaAdd() {
+  const gsm  = +document.getElementById('qa-gsm').value;
+  const w    = +document.getElementById('qa-w').value;
+  const need = +document.getElementById('qa-need').value;
+  if (!gsm || !w || !need) {
+    const el = document.getElementById('qa-need');
+    el.style.borderColor = 'var(--red)';
+    setTimeout(() => el.style.borderColor='', 1200);
+    return;
+  }
+  orders.push({gsm, w, need, adj:null});
+  renderOrderTable();
+  document.getElementById('qa-need').value = '';
+  document.getElementById('qa-need').focus();
+}
+function qaEnter(e) { if (e.key === 'Enter') qaAdd(); }
+
+function clearAll() {
+  if (orders.length && !confirm('確定清除全部訂單？')) return;
+  orders = [];
+  renderOrderTable();
+  document.getElementById('output').style.display = 'none';
+}
+
+function importPaste() {
+  const text = document.getElementById('pasteArea').value.trim();
+  if (!text) { alert('請先貼上資料'); return; }
+  let added = 0;
+  text.split('\n').map(l=>l.trim()).filter(l=>l).forEach(row => {
+    const p = row.split(/[\t ]+/).map(s=>s.trim()).filter(s=>s);
+    if (p.length < 3) return;
+    const gsm=parseInt(p[0]), w=parseInt(p[1]), need=parseFloat(p[2]);
+    if ([gsm,w,need].some(v=>isNaN(v)||v<=0)) return;
+    orders.push({gsm, w, need, adj:null});
+    added++;
+  });
+  if (!added) { alert('沒有讀到有效資料（格式：GSM 寬度mm 客需kg）'); return; }
+  renderOrderTable();
+  document.getElementById('pasteArea').value = '';
+  alert(`✅ 匯入 ${added} 筆`);
+}
+
+/* ── 配抄演算法（與 PM1/PM2 v2 相同）── */
+function sum(arr) { return arr.reduce((a,b)=>a+b,0); }
+
+function findOrderSubset(items,k,lo,hi,idx,chosen,cur) {
+  if (chosen.length===k) return (cur>=lo&&cur<=hi) ? [...chosen] : null;
+  const left = k-chosen.length;
+  for (let i=idx;i<items.length;i++) {
+    const v=items[i]; if(v<_minH||v>_maxH) continue;
+    const ns=cur+v; if(ns+(left-1)*_minH>hi) continue;
+    const res=findOrderSubset(items,k,lo,hi,i+1,[...chosen,v],ns);
+    if (res) return res;
+  }
+  return null;
+}
+
+function findInvSubset(k,lo,hi,idx,chosen,cur,pool) {
+  if (chosen.length===k) return (cur>=lo&&cur<=hi) ? [...chosen] : null;
+  const left = k-chosen.length;
+  for (let i=idx;i<pool.length;i++) {
+    const v=pool[i]; if(v<_minH||v>_maxH) continue;
+    const ns=cur+v; if(ns+(left-1)*_minH>hi) continue;
+    const res=findInvSubset(k,lo,hi,i,[...chosen,v],ns,pool);
+    if (res) return res;
+  }
+  return null;
+}
+
+function tryInv(k,lo,hi) {
+  let r = findInvSubset(k,lo,hi,0,[],0,GOLDEN_PRIMARY);
+  if (r) return r.map(v=>({size:v,type:'P'}));
+  r = findInvSubset(k,lo,hi,0,[],0,GOLDEN_ALL);
+  if (r) return r.map(v=>({size:v,type:GOLDEN_PRIMARY.includes(v)?'P':'P2'}));
+  return null;
+}
+
+function findOrderWithTryInv(items,k,lo,hi,invN,idx,chosen,cur) {
+  if (chosen.length===k) {
+    if (cur>=lo&&cur<=hi) { const ic=tryInv(invN,_min-cur,_max-cur); if(ic) return {oc:[...chosen],ic}; }
+    return null;
+  }
+  const left = k-chosen.length;
+  for (let i=idx;i<items.length;i++) {
+    const v=items[i]; if(v<_minH||v>_maxH) continue;
+    const ns=cur+v; if(ns+(left-1)*_minH>hi) continue;
+    const res=findOrderWithTryInv(items,k,lo,hi,invN,i+1,[...chosen,v],ns);
+    if (res) return res;
+  }
+  return null;
+}
+
+function findRoll(available) {
+  if (!available.length) return null;
+  // 優先：純訂單
+  for (const n of [3,4,5]) {
+    if (available.length>=n) {
+      const c=findOrderSubset(available,n,_min,_max,0,[],0);
+      if (c) return c.map(v=>({size:v,type:'W'}));
+    }
+  }
+  // 1孔庫存，最大化訂單孔
+  for (const n of [5,4,3]) {
+    const on=n-1; if(on<1||available.length<on) continue;
+    const lo=Math.max(_min-_maxH,on*_minH), hi=Math.min(_max-_minH,on*_maxH);
+    if (lo>hi) continue;
+    const res=findOrderWithTryInv(available,on,lo,hi,1,0,[],0);
+    if (res) return [...res.oc.map(v=>({size:v,type:'W'})),...res.ic];
+  }
+  // 2孔庫存，最大化訂單孔
+  for (const n of [5,4,3]) {
+    const on=n-2; if(on<1||available.length<on) continue;
+    const lo=Math.max(_min-2*_maxH,on*_minH), hi=Math.min(_max-2*_minH,on*_maxH);
+    if (lo>hi) continue;
+    const res=findOrderWithTryInv(available,on,lo,hi,2,0,[],0);
+    if (res) return [...res.oc.map(v=>({size:v,type:'W'})),...res.ic];
+  }
+  // 多孔庫存
+  for (const n of [4,5]) {
+    const maxOn=Math.min(n-3,available.length);
+    for (let on=1;on<=maxOn;on++) {
+      const invN=n-on;
+      const lo=Math.max(_min-invN*_maxH,on*_minH), hi=Math.min(_max-invN*_minH,on*_maxH);
+      if (lo>hi) continue;
+      const res=findOrderWithTryInv(available,on,lo,hi,invN,0,[],0);
+      if (res) return [...res.oc.map(v=>({size:v,type:'W'})),...res.ic];
+    }
+  }
+  return null;
+}
+
+function calculate() {
+  if (!orders.length) { alert('請先輸入訂單資料'); return; }
+  _min  = parseInt(document.getElementById('minTotal').value);
+  _max  = parseInt(document.getElementById('maxTotal').value);
+  _minH = parseInt(document.getElementById('minHole').value);
+  _maxH = parseInt(document.getElementById('maxHole').value);
+
+  // 展開訂單 → items 陣列
+  const items = [];
+  orders.forEach(o => {
+    const c = calcOrder(o);
+    for (let i=0;i<c.adj;i++) items.push(o.w);
+  });
+  items.sort((a,b)=>b-a);
+
+  const rolls=[], remaining=[...items];
+  let guard=1000;
+  while (remaining.length && guard-->0) {
+    const roll = findRoll(remaining);
+    if (!roll) { rolls.push([{size:remaining[0],type:'W',warn:true}]); remaining.splice(0,1); continue; }
+    rolls.push(roll);
+    const tmp=[...remaining];
+    roll.filter(h=>h.type==='W').forEach(({size})=>{ const i=tmp.indexOf(size); if(i>=0) tmp.splice(i,1); });
+    remaining.splice(0, remaining.length, ...tmp);
+  }
+  renderResult(rolls);
+}
+
+function renderResult(rolls) {
+  document.getElementById('output').style.display = 'block';
+  const totalW  = rolls.reduce((a,r)=>a+r.filter(h=>h.type==='W').length,  0);
+  const totalP  = rolls.reduce((a,r)=>a+r.filter(h=>h.type==='P').length,  0);
+  const totalP2 = rolls.reduce((a,r)=>a+r.filter(h=>h.type==='P2').length, 0);
+  const hasP2   = totalP2 > 0;
+
+  document.getElementById('summaryDiv').innerHTML = `<div class="summary-box">
+    共 <b>${rolls.length}</b> 支捲筒 ｜
+    訂單孔 <b class="type-W">${totalW}</b> 粒 ／
+    庫存填補 <b class="type-P">${totalP}</b> 孔
+    ${hasP2 ? ` ／ 備用規格 <b class="type-P2">${totalP2}</b> 孔 <span class="tag-P2">⚠備用</span>` : ''}
+  </div>`;
+
+  // 合併相同排列
+  const grouped = [];
+  rolls.forEach(roll => {
+    const sorted = [...roll].sort((a,b)=>b.size-a.size||a.type.localeCompare(b.type));
+    const key    = sorted.map(h=>h.size+''+h.type).join(',');
+    const g      = grouped.find(g=>g.key===key);
+    if (g) g.count++; else grouped.push({key, roll:sorted, count:1});
+  });
+
+  const tbody = document.getElementById('resultBody');
+  tbody.innerHTML = '';
+  const lines = [
+    `${currentPM} 配抄排程（MM）（${new Date().toLocaleDateString('zh-TW')}）`,
+    `機台限制：${_min}～${_max} mm ／ 每孔 ${_minH}～${_maxH} mm`,
+    '', '序號\t孔1\t孔2\t孔3\t孔4\t孔5\t總寬\t粒數\t說明'
+  ];
+
+  grouped.forEach(({roll,count},idx) => {
+    const total   = sum(roll.map(h=>h.size));
+    const valid   = total>=_min-1 && total<=_max+1;
+    const pCount  = roll.filter(h=>h.type==='P').length;
+    const p2Count = roll.filter(h=>h.type==='P2').length;
+    const note    = roll.some(h=>h.warn) ? '未能配排'
+      : roll.every(h=>h.type==='W') ? (roll.length>=4 ? '全訂單' : `全訂（${roll.length}孔）`)
+      : (p2Count>0 ? `含備用庫存×${p2Count}` : `含庫存×${pCount}`);
+
+    const cells = [`<td style="text-align:center;"><b>${idx+1}</b></td>`];
+    for (let i=0;i<5;i++) {
+      cells.push(i<roll.length
+        ? `<td class="type-${roll[i].type}">${roll[i].size}</td>`
+        : `<td style="color:#ddd">—</td>`);
+    }
+    cells.push(`<td class="${valid?'valid':'invalid'}">${total}</td>`);
+    cells.push(`<td><b>${count}</b></td>`);
+    cells.push(`<td>${note}${roll.some(h=>h.warn)?'<b style="color:orange"> ⚠</b>':''}</td>`);
+
+    const tr = document.createElement('tr');
+    tr.innerHTML = cells.join('');
+    tbody.appendChild(tr);
+
+    const holeTxt = roll.map(h=>''+h.size);
+    while (holeTxt.length<5) holeTxt.push('—');
+    lines.push(`${idx+1}\t${holeTxt.join('\t')}\t${total}\t${count}\t${note}`);
+  });
+
+  document.getElementById('textOutput').textContent = lines.join('\n');
+
+  // 備料清單
+  const coreMap = {};
+  rolls.forEach(roll => roll.forEach(h => { coreMap[h.size]=(coreMap[h.size]||0)+1; }));
+  simCoreMap = coreMap;  // 傳給裝載模擬
+  document.getElementById('sim-result').style.display = 'none';
+  const totalHoles  = totalW + totalP + totalP2;
+  const coreEntries = Object.entries(coreMap).sort((a,b)=>Number(b[0])-Number(a[0]));
+  const totalCores  = coreEntries.reduce((s,[,c])=>s+c, 0);
+  const p2note      = totalP2>0 ? ` + ${totalP2} 備用庫存` : '';
+  document.getElementById('materialDiv').innerHTML =
+    `<table style="width:auto;min-width:220px;margin-bottom:12px">
+       <thead><tr><th style="text-align:left;padding:6px 12px;">紙管尺寸</th><th style="text-align:left;padding:6px 12px;">數量</th></tr></thead>
+       <tbody>
+         ${coreEntries.map(([sz,cnt])=>`<tr><td style="padding:5px 12px;white-space:nowrap;">${sz} mm</td><td style="padding:5px 12px;font-weight:bold;text-align:right;">${cnt} 支</td></tr>`).join('')}
+         <tr style="border-top:2px solid var(--border2);background:var(--surface2)">
+           <td style="padding:6px 12px;font-weight:bold;white-space:nowrap;">總計</td>
+           <td style="padding:6px 12px;font-weight:bold;text-align:right;">${totalCores} 支</td>
+         </tr>
+       </tbody>
+     </table>
+     <div class="summary-box" style="border-color:var(--amber);">
+       🔩 塞頭預估：（${totalW} 訂單 + ${totalP} 庫存${p2note}）× 2 = <b>${totalHoles*2}</b> 個
+     </div>`;
+
+  document.getElementById('output').scrollIntoView({behavior:'smooth'});
+}
+
+function copyText() {
+  navigator.clipboard.writeText(document.getElementById('textOutput').textContent)
+    .then(() => alert('✅ 已複製！'));
+}
+
+/* ── 貨櫃裝載模擬 ── */
+const SIM_CONTAINER = {
+  40: { L: 1145, W: 222, H: 236 },
+  20: { L: 580,  W: 222, H: 236 }
+};
+const SIM_COLORS = ['#7fb3d3','#82c99a','#f7c8a8','#d4b8e0','#f9e4a0','#f4a8b0','#a8d8e8','#c8e0b0'];
+let simCoreMap = {};   // 由 renderResult() 填入 {sizeMM: count}
+
+function toggleCustomDia() {
+  const isCustom = document.getElementById('sim-dia').value === '0';
+  document.getElementById('sim-dia-custom-wrap').style.display = isCustom ? '' : 'none';
+}
+
+function getSimDia() {
+  const v = document.getElementById('sim-dia').value;
+  return v === '0' ? (+document.getElementById('sim-dia-custom').value || 130) : +v;
+}
+
+function simGetLayers(hCm) { return hCm <= 79 ? 3 : 2; }  // 790mm 以下疊3層
+
+function calculateSim() {
+  const ctype = document.getElementById('sim-ctype').value;
+  const con   = SIM_CONTAINER[ctype];
+  const diaCm = getSimDia();
+  if (!Object.keys(simCoreMap).length) { alert('請先執行配抄計算'); return; }
+
+  let totalLenCm = 0;
+  const items = Object.entries(simCoreMap)
+    .sort((a,b)=>Number(b[0])-Number(a[0]))
+    .map(([sizeMM, qty], i) => {
+      const hCm   = +sizeMM / 10;
+      const layers = simGetLayers(hCm);
+      let mode, spacing, numRows, lenNeeded;
+      if (diaCm === 134) {
+        mode = 'stagger';
+        spacing = diaCm / 2;
+        const draws = Math.ceil(qty / layers);
+        numRows = Math.ceil(draws / 2);
+        lenNeeded = (draws + 1) * spacing;
+      } else if (diaCm === 114) {
+        mode = 'double'; spacing = diaCm;
+        numRows = Math.ceil(qty / (2 * layers));
+        lenNeeded = numRows * spacing;
+      } else {
+        mode = 'single'; spacing = diaCm;
+        const perRow = Math.max(1, Math.floor(con.W / diaCm));
+        numRows = Math.ceil(qty / (perRow * layers));
+        lenNeeded = numRows * spacing;
+      }
+      totalLenCm += lenNeeded;
+      return { name: sizeMM + ' mm', sizeMM: +sizeMM, hCm, qty, layers, mode, spacing, numRows, lenNeeded, color: SIM_COLORS[i % SIM_COLORS.length] };
+    });
+
+  const fits  = totalLenCm <= con.L;
+  const remain = con.L - totalLenCm;
+
+  document.getElementById('sim-result').style.display = 'block';
+  const verdict = document.getElementById('sim-verdict');
+  if (fits) {
+    verdict.className = 'sim-verdict-ok';
+    verdict.innerHTML = `✅ <b>可以裝下</b>　總佔長 <b>${totalLenCm.toFixed(0)} CM</b>，剩餘 <b>${remain.toFixed(0)} CM</b>（${(remain/con.L*100).toFixed(1)}%）`;
+  } else {
+    verdict.className = 'sim-verdict-ng';
+    verdict.innerHTML = `❌ <b>裝不下</b>　需要 <b>${totalLenCm.toFixed(0)} CM</b>，超出 <b>${(-remain).toFixed(0)} CM</b>`;
+  }
+
+  drawSimSVG(items, con, totalLenCm);
+  document.getElementById('sim-result').scrollIntoView({behavior:'smooth'});
+}
+
+function drawSimSVG(items, con, totalLen) {
+  const SVG_W = 860, PAD = 52, LABEL_W = 24;
+  const drawW = SVG_W - PAD * 2 - LABEL_W;
+  const drawH = Math.round(drawW * con.W / con.L);
+  const SVG_H = drawH + PAD * 2 + 36;
+  const sx = drawW / con.L, sy = drawH / con.W;
+  const ox = PAD + LABEL_W, oy = PAD;
+
+  let svg = `<svg width="${SVG_W}" height="${SVG_H}" xmlns="http://www.w3.org/2000/svg" style="max-width:100%;height:auto;">`;
+  svg += `<rect x="${ox}" y="${oy}" width="${drawW}" height="${drawH}" fill="#f8f6f3" stroke="#888" stroke-width="2" rx="2"/>`;
+
+  for (let cm = 0; cm <= con.L; cm += 100) {
+    const x = ox + cm * sx;
+    svg += `<line x1="${x}" y1="${oy}" x2="${x}" y2="${oy+drawH}" stroke="#e0dbd4" stroke-width="1"/>`;
+    if (cm % 200 === 0)
+      svg += `<text x="${x}" y="${oy+drawH+16}" font-size="10" fill="#bbb" text-anchor="middle">${cm}cm</text>`;
+  }
+
+  let curX = ox;
+  items.forEach((item, idx) => {
+    const blockW = item.lenNeeded * sx;
+    const dPx = (document.getElementById('sim-dia').value === '0' ? +document.getElementById('sim-dia-custom').value : +document.getElementById('sim-dia').value) * sx;
+    const dPxY = (document.getElementById('sim-dia').value === '0' ? +document.getElementById('sim-dia-custom').value : +document.getElementById('sim-dia').value) * sy;
+    const rPx = dPx / 2, rPxY = dPxY / 2;
+    const sPx = item.spacing * sx;
+    const clipId = 'sclip' + idx;
+
+    svg += `<defs><clipPath id="${clipId}"><rect x="${curX}" y="${oy}" width="${blockW}" height="${drawH}"/></clipPath></defs>`;
+    svg += `<rect x="${curX}" y="${oy}" width="${blockW}" height="${drawH}" fill="${item.color}" fill-opacity="0.10" stroke="${item.color}" stroke-width="1" stroke-dasharray="3,2"/>`;
+
+    function dc(cx, cy, lc) {
+      svg += `<circle cx="${cx+2}" cy="${cy+2}" r="${rPx*0.82}" fill="#bbb" fill-opacity="0.25"/>`;
+      svg += `<circle cx="${cx}" cy="${cy}" r="${rPx*0.82}" fill="${item.color}" fill-opacity="0.80" stroke="white" stroke-width="1.5"/>`;
+      svg += `<circle cx="${cx}" cy="${cy}" r="${rPx*0.18}" fill="white" fill-opacity="0.5"/>`;
+      if (rPxY > 14) {
+        const bc = lc === 3 ? '#1e7a46' : '#915200';
+        svg += `<rect x="${cx-15}" y="${cy+rPxY*0.38-8}" width="30" height="15" rx="3" fill="${bc}" opacity="0.9"/>`;
+        svg += `<text x="${cx}" y="${cy+rPxY*0.38+3}" font-size="10" fill="white" text-anchor="middle" font-weight="bold">×${lc}層</text>`;
+      }
+    }
+
+    let drawn = 0;
+    svg += `<g clip-path="url(#${clipId})">`;
+    if (item.mode === 'stagger') {
+      const cyT = oy + rPxY, cyB = oy + drawH - rPxY;
+      const draws = Math.ceil(item.qty / item.layers);
+      for (let d = 0; d < draws; d++) {
+        if (drawn >= item.qty) break;
+        const cx = curX + (d + 1) * sPx;
+        dc(cx, d % 2 === 1 ? cyB : cyT, Math.min(item.layers, item.qty - drawn));
+        drawn += item.layers;
+      }
+    } else if (item.mode === 'double') {
+      const cyT = oy + rPxY, cyB = oy + drawH - rPxY;
+      for (let i = 0; i < item.numRows; i++) {
+        const cx = curX + i * sPx + rPx;
+        if (drawn < item.qty) { dc(cx, cyT, Math.min(item.layers, item.qty - drawn)); drawn += item.layers; }
+        if (drawn < item.qty) { dc(cx, cyB, Math.min(item.layers, item.qty - drawn)); drawn += item.layers; }
+      }
+    } else {
+      const cy = oy + rPxY;
+      for (let i = 0; i < item.numRows; i++) {
+        if (drawn >= item.qty) break;
+        dc(curX + i * sPx + rPx, cy, Math.min(item.layers, item.qty - drawn));
+        drawn += item.layers;
+      }
+    }
+    svg += `</g>`;
+
+    const midX = curX + blockW / 2;
+    svg += `<text x="${midX}" y="${oy+drawH/2-5}" font-size="12" fill="#2c2c2c" text-anchor="middle" font-weight="bold">${item.name}</text>`;
+    svg += `<text x="${midX}" y="${oy+drawH/2+11}" font-size="10" fill="#666" text-anchor="middle">${item.qty}顆</text>`;
+    curX += blockW;
+  });
+
+  if (curX < ox + drawW) {
+    const remW = ox + drawW - curX;
+    svg += `<rect x="${curX}" y="${oy}" width="${remW}" height="${drawH}" fill="#e8ebe8" fill-opacity="0.5" stroke="#ccc" stroke-dasharray="4,3" stroke-width="1"/>`;
+    if (remW > 35) svg += `<text x="${curX+remW/2}" y="${oy+drawH/2+4}" font-size="11" fill="#c0bbb5" text-anchor="middle">剩餘</text>`;
+  }
+  if (totalLen > con.L)
+    svg += `<line x1="${ox+drawW}" y1="${oy-8}" x2="${ox+drawW}" y2="${oy+drawH+8}" stroke="#b02020" stroke-width="2" stroke-dasharray="4,3"/>`;
+
+  svg += `<rect x="${ox}" y="${oy}" width="${drawW}" height="${drawH}" fill="none" stroke="#666" stroke-width="2" rx="2"/>`;
+  svg += `<text x="${ox-6}" y="${oy+drawH/2}" font-size="10" fill="#aaa" text-anchor="middle" transform="rotate(-90,${ox-6},${oy+drawH/2})">寬 ${con.W}cm</text>`;
+  svg += `<text x="${ox+drawW/2}" y="${SVG_H-4}" font-size="10" fill="#aaa" text-anchor="middle">← 長度方向（貨櫃限 ${con.L} cm）→</text>`;
+  svg += '</svg>';
+  document.getElementById('sim-visual').innerHTML = svg;
+}
+
+renderOrderTable();
+</script>
+</body>
+</html>

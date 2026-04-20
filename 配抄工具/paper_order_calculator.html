@@ -25,6 +25,10 @@
     --red-bg: #fdeaea;
     --radius: 10px;
     --radius-sm: 6px;
+    --rose: #9e4d6a;
+    --rose-bg: #fdf0f4;
+    --rose-border: #d4a0b5;
+    --rose-dark: #7b3552;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body {
@@ -518,12 +522,67 @@
     body { padding: 1rem .5rem; }
     .card .v { font-size: 18px; }
   }
+
+  /* ── 頁面品牌標記 ── */
+  .page-brand { font-size:10px; color:var(--rose); letter-spacing:2px; text-transform:uppercase; font-family:'IBM Plex Mono',monospace; margin-bottom:4px; opacity:.8; }
+
+  /* ── 捲筒粒數計算 ── */
+  .roll-hd {
+    max-width:1100px; margin:0 auto 1.25rem;
+    display:flex; align-items:baseline; justify-content:space-between; flex-wrap:wrap; gap:8px;
+  }
+  .roll-hd h2 { font-size:19px; font-weight:700; color:var(--rose); letter-spacing:-.3px; }
+  .roll-cfg { display:flex; align-items:center; gap:6px; font-size:12px; color:var(--text3); }
+  .roll-cfg input {
+    width:72px; border:1px solid var(--rose-border); border-radius:var(--radius-sm);
+    padding:4px 7px; font-size:13px; font-family:'IBM Plex Mono',monospace;
+    background:var(--rose-bg); color:var(--text); text-align:right; transition:border-color .15s;
+  }
+  .roll-cfg input:focus { outline:none; border-color:var(--rose); }
+
+  .roll-sum { max-width:1100px; margin:0 auto 1.5rem; display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:10px; }
+  .card.rose { border-color:var(--rose); background:var(--rose-bg); }
+  .card.rose .v { color:var(--rose); }
+
+  .roll-qa {
+    max-width:1100px; margin:0 auto 1.5rem;
+    background:var(--rose-bg); border:1.5px dashed var(--rose-border);
+    border-radius:var(--radius); padding:14px 16px;
+    display:flex; gap:10px; align-items:flex-end; flex-wrap:wrap;
+  }
+  .roll-qa label { display:flex; flex-direction:column; gap:4px; font-size:11px; color:var(--rose); letter-spacing:.3px; }
+  .roll-qa input[type=number] {
+    width:100px; border:1px solid var(--rose-border); border-radius:var(--radius-sm);
+    padding:7px 9px; font-size:14px; font-family:'IBM Plex Mono',monospace;
+    background:var(--surface); color:var(--text); text-align:right; transition:border-color .15s;
+  }
+  .roll-qa input[type=number]:focus { outline:none; border-color:var(--rose); background:var(--rose-bg); }
+  .roll-qa-btn {
+    font-family:'Noto Sans TC',sans-serif; font-size:13px; padding:8px 20px;
+    border-radius:var(--radius-sm); cursor:pointer; border:none;
+    background:var(--rose); color:#fff; font-weight:500; transition:background .15s; align-self:flex-end;
+  }
+  .roll-qa-btn:hover { background:var(--rose-dark); }
+  .rr-high { color:var(--green); font-weight:700; background:var(--green-bg); padding:2px 8px; border-radius:20px; font-family:'IBM Plex Mono',monospace; font-size:12px; }
+  .rr-mid  { color:var(--amber); font-weight:700; background:var(--amber-bg); padding:2px 8px; border-radius:20px; font-family:'IBM Plex Mono',monospace; font-size:12px; }
+  .rr-low  { color:var(--red);   font-weight:700; background:var(--red-bg);   padding:2px 8px; border-radius:20px; font-family:'IBM Plex Mono',monospace; font-size:12px; }
+
+  /* ── 分節線 ── */
+  .sec-div {
+    max-width:1100px; margin:2.5rem auto 2rem;
+    display:flex; align-items:center; gap:12px;
+    font-size:11px; color:var(--text3); letter-spacing:1px; text-transform:uppercase;
+  }
+  .sec-div::before,.sec-div::after { content:''; flex:1; height:1px; background:var(--border); }
 </style>
 </head>
 <body>
 
 <header>
-  <h1>紙張訂單計算工具</h1>
+  <div>
+    <p class="page-brand">FlowGPS · 紙業計算工具</p>
+    <h1>紙張訂單計算工具</h1>
+  </div>
   <span>單張重 = GSM × 長(m) × 寬(m)</span>
 </header>
 
