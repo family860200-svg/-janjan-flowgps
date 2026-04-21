@@ -1,0 +1,106 @@
+{
+  "_schema_version": "1.0",
+  "_created_at": "2026-04-21",
+  "_handle": "jan_92._",
+  "_data_confidence": "Directional",
+  "_note": "5 posts imported manually via Path C. No engagement metrics available. Schema-normalized from raw text.",
+  "posts": [
+    {
+      "id": "jan92_001",
+      "text": "我們公司前輩在去年退休，一直以來他是用手工計算+少少的ERP確認重量，沒有搞錯真的是手工+計算機\n對於我而言\n最痛苦的莫過於\n明明有更好的方式可以替代\n例如：Excel\n於是我接手後立馬改用Excel運算\n不用ㄧ直按計算機\n但我認為還不夠\n試著用AI做一些小工具\n驚覺再這樣下去\n我真的會沒工作\nAI不會因為客戶訂單很大要算很久而有情緒\n也不會生理痛😂\n只是還是要有個人餵資料進去\n並且審核它算的結果",
+      "created_at": "2026-04-17",
+      "content_type": "職場反思",
+      "topics": ["AI工具", "工作自動化", "職場觀察"],
+      "metrics": {
+        "views": null,
+        "likes": null,
+        "replies": null,
+        "reposts": null,
+        "shares": null
+      },
+      "comments": [],
+      "hook_type": "對比/諷刺",
+      "emotional_arc": "痛苦 → 改變 → 自嘲 → 洞見",
+      "word_count": 107,
+      "review_state": "imported"
+    },
+    {
+      "id": "jan92_002",
+      "text": "去年來公司提案的外國人問我\n處理一張單要多久\n我說30分鐘\n他展示了他的軟體可以解決我的痛點\n很棒，可以說是一輸入結果就出來了\n當時我覺得很棒\n但要好幾十萬美金/一套\n如今我用Claude做出來的這套\n是不是可以賣\n不用美金💸台幣就好",
+      "created_at": "2026-04-16",
+      "content_type": "職場反思",
+      "topics": ["AI工具", "Claude", "自建工具", "商業思考"],
+      "metrics": {
+        "views": null,
+        "likes": null,
+        "replies": null,
+        "reposts": null,
+        "shares": null
+      },
+      "comments": [],
+      "hook_type": "對話場景開場",
+      "emotional_arc": "羨慕 → 現實落差 → 逆轉自信",
+      "word_count": 72,
+      "review_state": "imported"
+    },
+    {
+      "id": "jan92_003",
+      "text": "早安\n今天重大事件就是白沙屯媽祖來苑裡，第一站公所站居然沒停下來 ，我不死心衝到車站附近等，是否有機會鑽轎底。\n天呀，因為一度現場十分混亂，媽祖等我們整隊速速跪下，膝蓋碰到柏油路面好痛，我整理了一下，速速低下頭，我已經激動到淚流滿面一抬頭看旁邊的陌生人也是，滿足的離開了。\n有一年我從文苑國小一直從橋下退退退到橋上再退到快到橋下\n所以今年退的程度只有一個紅綠燈🚥還可以接受。\n謝謝白沙屯媽祖和一路維持交通及秩序的每一位❤️",
+      "created_at": "2026-04-19",
+      "content_type": "生活記事",
+      "topics": ["白沙屯媽祖", "苑裡", "信仰", "在地文化"],
+      "metrics": {
+        "views": null,
+        "likes": null,
+        "replies": null,
+        "reposts": null,
+        "shares": null
+      },
+      "comments": [],
+      "hook_type": "時事/在地事件",
+      "emotional_arc": "期待 → 挫折 → 堅持 → 感動 → 滿足",
+      "word_count": 145,
+      "review_state": "imported"
+    },
+    {
+      "id": "jan92_004",
+      "text": "與媽祖同行\n早上5點多就被煙火聲叫醒，我知道媽祖快來了\n為了避免和前年卡在人龍裡面押秒到公司的窘境\n我一醒來就看媽祖定位開始計算著\n媽祖若是一路衝大甲，我可以7點再出門就好\n但媽祖到苑裡車站後轉苑裡農會\n當下我就決定我要先出門了\n這時6:15\n一出門，有N台遊覽車一同南下\n我索性抄小路\n靠體感覺得差不多了的時候轉回台一線\n幸運我一轉就對\n6:38到達公司\n守衛先生還問我為何這麼早來\n我怕塞車啊!!!\n辦公室同事各有各的招\n有人抄小路，有人騎機車上班\n8:20的時候差不多是媽祖離我最近的時候\n寧願早到也不要遲到",
+      "created_at": "2026-04-13",
+      "content_type": "生活記事",
+      "topics": ["白沙屯媽祖", "苑裡", "日常規劃", "在地文化"],
+      "metrics": {
+        "views": null,
+        "likes": null,
+        "replies": null,
+        "reposts": null,
+        "shares": null
+      },
+      "comments": [],
+      "hook_type": "時間線敘事",
+      "emotional_arc": "備戰 → 精算 → 行動 → 成功抵達",
+      "word_count": 153,
+      "review_state": "imported"
+    },
+    {
+      "id": "jan92_005",
+      "text": "我問AI 值不值\n整理好了，幫你列出這段期間用 Claude 做的所有事：\nFlowGPS × Claude 成果清單\n（2026/03/30 至今，約 9 天）\n系統建置\n1.建立 FlowGPS 四大資料夾架構（F.L.O.W.）\n2.建立玩家檔案 CLAUDE.md，含對話 SOP\n3.建立跨裝置同步流程（git pull → 說早安即接上）\n4.GitHub repo 改為 Private，補強資安\n5.gitignore 保護敏感資訊（Token、.env）\n6.建立手機遙控 Remote Trigger\n7.Notion 自動同步串接完成（GitHub Actions）\n8.根目錄 + scripts/ 133 個檔案大整理歸位\n9.建立 FlowGPS 日報 Dashboard（Memphis 風格）\n10.日報加入艾森豪矩陣、八大財富計分板\n11.隨手一記新增編輯、刪除、TAG 功能\n12.日報日期切換功能（可查歷史）\n13.每日 00:00 自動重置日報功能\n14.修復日報跨日資料污染 bug",
+      "created_at": "2026-04-07",
+      "content_type": "成果展示",
+      "topics": ["FlowGPS", "Claude", "AI工具", "生產力系統"],
+      "metrics": {
+        "views": null,
+        "likes": null,
+        "replies": null,
+        "reposts": null,
+        "shares": null
+      },
+      "comments": [],
+      "hook_type": "問句開場",
+      "emotional_arc": "疑問 → 成果揭露 → 清單式展示",
+      "word_count": 162,
+      "review_state": "imported"
+    }
+  ],
+  "discarded_drafts": [],
+  "_last_updated": "2026-04-21"
+}

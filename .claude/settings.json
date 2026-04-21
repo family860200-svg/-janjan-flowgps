@@ -22,5 +22,10 @@
         ]
       }
     ]
+  },
+  "permissions": {
+    "allow": [
+      "Bash(python3 -c \"import json,sys; data=json.load\\(sys.stdin\\); today=[n for n in data.get\\('notes',[]\\) if n.get\\('date',''\\).startswith\\('2026-04-20'\\)]; print\\(json.dumps\\(today, ensure_ascii=False, indent=2\\)\\)\")"
+    ]
   }
 }
