@@ -1,43 +1,57 @@
 {
-  "generatedAt": "2026-04-21T20:19:00",
+  "generatedAt": "2026-04-21T10:01:55+08:00",
   "tasks": {
     "urgent": [
-      { "title": "客訴：等副理簽核後確認下一步行動", "source": "FlowGPS", "dueDate": null },
-      { "title": "郵局寄診斷證明＋收據給素華姐（保險理賠）", "source": "FlowGPS", "dueDate": "2026-04-23" },
-      { "title": "趁客訴交接前，搞清楚業務小姐完整工作流程", "source": "FlowGPS", "dueDate": null }
+      { "title": "機車兩台三個險種：等侄子回覆後辦理", "source": "FlowGPS", "dueDate": "2026-04-21" },
+      { "title": "客訴處理接手上軌道（等副理簽核後確認下一步）", "source": "FlowGPS", "dueDate": "" },
+      { "title": "清楚業務小姐的工作流程", "source": "FlowGPS", "dueDate": "" },
+      { "title": "客訴異議單：統一版本與大小", "source": "FlowGPS", "dueDate": "" },
+      { "title": "姪子的車 MBC-XXXX 決定是否續繳任意險", "source": "FlowGPS", "dueDate": "2026-06-16" },
+      { "title": "裕的小黑 XXX-TDA 強制險續保", "source": "FlowGPS", "dueDate": "2026-06-17" },
+      { "title": "房租 9 月", "source": "FlowGPS", "dueDate": "2026-09-05" }
     ],
     "important": [
-      { "title": "⭐ 4/23（四）日本客戶來訪，需出席", "source": "FlowGPS", "dueDate": "2026-04-23" },
-      { "title": "4/25～4/26 女兒宜蘭二日遊", "source": "FlowGPS", "dueDate": "2026-04-25" },
-      { "title": "⚠️ 童綜合回診－肝膽腸胃科（4/30 前）", "source": "FlowGPS", "dueDate": "2026-04-30" },
-      { "title": "女兒資料整理 deadline（4/30）", "source": "FlowGPS", "dueDate": "2026-04-30" },
-      { "title": "孩子王培訓課程（5/2～5/3）", "source": "FlowGPS", "dueDate": "2026-05-02" },
-      { "title": "機車兩台三個險種：等侄子回覆確認是否續保", "source": "FlowGPS", "dueDate": null },
-      { "title": "動手製作 B 款樣品書（目標 3 本）", "source": "FlowGPS", "dueDate": null },
-      { "title": "Threads 每日 3 篇衝 1000+ 追蹤", "source": "FlowGPS", "dueDate": null }
+      { "title": "日本客戶來訪（需準備資料與出席）", "source": "FlowGPS", "dueDate": "2026-04-23" },
+      { "title": "童綜合回診－肝膽腸胃科", "source": "FlowGPS", "dueDate": "2026-04-25" },
+      { "title": "女兒宜蘭二日遊", "source": "FlowGPS", "dueDate": "2026-04-25" },
+      { "title": "女兒資料整理 deadline", "source": "FlowGPS", "dueDate": "2026-04-30" },
+      { "title": "孩子王培訓課程", "source": "FlowGPS", "dueDate": "2026-05-02" },
+      { "title": "動手製作樣品書，目標 3 本", "source": "FlowGPS", "dueDate": "" },
+      { "title": "婦女培力計劃跟著節奏推進", "source": "FlowGPS", "dueDate": "" },
+      { "title": "Threads 衝到 1000+ 追蹤", "source": "FlowGPS", "dueDate": "" }
     ],
     "quick": [
-      { "title": "每天晚餐後吃藥（胃潰瘍）", "source": "FlowGPS", "dueDate": null },
-      { "title": "嘜頭資料產生器：實際印一張確認版面位置", "source": "FlowGPS", "dueDate": null },
-      { "title": "紙張訂單計算工具：到公司用實際訂單測試", "source": "FlowGPS", "dueDate": null },
-      { "title": "看中醫（空檔安排）", "source": "FlowGPS", "dueDate": null }
+      { "title": "郵局寄診斷證明＋收據給素華姐", "source": "FlowGPS", "dueDate": "2026-04-23" },
+      { "title": "每天晚餐後吃藥（胃潰瘍）", "source": "FlowGPS", "dueDate": "" },
+      { "title": "每天早餐後吃藥（注意勿漏吃）", "source": "FlowGPS", "dueDate": "" },
+      { "title": "看中醫（空檔安排）", "source": "FlowGPS", "dueDate": "" },
+      { "title": "教阿娟二號：貨櫃裝載計算（公司測試）", "source": "FlowGPS", "dueDate": "" },
+      { "title": "嘜頭資料產生器：印紙確認版面對齊", "source": "FlowGPS", "dueDate": "" },
+      { "title": "紙張訂單計算工具：實際測試", "source": "FlowGPS", "dueDate": "" }
     ],
     "backlog": [
-      { "title": "Threads 貼文優化（鉤子策略、風格結構）", "source": "FlowGPS", "dueDate": null },
-      { "title": "八大財富三個面向優化（人脈、服務、金錢）", "source": "FlowGPS", "dueDate": null },
-      { "title": "手工書網站版面比例微調", "source": "FlowGPS", "dueDate": null },
-      { "title": "高雄之旅計劃", "source": "FlowGPS", "dueDate": null }
+      { "title": "買微波烤箱評估：SHARP R-TT25MG-W", "source": "FlowGPS", "dueDate": "" },
+      { "title": "Threads 貼文優化", "source": "FlowGPS", "dueDate": "" },
+      { "title": "八大財富三個面向優化", "source": "FlowGPS", "dueDate": "" },
+      { "title": "手工書網站版面比例調整", "source": "FlowGPS", "dueDate": "" },
+      { "title": "高雄之旅計劃", "source": "FlowGPS", "dueDate": "" },
+      { "title": "母親節餐會（與爸媽）", "source": "FlowGPS", "dueDate": "2026-05-06" },
+      { "title": "認識苑裡走讀與場域操作課程", "source": "FlowGPS", "dueDate": "2026-05-09" }
     ]
   },
   "schedule": [
-    { "time": "全天", "title": "等侄子機車保險回覆" },
-    { "time": "04/23", "title": "⭐ 日本客戶來訪 ＋ 郵局寄保險理賠文件" },
-    { "time": "04/25-26", "title": "女兒宜蘭二日遊" },
-    { "time": "04/30", "title": "⚠️ 童綜合回診 ＋ 女兒資料 deadline" }
+    { "time": "04/23", "title": "日本客戶來訪 ＋ 郵局寄診斷證明" },
+    { "time": "04/25 上午診", "title": "童綜合回診－肝膽腸胃科" },
+    { "time": "04/25 - 04/26", "title": "女兒宜蘭二日遊" },
+    { "time": "04/30", "title": "女兒資料整理 deadline" }
   ],
   "stats": {
-    "total": 19,
-    "done": 18,
-    "pending": 15
+    "total": 76,
+    "done": 47,
+    "pending": 29,
+    "urgent": 7,
+    "important": 8,
+    "quick": 7,
+    "backlog": 7
   }
 }

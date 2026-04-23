@@ -518,6 +518,35 @@
     body { padding: 1rem .5rem; }
     .card .v { font-size: 18px; }
   }
+
+  @media print {
+    @page { size: A4 landscape; margin: 12mm 10mm; }
+    body { background: white; padding: 0; font-size: 11px; }
+    header { margin-bottom: 8px; }
+    .summary { margin-bottom: 10px; gap: 6px; }
+    .card { box-shadow: none; border: 1px solid #ccc; padding: .5rem .7rem; }
+    .card .v { font-size: 16px; }
+    .table-wrap { border: 1px solid #ccc; margin-bottom: 8px; box-shadow: none; }
+    table { font-size: 10px; }
+    th, td { padding: 5px 6px; }
+    td input[type=number], td input.adj-input { border: none; background: transparent; font-size: 10px; width: auto; padding: 0; font-family: 'IBM Plex Mono', monospace; }
+    .del-btn { display: none; }
+    .quick-add, .import-box, .toolbar, .notice { display: none !important; }
+    .ca-section { display: block !important; }
+    .ca-grid { grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 8px; }
+    .ca-box { break-inside: avoid; overflow: visible !important; }
+    .ca-item { white-space: normal !important; flex-wrap: wrap; }
+    .ca-item-spec { white-space: normal !important; overflow: visible !important; }
+    .ca-item-qty { white-space: normal !important; overflow: visible !important; }
+    #ca-svg-section { display: block !important; }
+    #ca-svg-section > div:first-child { margin-bottom: 6px; }
+    #ca-svg-list > div { break-inside: avoid; margin-bottom: 10px; overflow-x: visible !important; }
+    #ca-svg-list svg { max-width: 100% !important; height: auto !important; }
+    .table-wrap { break-after: auto; }
+    thead tr { background: #f0ede6 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    tfoot td { background: #f0ede6 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .rate-high, .rate-mid, .rate-low { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
 </style>
 </head>
 <body>
