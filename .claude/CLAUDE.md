@@ -20,3 +20,12 @@
 ```
 
 執行方式：讀取該 markdown 檔案的完整內容，依照其中的步驟逐步執行。
+
+### `/teleprompter` 指令
+當使用者輸入包含 `/teleprompter` 或 `/telepromt` 關鍵字時，自動讀取並執行以下 workflow：
+
+```
+Ｚ 系統/workflows/teleprompter.md
+```
+
+執行方式：讀取該 markdown 檔案的完整內容，依照其中的步驟逐步執行。
