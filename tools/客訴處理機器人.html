@@ -124,7 +124,7 @@ body {
   display: flex; align-items: center; gap: 12px; cursor: pointer;
 }
 .step-num {
-  font-size: 10px; color: #c0a888; letter-spacing: 1px; min-width: 28px;
+  font-size: 10px; color: #c0a888; letter-spacing: 1px; min-width: 36px;
 }
 .step-title {
   flex: 1; font-weight: 600; font-size: 14px; color: #3d3028; letter-spacing: 0.5px;
@@ -147,7 +147,7 @@ body {
 
 .step-detail {
   font-size: 13px; color: #7a6858; margin-top: 10px;
-  padding-left: 40px; line-height: 1.9; display: none;
+  padding-left: 44px; line-height: 1.9; display: none;
 }
 .step-detail.show { display: block; }
 .step-detail ul { margin: 4px 0; padding-left: 14px; }
@@ -175,7 +175,7 @@ body {
 }
 
 /* ── 底部按鈕 ── */
-.bottom-bar { padding: 12px 16px 0; }
+.bottom-bar { padding: 12px 16px 0; display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
 .btn {
   padding: 9px 22px; border: none; border-radius: 20px;
   cursor: pointer; font-size: 13px; font-family: inherit;
@@ -186,6 +186,17 @@ body {
   border: 1px solid #d8cdbf;
 }
 .btn-ghost:hover { background: #f0e8dc; }
+.btn-print {
+  background: #f0e8dc; color: #7a5838;
+  border: 1px solid #d8cdbf;
+}
+.btn-print:hover { background: #e8d8c8; }
+.save-toast {
+  font-size: 12px; color: #b8c8a8; letter-spacing: 0.5px;
+  opacity: 0; transition: opacity 0.4s;
+  margin-left: auto;
+}
+.save-toast.show { opacity: 1; }
 
 /* ── 歷史記錄 ── */
 .history-panel { display: none; padding: 0 16px; }
@@ -217,6 +228,45 @@ body {
 .history-step-time { font-size: 11px; color: #b8c8a8; white-space: nowrap; }
 .history-note { font-size: 12px; color: #9a8878; margin-top: 4px; line-height: 1.6; }
 .no-history { color: #c0b0a0; font-size: 13px; text-align: center; padding: 40px; letter-spacing: 1px; }
+
+/* ── 列印樣式 ── */
+@media print {
+  @page { size: A4; margin: 18mm 16mm; }
+
+  body { max-width: 100%; padding: 0; font-size: 12px; background: #fff; color: #000; }
+
+  .tab-bar, .progress-wrap, .counter, .bottom-bar,
+  .history-panel, .note-area, .check-btn { display: none !important; }
+
+  .hero { padding: 16px 12px 12px; background: none; border-bottom: 2px solid #000; }
+  .hero::before, .hero::after { display: none; }
+  .hero h1 { font-size: 16px; color: #000; }
+  .hero-en { color: #555; }
+  .hero-date { color: #555; }
+  .deco-line { display: none; }
+
+  .steps-wrap { padding: 0; }
+  .step-card {
+    border: 1px solid #ccc;
+    border-left: 3px solid #888;
+    border-radius: 6px;
+    margin-bottom: 8px;
+    padding: 10px 12px;
+    box-shadow: none;
+    page-break-inside: avoid;
+  }
+  .step-card.done { background: #f8f8f8; }
+
+  .step-detail { display: block !important; padding-left: 44px; margin-top: 6px; color: #333; }
+
+  .step-num { color: #555; }
+  .step-title { font-size: 13px; }
+  .step-card.done .step-title { text-decoration: none; color: #000; }
+
+  .tip { border-left: 2px solid #888; background: #f5f5f5; color: #444; }
+  .timestamp, .ts-date, .ts-time { color: #555; }
+  .all-done { display: none !important; }
+}
 </style>
 </head>
 <body>
@@ -248,6 +298,8 @@ body {
 
   <div class="bottom-bar">
     <button class="btn btn-ghost" onclick="resetAll()">↺　重新開始今日</button>
+    <button class="btn btn-print" onclick="window.print()">🖨　列印 A4</button>
+    <span class="save-toast" id="saveToast">✦ 已儲存</span>
   </div>
 </div>
 
@@ -260,8 +312,8 @@ body {
 <script>
 const STEPS = [
   {
-    title: '處理客戶 FAX 客訴異議單',
-    detail: `<ul><li>客戶 FAX 客訴異議單</li><li>收到後修剪大小</li><li>COPY 一份 (背面不能有字)</li></ul>`,
+    title: '收 FAX 客訴異議單',
+    detail: `<ul><li>客戶 FAX 客訴異議單</li><li>收到後修剪大小</li><li>COPY 一份（背面不能有字）</li></ul>`,
     tip: '修剪後 COPY 的背面務必保持空白，以免後續作業干擾。',
     placeholder: '收到幾件 FAX？'
   },
@@ -327,12 +379,9 @@ let timestamps = new Array(TOTAL).fill('');
 let expanded = new Array(TOTAL).fill(false);
 
 function fmtDate(ts) {
-  // ts = "2026/04/20 11:44 AM" → "4/20"
   const parts = ts.split('/');
   if (parts.length < 3) return '';
-  const m = parseInt(parts[1], 10);
-  const d = parseInt(parts[2], 10);
-  return m + '/' + d;
+  return parseInt(parts[1], 10) + '/' + parseInt(parts[2], 10);
 }
 
 function getTodayKey() {
@@ -362,6 +411,15 @@ function saveToday() {
   const notes = STEPS.map((_, i) => { const el = document.getElementById('note_'+i); return el ? el.value : ''; });
   const data = { checked, timestamps, notes, date: new Date().toLocaleDateString('zh-TW', {year:'numeric',month:'long',day:'numeric',weekday:'short'}) };
   localStorage.setItem(getTodayKey(), JSON.stringify(data));
+  showSaveToast();
+}
+
+function showSaveToast() {
+  const t = document.getElementById('saveToast');
+  if (!t) return;
+  t.classList.add('show');
+  clearTimeout(t._timer);
+  t._timer = setTimeout(() => t.classList.remove('show'), 1800);
 }
 
 function init() {
@@ -381,7 +439,7 @@ function renderSteps() {
     card.className = 'step-card' + (checked[i] ? ' done' : (i === first ? ' active' : ''));
     card.innerHTML = `
       <div class="step-header" onclick="toggleExpand(${i})">
-        <span class="step-num">STEP ${i}</span>
+        <span class="step-num">STEP ${i+1}</span>
         <span class="step-title">${s.title}</span>
         <div class="step-right">
           <button class="check-btn" onclick="event.stopPropagation();toggleCheck(${i})">${checked[i] ? '✓' : ''}</button>
@@ -461,7 +519,7 @@ function renderHistory(keyword) {
       if (!data.checked || !data.checked[i]) return;
       html += `<div class="history-item">
         <div class="history-step">
-          <span class="history-step-name">STEP ${i}　${s.title}</span>
+          <span class="history-step-name">STEP ${i+1}　${s.title}</span>
           <span class="history-step-time">${ts[i] ? ts[i].slice(11) : ''}</span>
         </div>
         ${notes[i] ? '<div class="history-note">' + notes[i] + '</div>' : ''}
@@ -470,37 +528,6 @@ function renderHistory(keyword) {
   });
   document.getElementById('historyContent').innerHTML = html || '<div class="no-history">找不到符合的記錄</div>';
 }
-
-// 【修復舊紀錄與補回昨天資料】
-function migrateAndRestoreData() {
-  const yKey = 'complaint_20260420';
-  if (!localStorage.getItem(yKey)) {
-    localStorage.setItem(yKey, JSON.stringify({
-      checked: [false, true, true, true, true, false, false, false, false],
-      timestamps: ['', '2026/04/20 09:30 AM', '2026/04/20 10:30 AM', '2026/04/20 11:30 AM', '2026/04/20 02:00 PM', '', '', '', ''],
-      notes: ['', '', '', '', '【系統補回】昨天做到 STEP 4：副理簽核', '', '', '', ''],
-      date: '2026年4月20日 週一'
-    }));
-  }
-
-  // 升級 8 步為 9 步，確保昨天的打勾紀錄不會因為新增 STEP 0 而錯位
-  Object.keys(localStorage).forEach(k => {
-    if (k.startsWith('complaint_')) {
-      try {
-        const d = JSON.parse(localStorage.getItem(k));
-        if (d.checked && d.checked.length === 8) {
-          d.checked.unshift(false);
-          d.timestamps = d.timestamps || new Array(8).fill('');
-          d.timestamps.unshift('');
-          d.notes = d.notes || new Array(8).fill('');
-          d.notes.unshift('');
-          localStorage.setItem(k, JSON.stringify(d));
-        }
-      } catch(e) {}
-    }
-  });
-}
-migrateAndRestoreData();
 
 init();
 </script>
