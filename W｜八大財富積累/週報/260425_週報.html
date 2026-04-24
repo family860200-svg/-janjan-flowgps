@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FlowGPS 週報｜2026 年 4 月第四週</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;700;900&family=Noto+Sans+TC:wght@400;500;700&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --ink: #1a1a1a;
+    --red: #c0392b;
+    --gold: #b8860b;
+    --cream: #f9f5ef;
+    --gray: #6b6b6b;
+    --light: #e8e2d8;
+  }
+
+  body {
+    background: var(--cream);
+    color: var(--ink);
+    font-family: 'Noto Serif TC', serif;
+    font-size: 14px;
+    line-height: 1.6;
+  }
+
+  /* ─── MASTHEAD ─── */
+  .masthead {
+    text-align: center;
+    padding: 24px 40px 16px;
+    border-bottom: 3px double var(--ink);
+  }
+  .masthead-date {
+    font-family: 'Noto Sans TC', sans-serif;
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--gray);
+    margin-bottom: 6px;
+  }
+  .masthead h1 {
+    font-size: 42px;
+    font-weight: 900;
+    letter-spacing: -1px;
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+  .masthead-sub {
+    font-size: 13px;
+    color: var(--gray);
+    font-style: italic;
+  }
+  .masthead-rule {
+    border: none;
+    border-top: 1px solid var(--ink);
+    margin: 10px 0 6px;
+  }
+  .masthead-tagline {
+    font-size: 11px;
+    letter-spacing: 4px;
+    color: var(--gray);
+    font-family: 'Noto Sans TC', sans-serif;
+  }
+
+  /* ─── BREAKING BAR ─── */
+  .breaking-bar {
+    background: var(--ink);
+    color: white;
+    padding: 6px 40px;
+    font-family: 'Noto Sans TC', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .breaking-bar span.label {
+    background: var(--red);
+    padding: 2px 8px;
+    font-size: 11px;
+  }
+
+  /* ─── LAYOUT ─── */
+  .newspaper {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 20px 40px 40px;
+  }
+
+  .columns-3 {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 24px;
+    border-top: 2px solid var(--ink);
+    padding-top: 20px;
+  }
+  .columns-2 {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 24px;
+  }
+  .full-width {
+    border-top: 2px solid var(--ink);
+    padding-top: 16px;
+    margin-top: 20px;
+  }
+  .col { border-right: 1px solid var(--light); padding-right: 20px; }
+  .col:last-child { border-right: none; padding-right: 0; }
+
+  /* ─── SECTION LABELS ─── */
+  .section-label {
+    font-family: 'Noto Sans TC', sans-serif;
+    font-size: 10px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--gray);
+    border-bottom: 1px solid var(--light);
+    padding-bottom: 4px;
+    margin-bottom: 10px;
+  }
+
+  /* ─── HEADLINES ─── */
+  h2.headline {
+    font-size: 20px;
+    font-weight: 900;
+    line-height: 1.2;
+    margin-bottom: 8px;
+  }
+  h2.headline.big {
+    font-size: 28px;
+  }
+  h3.sub-headline {
+    font-size: 15px;
+    font-weight: 700;
+    margin-bottom: 6px;
+    line-height: 1.3;
+  }
+  .deck {
+    font-style: italic;
+    color: var(--gray);
+    font-size: 13px;
+    margin-bottom: 10px;
+    border-left: 3px solid var(--red);
+    padding-left: 8px;
+  }
+  p { margin-bottom: 8px; font-size: 13.5px; }
+
+  /* ─── PULLQUOTE ─── */
+  .pullquote {
+    font-size: 17px;
+    font-weight: 700;
+    font-style: italic;
+    color: var(--ink);
+    border-top: 2px solid var(--ink);
+    border-bottom: 2px solid var(--ink);
+    padding: 12px 0;
+    margin: 16px 0;
+    text-align: center;
+    line-height: 1.4;
+  }
+
+  /* ─── STATS BOX ─── */
+  .stats-box {
+    background: var(--ink);
+    color: white;
+    padding: 14px;
+    margin: 12px 0;
+  }
+  .stats-box .label {
+    font-family: 'Noto Sans TC', sans-serif;
+    font-size: 10px;
+    letter-spacing: 2px;
+    opacity: 0.7;
+    margin-bottom: 4px;
+  }
+  .stats-box .number {
+    font-size: 36px;
+    font-weight: 900;
+    line-height: 1;
+  }
+  .stats-box .unit {
+    font-size: 13px;
+    opacity: 0.8;
+  }
+
+  /* ─── PILL TAGS ─── */
+  .tags { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0; }
+  .tag {
+    font-family: 'Noto Sans TC', sans-serif;
+    font-size: 11px;
+    padding: 2px 8px;
+    border: 1px solid var(--ink);
+    border-radius: 2px;
+  }
+  .tag.gold { border-color: var(--gold); color: var(--gold); }
+  .tag.red { border-color: var(--red); color: var(--red); }
+
+  /* ─── WEALTH TABLE ─── */
+  .wealth-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12.5px;
+    margin-top: 8px;
+  }
+  .wealth-table th {
+    background: var(--ink);
+    color: white;
+    padding: 6px 8px;
+    text-align: left;
+    font-family: 'Noto Sans TC', sans-serif;
+    font-weight: 500;
+    font-size: 11px;
+  }
+  .wealth-table td {
+    padding: 6px 8px;
+    border-bottom: 1px solid var(--light);
+    vertical-align: top;
+  }
+  .wealth-table tr:nth-child(even) td { background: rgba(0,0,0,0.03); }
+  .stars { color: var(--gold); letter-spacing: -2px; }
+
+  /* ─── DIVIDER ─── */
+  .divider {
+    text-align: center;
+    margin: 16px 0;
+    color: var(--gray);
+    font-size: 18px;
+    letter-spacing: 8px;
+  }
+
+  /* ─── FOOTER ─── */
+  .footer {
+    border-top: 3px double var(--ink);
+    padding-top: 12px;
+    margin-top: 24px;
+    text-align: center;
+    font-family: 'Noto Sans TC', sans-serif;
+    font-size: 11px;
+    color: var(--gray);
+    letter-spacing: 1px;
+  }
+
+  /* ─── CHECKLIST ─── */
+  .checklist { list-style: none; margin: 8px 0; }
+  .checklist li { padding: 3px 0; font-size: 13px; padding-left: 18px; position: relative; }
+  .checklist li::before { content: '✓'; position: absolute; left: 0; color: var(--gold); font-weight: 700; }
+  .checklist li.pending::before { content: '○'; color: var(--gray); }
+
+  .badge {
+    display: inline-block;
+    background: var(--red);
+    color: white;
+    font-family: 'Noto Sans TC', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 2px 7px;
+    margin-right: 4px;
+    border-radius: 2px;
+  }
+  .badge.green { background: #27ae60; }
+  .badge.gold { background: var(--gold); }
+  .badge.blue { background: #2980b9; }
+
+  @media print {
+    body { font-size: 12px; }
+    .masthead h1 { font-size: 36px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- MASTHEAD -->
+<div class="masthead">
+  <div class="masthead-date">2026 年 4 月 19 日 ─ 4 月 25 日　Vol. 3　No. 5</div>
+  <h1>FlowGPS 週報</h1>
+  <div class="masthead-sub">JANJAN 的個人管理系統週刊　by 阿助</div>
+  <hr class="masthead-rule">
+  <div class="masthead-tagline">媽祖鑽轎底 · 日本客戶接待 · 宜蘭二日遊出發</div>
+</div>
+
+<!-- BREAKING BAR -->
+<div class="breaking-bar">
+  <span class="label">本週焦點</span>
+  <span>🙏 白沙屯媽祖鑽轎底成功</span>
+  <span>🇯🇵 日本客戶全日接待圓滿</span>
+  <span>🏥 童綜合回診 ＋ 宜蘭二日遊出發</span>
+</div>
+
+<div class="newspaper">
+
+  <!-- ROW 1: 3 COLUMNS -->
+  <div class="columns-3" style="margin-top: 20px;">
+
+    <!-- COL 1-2: LEAD STORY -->
+    <div class="col" style="grid-column: span 2;">
+      <div class="section-label">頭版要聞</div>
+      <h2 class="headline big">鑽轎底成功、日本客戶圓滿<br>這週 JANJAN 站在自己的位置</h2>
+      <div class="deck">一個靈性體驗，一場跨國商務接待，兩件事都在同一週完成——身在苗栗，能量到位。</div>
+
+      <div class="columns-2">
+        <div>
+          <p><strong>4/19（六）</strong>，白沙屯媽祖進香，JANJAN 完成鑽轎底儀式。人潮龐大，但投射者的智慧在這裡再次顯現：<em>人多的時候，先找個地方緩緩，大軍離開後，自己也能安全離開。</em></p>
+          <p><strong>4/23（三）</strong>，四位日本重要客戶來訪，公司各單位幹部各司其職，JANJAN 擔任全場協調——顧前顧後、扮演「車掌小姐」角色，確保每個環節順暢。接待圓滿收尾，業務關係穩固。</p>
+          <p>這週的亮點，不是做了多少，而是<strong>在對的時間站在對的位置</strong>——祭典裡保護自己，職場上協調全局，兩者都是投射者本色。</p>
+
+          <div class="tags">
+            <span class="tag gold">鑽轎底 ✓</span>
+            <span class="tag gold">日本客戶接待 ✓</span>
+            <span class="tag">母親節訂位 ✓</span>
+            <span class="tag">Threads 發文 ✓</span>
+          </div>
+        </div>
+        <div>
+          <div class="stats-box">
+            <div class="label">本週完成重點事項</div>
+            <div class="number">6</div>
+            <div class="unit">件待辦全部落地</div>
+          </div>
+          <div class="stats-box" style="background: #8e44ad; margin-top: 8px;">
+            <div class="label">白沙屯媽祖鑽轎底</div>
+            <div class="number">✓</div>
+            <div class="unit">人生體驗帳戶 ★★★</div>
+          </div>
+          <div class="stats-box" style="background: #2980b9; margin-top: 8px;">
+            <div class="label">捲筒配抄工具</div>
+            <div class="number">新建</div>
+            <div class="unit">整合裝載模擬 ✓</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- COL 3: LIFE -->
+    <div class="col">
+      <div class="section-label">生活快訊</div>
+
+      <h3 class="sub-headline">🏥 童綜合回診已到位</h3>
+      <p>肝膽腸胃科 52 號，4/25 上午如期完成。胃潰瘍追蹤不落空，健康帳戶按計畫推進。</p>
+
+      <div class="pullquote">「累得有<br>值得」</div>
+
+      <h3 class="sub-headline">🚗 宜蘭二日遊出發</h3>
+      <p>4/25 童綜合回診後，帶女兒出發宜蘭，預計 4/26 返回。家庭帳戶大加分。</p>
+
+      <div class="divider">— ✦ —</div>
+
+      <h3 class="sub-headline">📱 Threads 發文</h3>
+      <p>主題：每天 7～9 點屬於自己。投射者補電概念＋日常感風格，品牌聲音持續累積。</p>
+
+      <div class="section-label" style="margin-top: 16px;">本週完成 ✓</div>
+      <ul class="checklist">
+        <li>鑽轎底儀式</li>
+        <li>牙醫（4/19）</li>
+        <li>母親節聚餐訂位（5/6）</li>
+        <li>日本客戶接待（4/23）</li>
+        <li>Threads 發文（ME TIME）</li>
+        <li>童綜合回診（4/25）</li>
+      </ul>
+
+      <div class="section-label" style="margin-top: 12px;">待辦未完成 ○</div>
+      <ul class="checklist">
+        <li class="pending">郵局寄素華姐診斷證明（宜蘭回來後）</li>
+        <li class="pending">B 款樣品書（0/3）</li>
+        <li class="pending">機車保險等侄子回覆</li>
+      </ul>
+    </div>
+
+  </div>
+
+  <!-- DIVIDER -->
+  <div class="divider" style="margin: 20px 0 0;">—————————————————————————</div>
+
+  <!-- ROW 2: 3 COLUMNS -->
+  <div class="columns-3" style="border-top: 1px solid var(--light); padding-top: 16px;">
+
+    <!-- COL 1: 捲筒工具 -->
+    <div class="col">
+      <div class="section-label">工具報導</div>
+      <h3 class="sub-headline">捲筒配抄工具正式誕生<br>從 kg 到裝載一氣呵成</h3>
+      <p>4/20（日）完成新建：<code>配抄排程_MM.html</code>，填補了原有工具的最後缺口。</p>
+      <p>客戶給 GSM ＋ 寬度 ＋ 客需 kg，系統自動算出粒數，一鍵切換 PM1／PM2，配抄排程、生管格式、備料清單一次輸出。</p>
+      <p>配抄完成後直接帶入貨櫃裝載模擬——選直徑（大粒 134 ／小粒 114 ／自訂），疊層規則自動套用（790mm 以下疊 3 層，超過疊 2 層），俯視 SVG 即時呈現。</p>
+      <div class="tags">
+        <span class="tag">PM1 / PM2 切換</span>
+        <span class="tag">自動算粒數</span>
+        <span class="tag gold">整合裝載模擬</span>
+      </div>
+      <p style="font-size: 12px; color: var(--gray); margin-top: 8px;">待驗證：用 G106 KY-3400 訂單（270gsm 889/787/686mm）到公司實測。</p>
+    </div>
+
+    <!-- COL 2: 系統同步 -->
+    <div class="col">
+      <div class="section-label">系統更新</div>
+      <h3 class="sub-headline">4/24 公司端大同步<br>12 個檔案 3 個 commit</h3>
+      <p>4/24（四）下班後 git pull，同步公司環境最新更新：</p>
+      <ul style="margin: 8px 0 8px 16px; font-size: 13px; line-height: 1.8;">
+        <li>客訴機器人更新</li>
+        <li>英吋配抄工具修正</li>
+        <li>新增 MM 配抄工具</li>
+        <li>捲筒排程整合</li>
+        <li>補存 4/22 與 4/24 flow journal</li>
+      </ul>
+      <p>兩端同步無誤，工具版本一致性維持良好。</p>
+
+      <div class="divider">— ✦ —</div>
+
+      <h3 class="sub-headline">🔧 電腦除卡（4/22）</h3>
+      <p>Chrome 佔用過高，一鍵砍掉所有進程，CPU 負載從 <strong>67 → 35</strong>，工作環境恢復順暢。</p>
+    </div>
+
+    <!-- COL 3: 白沙屯智慧 -->
+    <div class="col">
+      <div class="section-label">本週智慧結晶</div>
+      <h3 class="sub-headline">白沙屯教的一課<br>投射者的人群策略</h3>
+
+      <div class="pullquote" style="font-size: 14px;">
+        「人多的時候<br>先找個地方緩緩<br>大軍離開後<br>妳也能安全離開」
+      </div>
+
+      <p>這不只是現場應急，更是投射者的能量守則——<strong>不是不融入，是知道何時進、何時退</strong>。</p>
+      <p>同樣的智慧，用在日本客戶接待日：不衝最前、不搶鋒頭，全場協調、顧前顧後，反而讓接待更圓滿。</p>
+
+      <div class="section-label" style="margin-top: 16px;">本週 ME TIME 品質</div>
+      <p>4/21 跟妹妹＋女兒好好聊天，23:00 前上床。4/24 發完 Threads 後輕緩收工。黃金時段沒有浪費。</p>
+    </div>
+
+  </div>
+
+  <!-- ROW 3: WEALTH TABLE + NEXT WEEK -->
+  <div class="full-width">
+    <div class="columns-2">
+
+      <!-- WEALTH ACCOUNTS -->
+      <div>
+        <div class="section-label">本週八大財富帳戶結算</div>
+        <table class="wealth-table">
+          <thead>
+            <tr>
+              <th>帳戶</th>
+              <th>本週亮點</th>
+              <th>評分</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>✈️ 體驗</td>
+              <td>白沙屯媽祖鑽轎底，難得的人生儀式體驗</td>
+              <td><span class="stars">★★★</span></td>
+            </tr>
+            <tr>
+              <td>🏠 家庭</td>
+              <td>母親節訂位、跟妹妹女兒聊天、宜蘭二日遊</td>
+              <td><span class="stars">★★★</span></td>
+            </tr>
+            <tr>
+              <td>💰 金錢</td>
+              <td>日本客戶接待圓滿，業務關係穩固</td>
+              <td><span class="stars">★★</span></td>
+            </tr>
+            <tr>
+              <td>🤝 人脈</td>
+              <td>跨國客戶現場信任建立；侄子機車保險聯繫</td>
+              <td><span class="stars">★★</span></td>
+            </tr>
+            <tr>
+              <td>⚒️ 技能</td>
+              <td>捲筒配抄工具新建完成，整合裝載模擬</td>
+              <td><span class="stars">★★</span></td>
+            </tr>
+            <tr>
+              <td>💪 健康</td>
+              <td>童綜合回診完成，胃潰瘍追蹤持續；牙醫 ✓</td>
+              <td><span class="stars">★★</span></td>
+            </tr>
+            <tr>
+              <td>🌱 成長</td>
+              <td>Threads 發文持續、投射者能量智慧實踐</td>
+              <td><span class="stars">★★</span></td>
+            </tr>
+            <tr>
+              <td>🫶 服務</td>
+              <td>工具更新同步，捲筒流程整合</td>
+              <td><span class="stars">★</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- NEXT WEEK -->
+      <div>
+        <div class="section-label">下週作戰計畫（4/27 起）</div>
+        <h3 class="sub-headline">🎯 四月收尾 ＋ 五月備戰</h3>
+        <p>宜蘭回來後，進入四月最後一週。幾個待辦要在月底前關閉，同時開始為五月市集熱身。</p>
+
+        <div style="margin: 12px 0;">
+          <div><span class="badge red">P0</span> 郵局寄素華姐診斷證明</div>
+          <p style="font-size: 12px; color: var(--gray); margin: 4px 0 8px 50px;">宜蘭回來後第一個工作日處理，不再拖</p>
+
+          <div><span class="badge red">P0</span> 女兒資料整理（4/30 deadline）</div>
+          <p style="font-size: 12px; color: var(--gray); margin: 4px 0 8px 50px;">4/30 前必須完成，不能拖</p>
+
+          <div><span class="badge gold">P1</span> 捲筒配抄工具實測</div>
+          <p style="font-size: 12px; color: var(--gray); margin: 4px 0 8px 50px;">用 G106 KY-3400 實際訂單驗證，確認無誤後交阿娟二號</p>
+
+          <div><span class="badge gold">P1</span> 機車保險後續</div>
+          <p style="font-size: 12px; color: var(--gray); margin: 4px 0 8px 50px;">等侄子回覆後統一辦理三個險種</p>
+
+          <div><span class="badge blue">P2</span> B 款樣品書（先求有）</div>
+          <p style="font-size: 12px; color: var(--gray); margin: 4px 0 8px 50px;">目標 3 本，動手比計畫重要；五月市集資訊等中</p>
+
+          <div><span class="badge blue">P2</span> Threads 持續發文</div>
+          <p style="font-size: 12px; color: var(--gray); margin: 4px 0 8px 50px;">衝 1000+ 追蹤，日常感素材挖不完</p>
+        </div>
+
+        <div class="pullquote" style="font-size: 14px;">
+          先去宜蘭好好放電<br>回來再一步一步走
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="footer">
+    <p>FlowGPS Weekly Report　Vol. 3 No. 5　2026.04.25</p>
+    <p style="margin-top: 4px;">由阿助自動生成，每週六製作，建議週日發佈 🗞️</p>
+  </div>
+
+</div>
+</body>
+</html>
