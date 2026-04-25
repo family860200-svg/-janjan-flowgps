@@ -790,6 +790,10 @@ function render(data) {
                 早餐後
               </label>
               <label style="display:flex;align-items:center;gap:8px;font-weight:700;cursor:pointer;">
+                <input type="checkbox" id="med-noon" onchange="saveMed()" style="width:22px;height:22px;cursor:pointer;">
+                午餐後
+              </label>
+              <label style="display:flex;align-items:center;gap:8px;font-weight:700;cursor:pointer;">
                 <input type="checkbox" id="med-evening" onchange="saveMed()" style="width:22px;height:22px;cursor:pointer;">
                 晚餐後
               </label>
@@ -964,6 +968,7 @@ async function saveFlowJournal() {
     drip: _dripItems,
     review: document.getElementById('flow-review').value,
     med_morning: document.getElementById('med-morning').checked,
+    med_noon: document.getElementById('med-noon').checked,
     med_evening: document.getElementById('med-evening').checked,
   };
   await fetch('/api/flow-journal', {
@@ -1009,6 +1014,7 @@ async function loadFlowJournal(dateKey) {
   _dripItems = j.drip || [];
   renderDrip();
   document.getElementById('med-morning').checked = j.med_morning || false;
+  document.getElementById('med-noon').checked = j.med_noon || false;
   document.getElementById('med-evening').checked = j.med_evening || false;
 }
 
@@ -1023,6 +1029,7 @@ async function saveMed() {
     drip: _dripItems,
     review: document.getElementById('flow-review').value,
     med_morning: document.getElementById('med-morning').checked,
+    med_noon: document.getElementById('med-noon').checked,
     med_evening: document.getElementById('med-evening').checked,
   };
   await fetch('/api/flow-journal', {
