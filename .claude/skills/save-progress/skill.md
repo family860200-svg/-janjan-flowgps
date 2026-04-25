@@ -186,7 +186,7 @@ F｜行動聚焦漏斗/玩家待辦任務.md
 
 ---
 
-### Step 9：Git 備份
+### Step 9：Git 備份 + Notion 同步
 
 ```bash
 cd "/Users/user/-janjan-flowgps"
@@ -202,6 +202,16 @@ EOF
 )"
 git push
 ```
+
+**Git 完成後，同步摘要到 Notion 當日頁面**：
+
+```bash
+source ~/.claude/secrets/.env && export NOTION_TOKEN && python3 "/Users/user/-janjan-flowgps/scripts/notion_daily_sync.py"
+```
+
+- 成功 → 在存檔摘要加上 `📒 Notion：已同步`
+- 找不到今日頁面 → 略過，不中斷流程
+- Token 失效 → 說明原因，不中斷流程
 
 **Commit 完成後必須回報**：
 
