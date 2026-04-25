@@ -1,13 +1,18 @@
 {
   "boss": "",
-  "idea": "",
+  "idea": "今天一口氣看完第七章:獨當一面的織書人",
   "f": "",
   "l": "",
   "o": "",
   "w": "",
-  "drip": [],
+  "drip": [
+    {
+      "type": "P",
+      "activity": "看課ING"
+    }
+  ],
   "review": "感謝阿淇哥陪我去看診",
   "med_morning": true,
   "med_noon": true,
-  "med_evening": false
+  "med_evening": true
 }
