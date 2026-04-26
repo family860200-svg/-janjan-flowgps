@@ -16,8 +16,8 @@ tags: [agent, admin-assistant]
 
 | 任務場景 | 使用工具 | 類型 |
 |---------|---------|------|
-| 備份 StreamDeck 設定 | `streamdeck-backup` | Skill（待建）|
-| 備份 Claude 設定（~/.claude）| `claude-config-backup` | Skill（待建）|
+| 備份 StreamDeck 設定 | `streamdeck-backup` | Skill |
+| 備份 Claude 設定（~/.claude）| `claude-config-backup` | Skill |
 | 確認備份時間戳、檔案大小 | Bash（`date` / `ls -la` / `du -sh`）| CLI |
 | Skills 認領巡檢（每週）| 比對 `.claude/skills/` vs 各 agent TOOLS.md | SOP |
 
@@ -27,8 +27,8 @@ tags: [agent, admin-assistant]
 
 | Skill | 觸發時機 | 說明 |
 |-------|---------|------|
-| `streamdeck-backup` | 需要備份 StreamDeck 設定 | Stream Deck+ 設定自動備份到 iCloud Drive（待建）|
-| `claude-config-backup` | 需要備份 Claude 設定 | ~/.claude 整個設定目錄備份到 iCloud Drive（待建）|
+| `streamdeck-backup` | 需要備份 StreamDeck 設定 | Stream Deck+ 設定自動備份到 iCloud Drive |
+| `claude-config-backup` | 需要備份 Claude 設定 | ~/.claude 整個設定目錄備份到 iCloud Drive |
 
 ---
 

@@ -17,10 +17,10 @@ tags: [agent, admin-assistant]
 
 ## 🟡 待辦
 
-- [ ] 建立 `streamdeck-backup` Skill [P2]
-- [ ] 建立 `claude-config-backup` Skill [P2]
 - [ ] 執行首次 Skills 認領巡檢 [P2]
 
 ## ✅ 已完成（本月）
 
 - [x] ~~建立清簡員工資料夾（8 件套）~~ ✅ 260426
+- [x] ~~建立 `claude-config-backup` Skill~~ ✅ 260426
+- [x] ~~建立 `streamdeck-backup` Skill~~ ✅ 260426
