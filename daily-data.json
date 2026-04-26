@@ -1,0 +1,35 @@
+{
+  "generatedAt": "2026-04-26T19:57:00",
+  "tasks": {
+    "urgent": [
+      { "title": "填寫手工書課程成果發表會問卷（選 6/13、6/20、6/27）", "source": "FlowGPS", "dueDate": "2026-04-30" },
+      { "title": "女兒資料整理 deadline", "source": "FlowGPS", "dueDate": "2026-04-30" },
+      { "title": "機車兩台三個險種：侄子確認 OK，全網路辦理", "source": "FlowGPS", "dueDate": "2026-04-26" }
+    ],
+    "important": [
+      { "title": "動手製作樣品書，目標 3 本，先求有", "source": "FlowGPS", "dueDate": null },
+      { "title": "婦女培力計劃跟著節奏推進（5 月起市集資訊會到位）", "source": "FlowGPS", "dueDate": null },
+      { "title": "Threads 衝到 1000+ 追蹤", "source": "FlowGPS", "dueDate": null },
+      { "title": "母親節餐會（2026-05-06）與爸媽", "source": "FlowGPS", "dueDate": "2026-05-06" },
+      { "title": "孩子王培訓課程（2026-05-02 ～ 05-03）", "source": "FlowGPS", "dueDate": "2026-05-02" }
+    ],
+    "quick": [
+      { "title": "每天學習 AI（晚餐後吃完胃藥 → Claude Code 問一個 AI 問題）", "source": "FlowGPS", "dueDate": null },
+      { "title": "每天吃藥（早中晚三次，胃潰瘍）", "source": "FlowGPS", "dueDate": null },
+      { "title": "保險理賠款項入帳確認", "source": "FlowGPS", "dueDate": null }
+    ],
+    "backlog": [
+      { "title": "Threads 貼文優化（風格、結構、鉤子策略）", "source": "FlowGPS", "dueDate": null },
+      { "title": "八大財富三個面向優化：人脈、服務、金錢", "source": "FlowGPS", "dueDate": null },
+      { "title": "高雄之旅計劃（5 月或 6 月）", "source": "FlowGPS", "dueDate": null }
+    ]
+  },
+  "schedule": [
+    { "time": "全天", "title": "女兒宜蘭二日遊（第二天）" }
+  ],
+  "stats": {
+    "total": 18,
+    "done": 1,
+    "pending": 17
+  }
+}
