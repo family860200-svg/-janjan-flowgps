@@ -3,7 +3,7 @@ const fs = require('fs');
 const path = require('path');
 const schedule = require('node-schedule');
 
-const ROOT = path.resolve(__dirname, '..');
+const ROOT = path.resolve(__dirname, '../..');
 const PORT = 3737;
 
 function getFlowJournalFile() {
