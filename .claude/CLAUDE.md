@@ -9,14 +9,14 @@
 3. 讀取 `F｜行動聚焦漏斗/` 最新對話摘要
 4. 讀取 `F｜行動聚焦漏斗/玩家待辦任務.md`
 5. 簡短報告上次做了什麼、今天待辦
-6. 啟動 FlowGPS 日報伺服器（若尚未啟動）：`lsof -ti:3737 | xargs kill -9 2>/dev/null; source ~/.nvm/nvm.sh && node scripts/dashboard-server.js &`
+6. 啟動 FlowGPS 日報伺服器（若尚未啟動）：`lsof -ti:3737 | xargs kill -9 2>/dev/null; source ~/.nvm/nvm.sh && node O｜系統持續優化/scripts/dashboard-server.js &`
 7. 提供日報連結：http://localhost:3737
 
 ### 「日報」指令
 當使用者輸入包含「日報」關鍵字時，自動讀取並執行以下 workflow：
 
 ```
-Ｚ 系統/workflows/daily-report.md
+O｜系統持續優化/Ｚ 系統/workflows/daily-report.md
 ```
 
 執行方式：讀取該 markdown 檔案的完整內容，依照其中的步驟逐步執行。
