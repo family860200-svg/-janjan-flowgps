@@ -17,6 +17,10 @@
 | threads | 生成 Threads 貼文草稿 | 說「發文」或掃描到素材 |
 | loose-ends-scanner | 掃描散落待辦 | 存檔時 Wave 1 Step 3 |
 | notion-integration | 寫入 Notion | 存檔後同步 |
+| notion-knowledge-patterns | Notion 知識管理框架 | 整理知識架構時 |
+| skill-lookup | 搜尋可用 Skill | 找不到對應工具時 |
+| skill-vs-agent-decision | Skill vs Agent 決策框架 | 評估是否建新工具時 |
+| personal-assistant | 每日簡報、個人節奏 | 說「早安」或「日報」 |
 
 ## 禁止使用
 - ✗ 不主動 git push（存檔 SOP 內除外）
