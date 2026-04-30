@@ -591,6 +591,7 @@
           <th>客需<br>(kg)</th>
           <th>試算件數</th>
           <th>整件數<br>▼可調整</th>
+          <th>束數</th>
           <th>實際重<br>(kg)</th>
           <th>達成率</th>
           <th>疊2層</th>
@@ -683,6 +684,11 @@ let rows = loadData() || [
   {gsm:450, l:31.5, w:43.3, pcs:1500, need:3000, adj:null, stack:false},
 ];
 
+function calcBundles(gsm, pcs) {
+  const sheetsPerBundle = gsm < 350 ? 125 : 100;
+  return Math.round(pcs / sheetsPerBundle);
+}
+
 function calcRow(r) {
   const wps = r.gsm * (r.l * 0.0254) * (r.w * 0.0254);       // g per sheet
   const unitW = r.pcs * (wps / 1000);                      // kg per bundle
@@ -725,6 +731,7 @@ function render() {
       <td><input type="number" value="${r.need}" min="1" style="width:78px;" oninput="update(${i},'need',+this.value)"></td>
       <td class="mono-cell" style="color:var(--text2);">${c.trial.toFixed(4)}</td>
       <td><input type="number" class="adj-input" value="${c.adjVal}" min="0" oninput="updateAdj(${i},+this.value)"></td>
+      <td class="mono-cell" style="background:#f3f4f6;"><span style="color:#b02020;font-weight:700;">${c.adjVal * calcBundles(r.gsm, r.pcs)}</span><br><span style="font-size:10px;color:var(--text3);">${calcBundles(r.gsm, r.pcs)}束/件</span></td>
       <td class="mono-cell"><strong>${fmt(c.actual, 0)}</strong></td>
       <td>${rateSpan(c.rate)}</td>
       <td style="text-align:center;">
@@ -744,6 +751,7 @@ function render() {
     <td></td>
     <td></td>
     <td style="color:var(--accent);">${totalItems} 件</td>
+    <td></td>
     <td style="color:var(--accent);">${fmt(totalW, 0)} kg</td>
     <td></td>
     <td></td>
@@ -837,7 +845,7 @@ function loadData() {
 }
 
 function exportCSV() {
-  const headers = ['#','磅重(GSM)','長(英吋)','寬(英吋)','張數/件','單張重(g)','單件重(kg)','客需(kg)','試算件數','整件數','實際重(kg)','達成率(%)'];
+  const headers = ['#','磅重(GSM)','長(英吋)','寬(英吋)','張數/件','單張重(g)','單件重(kg)','客需(kg)','試算件數','整件數','束數','實際重(kg)','達成率(%)'];
   const lines = [headers.join(',')];
   rows.forEach((r, i) => {
     const c = calcRow(r);
@@ -845,6 +853,7 @@ function exportCSV() {
       i+1, r.gsm, r.l, r.w, r.pcs,
       c.wps.toFixed(3), c.unitW.toFixed(2),
       r.need, c.trial.toFixed(4), c.adjVal,
+      c.adjVal * calcBundles(r.gsm, r.pcs),
       c.actual.toFixed(0), c.rate.toFixed(2)
     ].join(','));
   });

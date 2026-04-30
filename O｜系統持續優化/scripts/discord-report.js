@@ -4,6 +4,28 @@ const path = require('path');
 
 const ROOT = path.resolve(__dirname, '../..');
 const DISCORD_WEBHOOK = 'https://discord.com/api/webhooks/1498468822246490122/R56qWlAsuBCj1J-nhl_u08uyAW5vU03PYO2mmwRkhr8fQ37fQojrZa7NlZHTLxqJoHF-';
+const CONFIG_PATH = path.join(__dirname, 'config.json');
+
+function fetchIcs(url) {
+  return new Promise((resolve) => {
+    if (!url || !url.startsWith('http')) return resolve('');
+    https.get(url, res => {
+      let data = '';
+      res.on('data', chunk => data += chunk);
+      res.on('end', () => resolve(data));
+    }).on('error', () => resolve(''));
+  });
+}
+
+function parseIcsDate(dateStr) {
+  if (!dateStr) return null;
+  const match = dateStr.match(/^(\d{4})(\d{2})(\d{2})T(\d{2})(\d{2})(\d{2})(Z)?/);
+  if (!match) return null;
+  const [_, y, m, d, h, mn, s, z] = match;
+  let date = new Date(Date.UTC(y, m - 1, d, h, mn, s));
+  if (!z) date = new Date(y, m - 1, d, h, mn, s);
+  return date;
+}
 
 function getTodayPrefix() {
   const now = new Date();
@@ -44,7 +66,7 @@ function getTodayFlowJournal() {
   catch { return null; }
 }
 
-function run() {
+async function run() {
   const todoMd = fs.readFileSync(path.join(ROOT, 'F｜行動聚焦漏斗', '玩家待辦任務.md'), 'utf8');
   const sections = parseTodos(todoMd);
   const notes = getManualNotes();
@@ -52,6 +74,34 @@ function run() {
   const date = new Date().toLocaleDateString('zh-TW', {
     year: 'numeric', month: 'long', day: 'numeric', weekday: 'long'
   });
+  const now = new Date();
+
+  // 解析 Google 行事曆 (如果有設定)
+  let config = {};
+  if (fs.existsSync(CONFIG_PATH)) {
+    config = JSON.parse(fs.readFileSync(CONFIG_PATH, 'utf8'));
+  }
+  const calendarItems = [];
+  if (config.google_calendar_ical_url && config.google_calendar_ical_url.startsWith('http')) {
+    const icsData = await fetchIcs(config.google_calendar_ical_url);
+    const lines = icsData.split(/\r?\n/);
+    let inEvent = false, currentEvent = {};
+    for (const line of lines) {
+      if (line.startsWith('BEGIN:VEVENT')) { inEvent = true; currentEvent = {}; }
+      else if (line.startsWith('END:VEVENT')) {
+        inEvent = false;
+        if (currentEvent.start && currentEvent.title) {
+          if (currentEvent.start.getDate() === now.getDate() && currentEvent.start.getMonth() === now.getMonth()) {
+            const timeStr = `${currentEvent.start.getHours().toString().padStart(2, '0')}:${currentEvent.start.getMinutes().toString().padStart(2, '0')}`;
+            calendarItems.push(`[Google 日曆] @${timeStr} ${currentEvent.title}`);
+          }
+        }
+      } else if (inEvent) {
+        if (line.startsWith('SUMMARY:')) currentEvent.title = line.substring(8);
+        else if (line.startsWith('DTSTART')) currentEvent.start = parseIcsDate(line.split(':')[1]);
+      }
+    }
+  }
 
   const clean = t => t.replace(/（https?:\/\/[^）]*）/g, '').replace(/https?:\/\/\S+/g, '').replace(/\s{2,}/g, ' ').trim();
   const fmtSection = items => {
@@ -67,7 +117,7 @@ function run() {
     '🔵 支線任務（空檔推進）': 'q4',
   };
   const q = { q1: [], q2: [], q3: [], q4: [] };
-  const scheduleItems = [];
+  const scheduleItems = [...calendarItems]; // 將日曆行程加入
 
   for (const s of sections) {
     const bucket = eisenhowerMap[s.title];
@@ -85,7 +135,7 @@ function run() {
   }];
 
   const cfg = [
-    { title: '📅 本週行程',            color: 0x00BFFF, items: scheduleItems },
+    { title: '📅 今日重要時間點與行程', color: 0x00BFFF, items: scheduleItems },
     { title: '🔴 立刻做（重要＋緊急）', color: 0xFF4444, items: q.q1 },
     { title: '🟡 排時間（重要＋不緊急）',color: 0xFFCC00, items: q.q2 },
     { title: '🟠 快速處理',             color: 0xFF8C00, items: q.q3 },
