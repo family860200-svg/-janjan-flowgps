@@ -1,523 +1,935 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>客訴處理機器人</title>
-<style>
-@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&display=swap');
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>客訴處理機器人</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&display=swap');
 
-* { box-sizing: border-box; margin: 0; padding: 0; }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
-body {
-  font-family: 'Microsoft JhengHei', 'PingFang TC', sans-serif;
-  max-width: 680px;
-  margin: 0 auto;
-  padding: 0 0 60px;
-  background: #fdfcf9;
-  color: #3d3028;
-  font-size: 18px;
-  min-height: 100vh;
-}
+    body {
+      font-family: 'Microsoft JhengHei', 'PingFang TC', sans-serif;
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 0 0 60px;
+      background: #fdfcf9;
+      color: #3d3028;
+      font-size: 18px;
+      min-height: 100vh;
+    }
 
-/* ── 頁首 ── */
-.hero {
-  background: linear-gradient(160deg, #f7f0e2 0%, #f0e4cc 60%, #e8d5b8 100%);
-  padding: 36px 24px 28px;
-  text-align: center;
-  position: relative;
-  overflow: hidden;
-}
-.hero::before {
-  content: '✿';
-  position: absolute; top: -10px; left: 10px;
-  font-size: 80px; opacity: 0.05; transform: rotate(-20deg);
-}
-.hero::after {
-  content: '✿';
-  position: absolute; bottom: -20px; right: 5px;
-  font-size: 100px; opacity: 0.05; transform: rotate(15deg);
-}
-.hero-en {
-  font-family: 'Cormorant Garamond', serif;
-  font-weight: 300; font-style: italic;
-  font-size: 13px; letter-spacing: 4px;
-  color: #c8a83a; margin-bottom: 6px;
-}
-.hero h1 {
-  font-size: 19px; font-weight: 600;
-  color: #4a3820; letter-spacing: 2px; margin-bottom: 6px;
-}
-.hero-date { font-size: 12px; color: #b8943a; letter-spacing: 1px; }
-.deco-line {
-  display: flex; align-items: center; justify-content: center; gap: 10px;
-  margin: 10px 0 0;
-}
-.deco-line span { font-size: 11px; color: #d4b050; letter-spacing: 2px; }
-.deco-line::before, .deco-line::after {
-  content: ''; flex: 1; max-width: 60px; height: 1px; background: #e0c870;
-}
+    /* ── 頁首 ── */
+    .hero {
+      background: linear-gradient(160deg, #f7f0e2 0%, #f0e4cc 60%, #e8d5b8 100%);
+      padding: 36px 24px 28px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
 
-/* ── 分頁 ── */
-.tab-bar {
-  display: flex; gap: 0;
-  margin: 20px 20px 20px;
-  border-radius: 30px; overflow: hidden;
-  background: #f0ece4; padding: 4px;
-}
-.tab {
-  flex: 1; padding: 9px 0;
-  border: none; border-radius: 26px;
-  background: transparent; color: #a09080;
-  cursor: pointer; font-size: 13px;
-  font-family: inherit; font-weight: 600;
-  letter-spacing: 1px; transition: all 0.25s;
-}
-.tab.active { background: #fff; color: #4a3820; box-shadow: 0 2px 8px rgba(180,150,50,0.15); }
+    .hero::before {
+      content: '✿';
+      position: absolute;
+      top: -10px;
+      left: 10px;
+      font-size: 80px;
+      opacity: 0.05;
+      transform: rotate(-20deg);
+    }
 
-/* ── 進度 ── */
-.progress-wrap { padding: 0 20px; margin-bottom: 6px; }
-.progress-bar { background: #f0ece4; border-radius: 10px; height: 6px; overflow: hidden; }
-.progress-fill {
-  background: linear-gradient(90deg, #d4a820, #f0d060);
-  height: 100%; border-radius: 10px; transition: width 0.5s ease;
-}
-.counter { font-size: 12px; color: #b0997f; text-align: right; margin: 5px 20px 16px; letter-spacing: 0.5px; }
+    .hero::after {
+      content: '✿';
+      position: absolute;
+      bottom: -20px;
+      right: 5px;
+      font-size: 100px;
+      opacity: 0.05;
+      transform: rotate(15deg);
+    }
 
-/* ── Step 卡片 ── */
-.steps-wrap { padding: 0 16px; }
+    .hero-en {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 300;
+      font-style: italic;
+      font-size: 13px;
+      letter-spacing: 4px;
+      color: #c8a83a;
+      margin-bottom: 6px;
+    }
 
-.step-card {
-  background: #fff; border-radius: 14px;
-  padding: 14px 16px; margin-bottom: 10px;
-  box-shadow: 0 2px 12px rgba(120,90,60,0.07);
-  border-left: 3px solid #eee8d8; transition: all 0.3s;
-}
-.step-card.done { border-left-color: #b8c8a8; background: #f8fbf6; }
-.step-card.active { border-left-color: #d4a820; box-shadow: 0 3px 16px rgba(180,140,80,0.13); }
-.step-card.skip { border-left-color: #ddd8d0; background: #f8f6f4; opacity: 0.5; }
+    .hero h1 {
+      font-size: 19px;
+      font-weight: 600;
+      color: #4a3820;
+      letter-spacing: 2px;
+      margin-bottom: 6px;
+    }
 
-.step-header { display: flex; align-items: center; gap: 12px; cursor: pointer; }
-.step-num { font-size: 10px; color: #c0a888; letter-spacing: 1px; min-width: 28px; }
-.step-title { flex: 1; font-weight: 600; font-size: 14px; color: #3d3028; letter-spacing: 0.5px; }
-.step-card.done .step-title { color: #90a880; text-decoration: line-through; }
-.step-card.skip .step-title { color: #b8b0a8; text-decoration: line-through; text-decoration-style: dashed; }
+    .hero-date {
+      font-size: 12px;
+      color: #b8943a;
+      letter-spacing: 1px;
+    }
 
-.step-right { display: flex; flex-direction: column; align-items: flex-end; gap: 3px; flex-shrink: 0; }
-.check-btn {
-  width: 28px; height: 28px; border-radius: 50%;
-  border: 1.5px solid #d4a820; background: white;
-  cursor: pointer; font-size: 14px;
-  display: flex; align-items: center; justify-content: center;
-  transition: all 0.2s; color: transparent;
-}
-.step-card.done .check-btn { background: #b8c8a8; border-color: #b8c8a8; color: white; }
-.step-card.skip .check-btn {
-  background: #e8e2da; border-color: #ddd8d0; color: #b8b0a8;
-  cursor: default; font-size: 16px;
-}
+    .deco-line {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin: 10px 0 0;
+    }
 
-.timestamp { display: flex; flex-direction: column; align-items: flex-end; gap: 1px; }
-.ts-date { font-size: 10px; color: #aaa; white-space: nowrap; letter-spacing: 0.3px; }
-.ts-time { font-size: 10px; color: #b8c8a8; white-space: nowrap; letter-spacing: 0.3px; }
+    .deco-line span {
+      font-size: 11px;
+      color: #d4b050;
+      letter-spacing: 2px;
+    }
 
-.step-detail {
-  font-size: 13px; color: #7a6858; margin-top: 10px;
-  padding-left: 40px; line-height: 1.9; display: none;
-}
-.step-detail.show { display: block; }
-.step-detail ul { margin: 4px 0; padding-left: 14px; }
-.step-detail li { margin-bottom: 3px; }
-.tip {
-  background: #fdf8f0; border-left: 2px solid #d4a820;
-  padding: 7px 10px; border-radius: 0 6px 6px 0;
-  margin-top: 8px; font-size: 12px; color: #9a7848;
-}
-.note-area {
-  width: 100%; margin-top: 10px; padding: 8px 10px;
-  border: 1px solid #f0ece4; border-radius: 8px;
-  font-size: 13px; font-family: inherit;
-  resize: vertical; min-height: 52px;
-  background: #fdfaf7; color: #5a4838; line-height: 1.6;
-}
-.note-area:focus { outline: none; border-color: #d4a820; }
+    .deco-line::before,
+    .deco-line::after {
+      content: '';
+      flex: 1;
+      max-width: 60px;
+      height: 1px;
+      background: #e0c870;
+    }
 
-/* ── 等待分隔線 ── */
-.phase-divider {
-  margin: 4px 0 16px;
-  text-align: center;
-}
-.phase-wait-tag {
-  display: inline-block;
-  background: #fdf3e0; border: 1px solid #e8c870;
-  border-radius: 16px; padding: 5px 18px;
-  font-size: 12px; color: #a07828; letter-spacing: 1.5px;
-}
-.btn-skip-phase {
-  display: block; margin: 8px auto 0;
-  padding: 6px 18px;
-  border: 1px dashed #d4a820; border-radius: 16px;
-  background: transparent; color: #b8882a;
-  font-size: 12px; font-family: inherit;
-  cursor: pointer; letter-spacing: 0.5px;
-  transition: background 0.2s;
-}
-.btn-skip-phase:hover { background: #fdf8f0; }
-.btn-unskip-phase {
-  display: block; margin: 8px auto 0;
-  padding: 5px 14px;
-  border: 1px dashed #c0b0a0; border-radius: 16px;
-  background: transparent; color: #b0a090;
-  font-size: 11px; font-family: inherit;
-  cursor: pointer; letter-spacing: 0.5px;
-  transition: background 0.2s;
-}
-.btn-unskip-phase:hover { background: #f5f0ea; }
+    /* ── 分頁 ── */
+    .tab-bar {
+      display: flex;
+      gap: 0;
+      margin: 20px 20px 20px;
+      border-radius: 30px;
+      overflow: hidden;
+      background: #f0ece4;
+      padding: 4px;
+    }
 
-/* ── 完成訊息 ── */
-.all-done {
-  text-align: center; padding: 24px; font-size: 16px;
-  color: #90a880; display: none; letter-spacing: 1px;
-  background: #f8fbf6; border-radius: 14px; margin: 10px 16px;
-}
+    .tab {
+      flex: 1;
+      padding: 9px 0;
+      border: none;
+      border-radius: 26px;
+      background: transparent;
+      color: #a09080;
+      cursor: pointer;
+      font-size: 13px;
+      font-family: inherit;
+      font-weight: 600;
+      letter-spacing: 1px;
+      transition: all 0.25s;
+    }
 
-/* ── 底部按鈕 ── */
-.bottom-bar { padding: 12px 16px 0; display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
-.btn {
-  padding: 9px 22px; border: none; border-radius: 20px;
-  cursor: pointer; font-size: 13px; font-family: inherit;
-  letter-spacing: 0.5px; transition: all 0.2s;
-}
-.btn-ghost { background: transparent; color: #9a8070; border: 1px solid #d8cdbf; }
-.btn-ghost:hover { background: #f0e8dc; }
-.btn-export { background: #f0e8dc; color: #7a5838; border: 1px solid #d8cdbf; }
-.btn-export:hover { background: #e8d8c8; }
-.save-toast {
-  font-size: 12px; color: #b8c8a8; letter-spacing: 0.5px;
-  opacity: 0; transition: opacity 0.4s; margin-left: auto;
-}
-.save-toast.show { opacity: 1; }
+    .tab.active {
+      background: #fff;
+      color: #4a3820;
+      box-shadow: 0 2px 8px rgba(180, 150, 50, 0.15);
+    }
 
-/* ── 歷史記錄 ── */
-.history-panel { display: none; padding: 0 16px; }
-.history-panel.show { display: block; }
-.today-panel.hide { display: none; }
+    /* ── 進度 ── */
+    .progress-wrap {
+      padding: 0 20px;
+      margin-bottom: 6px;
+    }
 
-.search-box {
-  width: 100%; padding: 10px 16px;
-  border: 1px solid #e0d4c4; border-radius: 24px;
-  font-size: 13px; font-family: inherit;
-  background: #fff; color: #5a4838;
-  margin-bottom: 16px; letter-spacing: 0.3px;
-}
-.search-box:focus { outline: none; border-color: #d4a820; }
+    .progress-bar {
+      background: #f0ece4;
+      border-radius: 10px;
+      height: 6px;
+      overflow: hidden;
+    }
 
-.history-date {
-  font-size: 12px; font-weight: 600; color: #a08060;
-  letter-spacing: 2px; margin: 18px 0 8px;
-  display: flex; align-items: center; gap: 8px;
-}
-.history-date::after { content: ''; flex: 1; height: 1px; background: #f0ece4; }
+    .progress-fill {
+      background: linear-gradient(90deg, #d4a820, #f0d060);
+      height: 100%;
+      border-radius: 10px;
+      transition: width 0.5s ease;
+    }
 
-.history-item {
-  background: #fff; border-radius: 10px; padding: 10px 14px;
-  margin-bottom: 7px; box-shadow: 0 1px 6px rgba(120,90,60,0.06);
-}
-.history-step { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; }
-.history-step-name { font-size: 13px; font-weight: 600; color: #3d3028; }
-.history-step-time { font-size: 11px; color: #b8c8a8; white-space: nowrap; }
-.history-note { font-size: 12px; color: #9a8878; margin-top: 4px; line-height: 1.6; }
-.no-history { color: #c0b0a0; font-size: 13px; text-align: center; padding: 40px; letter-spacing: 1px; }
+    .counter {
+      font-size: 12px;
+      color: #b0997f;
+      text-align: right;
+      margin: 5px 20px 16px;
+      letter-spacing: 0.5px;
+    }
 
-/* ── 列印（橫式 A4 兩欄） ── */
-@media print {
-  @page { size: A4 landscape; margin: 10mm 12mm; }
-  body { max-width: 100%; padding: 0; font-size: 14px; background: #fff; color: #000; }
-  .tab-bar, .progress-wrap, .counter, .bottom-bar,
-  .history-panel, .note-area, .check-btn { display: none !important; }
-  .hero { padding: 10px 12px 8px; background: none; border-bottom: 2px solid #000; }
-  .hero::before, .hero::after { display: none; }
-  .hero h1 { font-size: 18px; color: #000; }
-  .hero-en { color: #555; }
-  .hero-date { color: #555; }
-  .deco-line { display: none; }
+    /* ── Step 卡片 ── */
+    .steps-wrap {
+      padding: 0 16px;
+    }
 
-  /* 兩欄排版 */
-  .steps-wrap {
-    padding: 0;
-    columns: 2;
-    column-gap: 10mm;
-  }
-  .step-card {
-    border: 1px solid #ccc; border-left: 3px solid #888;
-    border-radius: 5px; margin-bottom: 6px; padding: 8px 10px;
-    box-shadow: none;
-    break-inside: avoid;
-    -webkit-column-break-inside: avoid;
-  }
-  .step-card.done { background: #f8f8f8; }
-  .step-card.skip { display: none; }
-  .step-detail { display: block !important; padding-left: 20px; margin-top: 4px; color: #333; font-size: 13px; }
+    .step-card {
+      background: #fff;
+      border-radius: 14px;
+      padding: 14px 16px;
+      margin-bottom: 10px;
+      box-shadow: 0 2px 12px rgba(120, 90, 60, 0.07);
+      border-left: 3px solid #eee8d8;
+      transition: all 0.3s;
+    }
 
-  /* 分隔線橫跨兩欄 */
-  .phase-divider {
-    column-span: all;
-    display: block !important;
-    text-align: center;
-    margin: 4px 0 8px;
-    border-top: 1px dashed #aaa;
-    padding-top: 5px;
-  }
-  .phase-wait-tag { font-size: 12px; color: #888; border: 1px solid #ccc; background: #f9f9f9; }
-  .btn-skip-phase, .btn-unskip-phase { display: none !important; }
+    .step-card.done {
+      border-left-color: #b8c8a8;
+      background: #f8fbf6;
+    }
 
-  .step-num { color: #555; }
-  .step-title { font-size: 14px; }
-  .step-card.done .step-title { text-decoration: none; color: #000; }
-  .tip { border-left: 2px solid #888; background: #f5f5f5; color: #444; font-size: 12px; }
-  .timestamp, .ts-date, .ts-time { color: #555; }
-  .all-done { display: none !important; }
-}
-</style>
+    .step-card.active {
+      border-left-color: #d4a820;
+      box-shadow: 0 3px 16px rgba(180, 140, 80, 0.13);
+    }
+
+    .step-card.skip {
+      border-left-color: #ddd8d0;
+      background: #f8f6f4;
+      opacity: 0.5;
+    }
+
+    .step-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      cursor: pointer;
+    }
+
+    .step-num {
+      font-size: 10px;
+      color: #c0a888;
+      letter-spacing: 1px;
+      min-width: 28px;
+    }
+
+    .step-title {
+      flex: 1;
+      font-weight: 600;
+      font-size: 14px;
+      color: #3d3028;
+      letter-spacing: 0.5px;
+    }
+
+    .step-card.done .step-title {
+      color: #90a880;
+      text-decoration: line-through;
+    }
+
+    .step-card.skip .step-title {
+      color: #b8b0a8;
+      text-decoration: line-through;
+      text-decoration-style: dashed;
+    }
+
+    .step-right {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 3px;
+      flex-shrink: 0;
+    }
+
+    .check-btn {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      border: 1.5px solid #d4a820;
+      background: white;
+      cursor: pointer;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+      color: transparent;
+    }
+
+    .step-card.done .check-btn {
+      background: #b8c8a8;
+      border-color: #b8c8a8;
+      color: white;
+    }
+
+    .step-card.skip .check-btn {
+      background: #e8e2da;
+      border-color: #ddd8d0;
+      color: #b8b0a8;
+      cursor: default;
+      font-size: 16px;
+    }
+
+    .timestamp {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 1px;
+    }
+
+    .ts-date {
+      font-size: 10px;
+      color: #aaa;
+      white-space: nowrap;
+      letter-spacing: 0.3px;
+    }
+
+    .ts-time {
+      font-size: 10px;
+      color: #b8c8a8;
+      white-space: nowrap;
+      letter-spacing: 0.3px;
+    }
+
+    .step-detail {
+      font-size: 13px;
+      color: #7a6858;
+      margin-top: 10px;
+      padding-left: 40px;
+      line-height: 1.9;
+      display: none;
+    }
+
+    .step-detail.show {
+      display: block;
+    }
+
+    .step-detail ul {
+      margin: 4px 0;
+      padding-left: 14px;
+    }
+
+    .step-detail li {
+      margin-bottom: 3px;
+    }
+
+    .tip {
+      background: #fdf8f0;
+      border-left: 2px solid #d4a820;
+      padding: 7px 10px;
+      border-radius: 0 6px 6px 0;
+      margin-top: 8px;
+      font-size: 12px;
+      color: #9a7848;
+    }
+
+    .note-area {
+      width: 100%;
+      margin-top: 10px;
+      padding: 8px 10px;
+      border: 1px solid #f0ece4;
+      border-radius: 8px;
+      font-size: 13px;
+      font-family: inherit;
+      resize: vertical;
+      min-height: 52px;
+      background: #fdfaf7;
+      color: #5a4838;
+      line-height: 1.6;
+    }
+
+    .note-area:focus {
+      outline: none;
+      border-color: #d4a820;
+    }
+
+    /* ── 等待分隔線 ── */
+    .phase-divider {
+      margin: 4px 0 16px;
+      text-align: center;
+    }
+
+    .phase-wait-tag {
+      display: inline-block;
+      background: #fdf3e0;
+      border: 1px solid #e8c870;
+      border-radius: 16px;
+      padding: 5px 18px;
+      font-size: 12px;
+      color: #a07828;
+      letter-spacing: 1.5px;
+    }
+
+    .btn-skip-phase {
+      display: block;
+      margin: 8px auto 0;
+      padding: 6px 18px;
+      border: 1px dashed #d4a820;
+      border-radius: 16px;
+      background: transparent;
+      color: #b8882a;
+      font-size: 12px;
+      font-family: inherit;
+      cursor: pointer;
+      letter-spacing: 0.5px;
+      transition: background 0.2s;
+    }
+
+    .btn-skip-phase:hover {
+      background: #fdf8f0;
+    }
+
+    .btn-unskip-phase {
+      display: block;
+      margin: 8px auto 0;
+      padding: 5px 14px;
+      border: 1px dashed #c0b0a0;
+      border-radius: 16px;
+      background: transparent;
+      color: #b0a090;
+      font-size: 11px;
+      font-family: inherit;
+      cursor: pointer;
+      letter-spacing: 0.5px;
+      transition: background 0.2s;
+    }
+
+    .btn-unskip-phase:hover {
+      background: #f5f0ea;
+    }
+
+    /* ── 完成訊息 ── */
+    .all-done {
+      text-align: center;
+      padding: 24px;
+      font-size: 16px;
+      color: #90a880;
+      display: none;
+      letter-spacing: 1px;
+      background: #f8fbf6;
+      border-radius: 14px;
+      margin: 10px 16px;
+    }
+
+    /* ── 底部按鈕 ── */
+    .bottom-bar {
+      padding: 12px 16px 0;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .btn {
+      padding: 9px 22px;
+      border: none;
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: 13px;
+      font-family: inherit;
+      letter-spacing: 0.5px;
+      transition: all 0.2s;
+    }
+
+    .btn-ghost {
+      background: transparent;
+      color: #9a8070;
+      border: 1px solid #d8cdbf;
+    }
+
+    .btn-ghost:hover {
+      background: #f0e8dc;
+    }
+
+    .btn-export {
+      background: #f0e8dc;
+      color: #7a5838;
+      border: 1px solid #d8cdbf;
+    }
+
+    .btn-export:hover {
+      background: #e8d8c8;
+    }
+
+    .save-toast {
+      font-size: 12px;
+      color: #b8c8a8;
+      letter-spacing: 0.5px;
+      opacity: 0;
+      transition: opacity 0.4s;
+      margin-left: auto;
+    }
+
+    .save-toast.show {
+      opacity: 1;
+    }
+
+    /* ── 歷史記錄 ── */
+    .history-panel {
+      display: none;
+      padding: 0 16px;
+    }
+
+    .history-panel.show {
+      display: block;
+    }
+
+    .today-panel.hide {
+      display: none;
+    }
+
+    .search-box {
+      width: 100%;
+      padding: 10px 16px;
+      border: 1px solid #e0d4c4;
+      border-radius: 24px;
+      font-size: 13px;
+      font-family: inherit;
+      background: #fff;
+      color: #5a4838;
+      margin-bottom: 16px;
+      letter-spacing: 0.3px;
+    }
+
+    .search-box:focus {
+      outline: none;
+      border-color: #d4a820;
+    }
+
+    .history-date {
+      font-size: 12px;
+      font-weight: 600;
+      color: #a08060;
+      letter-spacing: 2px;
+      margin: 18px 0 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .history-date::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: #f0ece4;
+    }
+
+    .history-item {
+      background: #fff;
+      border-radius: 10px;
+      padding: 10px 14px;
+      margin-bottom: 7px;
+      box-shadow: 0 1px 6px rgba(120, 90, 60, 0.06);
+    }
+
+    .history-step {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 8px;
+    }
+
+    .history-step-name {
+      font-size: 13px;
+      font-weight: 600;
+      color: #3d3028;
+    }
+
+    .history-step-time {
+      font-size: 11px;
+      color: #b8c8a8;
+      white-space: nowrap;
+    }
+
+    .history-note {
+      font-size: 12px;
+      color: #9a8878;
+      margin-top: 4px;
+      line-height: 1.6;
+    }
+
+    .no-history {
+      color: #c0b0a0;
+      font-size: 13px;
+      text-align: center;
+      padding: 40px;
+      letter-spacing: 1px;
+    }
+
+    /* ── 列印（橫式 A4 兩欄） ── */
+    @media print {
+      @page {
+        size: A4 landscape;
+        margin: 10mm 12mm;
+      }
+
+      body {
+        max-width: 100%;
+        padding: 0;
+        font-size: 14px;
+        background: #fff;
+        color: #000;
+      }
+
+      .tab-bar,
+      .progress-wrap,
+      .counter,
+      .bottom-bar,
+      .history-panel,
+      .note-area,
+      .check-btn {
+        display: none !important;
+      }
+
+      .hero {
+        padding: 10px 12px 8px;
+        background: none;
+        border-bottom: 2px solid #000;
+      }
+
+      .hero::before,
+      .hero::after {
+        display: none;
+      }
+
+      .hero h1 {
+        font-size: 18px;
+        color: #000;
+      }
+
+      .hero-en {
+        color: #555;
+      }
+
+      .hero-date {
+        color: #555;
+      }
+
+      .deco-line {
+        display: none;
+      }
+
+      /* 兩欄排版 */
+      .steps-wrap {
+        padding: 0;
+        columns: 2;
+        column-gap: 10mm;
+      }
+
+      .step-card {
+        border: 1px solid #ccc;
+        border-left: 3px solid #888;
+        border-radius: 5px;
+        margin-bottom: 6px;
+        padding: 8px 10px;
+        box-shadow: none;
+        break-inside: avoid;
+        -webkit-column-break-inside: avoid;
+      }
+
+      .step-card.done {
+        background: #f8f8f8;
+      }
+
+      .step-card.skip {
+        display: none;
+      }
+
+      .step-detail {
+        display: block !important;
+        padding-left: 20px;
+        margin-top: 4px;
+        color: #333;
+        font-size: 13px;
+      }
+
+      /* 分隔線橫跨兩欄 */
+      .phase-divider {
+        column-span: all;
+        display: block !important;
+        text-align: center;
+        margin: 4px 0 8px;
+        border-top: 1px dashed #aaa;
+        padding-top: 5px;
+      }
+
+      .phase-wait-tag {
+        font-size: 12px;
+        color: #888;
+        border: 1px solid #ccc;
+        background: #f9f9f9;
+      }
+
+      .btn-skip-phase,
+      .btn-unskip-phase {
+        display: none !important;
+      }
+
+      .step-num {
+        color: #555;
+      }
+
+      .step-title {
+        font-size: 14px;
+      }
+
+      .step-card.done .step-title {
+        text-decoration: none;
+        color: #000;
+      }
+
+      .tip {
+        border-left: 2px solid #888;
+        background: #f5f5f5;
+        color: #444;
+        font-size: 12px;
+      }
+
+      .timestamp,
+      .ts-date,
+      .ts-time {
+        color: #555;
+      }
+
+      .all-done {
+        display: none !important;
+      }
+    }
+  </style>
 </head>
+
 <body>
 
-<div class="hero">
-  <div class="hero-en">Complaint Flow</div>
-  <h1>客　訴　處　理</h1>
-  <div class="deco-line"><span>✦</span></div>
-  <div class="hero-date" id="dateDisplay"></div>
-</div>
-
-<div class="tab-bar">
-  <button class="tab active" onclick="switchTab('today', this)">今日作業</button>
-  <button class="tab" onclick="switchTab('history', this)">歷史回顧</button>
-</div>
-
-<div id="todayPanel">
-  <div class="progress-wrap">
-    <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+  <div class="hero">
+    <div class="hero-en">Complaint Flow</div>
+    <h1>客　訴　處　理</h1>
+    <div class="deco-line"><span>✦</span></div>
+    <div class="hero-date" id="dateDisplay"></div>
   </div>
-  <div class="counter" id="counter">0 / 9 完成</div>
 
-  <div class="steps-wrap" id="steps"></div>
-
-  <div class="all-done" id="allDone">✦　今日客訴全數處理完成，辛苦了　✦</div>
-
-  <div class="bottom-bar">
-    <button class="btn btn-ghost" onclick="resetAll()">↺　重新開始今日</button>
-    <button class="btn btn-export" onclick="window.print()">🖨　列印 A4</button>
-    <span class="save-toast" id="saveToast">✦ 已儲存</span>
+  <div class="tab-bar">
+    <button class="tab active" onclick="switchTab('today', this)">今日作業</button>
+    <button class="tab" onclick="switchTab('history', this)">歷史回顧</button>
   </div>
-</div>
 
-<div class="history-panel" id="historyPanel">
-  <input class="search-box" type="text" placeholder="🔍　搜尋關鍵字（客戶名、備註…）" oninput="renderHistory(this.value)">
-  <div id="historyContent"></div>
-</div>
+  <div id="todayPanel">
+    <div class="progress-wrap">
+      <div class="progress-bar">
+        <div class="progress-fill" id="progressFill" style="width:0%"></div>
+      </div>
+    </div>
+    <div class="counter" id="counter">0 / 9 完成</div>
 
-<script>
-// checked 狀態：false = 未完成 | true = 已完成 | 'skip' = 略過（不適用）
-const STEPS = [
-  {
-    phase: 1,
-    title: '收 FAX 客訴異議單',
-    detail: `<ul>
+    <div class="steps-wrap" id="steps"></div>
+
+    <div class="all-done" id="allDone">✦　今日客訴全數處理完成，辛苦了　✦</div>
+
+    <div class="bottom-bar">
+      <button class="btn btn-ghost" onclick="resetAll()">↺　重新開始今日</button>
+      <button class="btn btn-export" onclick="window.print()">🖨　列印 A4</button>
+      <span class="save-toast" id="saveToast">✦ 已儲存</span>
+    </div>
+  </div>
+
+  <div class="history-panel" id="historyPanel">
+    <input class="search-box" type="text" placeholder="🔍　搜尋關鍵字（客戶名、備註…）" oninput="renderHistory(this.value)">
+    <div id="historyContent"></div>
+  </div>
+
+  <script>
+    // checked 狀態：false = 未完成 | true = 已完成 | 'skip' = 略過（不適用）
+    const STEPS = [
+      {
+        phase: 1,
+        title: '收 FAX 客訴異議單',
+        detail: `<ul>
       <li>客戶 FAX 客訴異議單</li>
       <li>收到後修剪大小</li>
       <li>COPY 一份（背面不能有字）</li>
     </ul>`,
-    tip: '綠殼後 COPY 的背面必須保持空白，以便後續作業填寫',
-    placeholder: '幾件？哪些客戶？'
-  },
-  {
-    phase: 1,
-    title: '拆紙樣、釘異議單',
-    detail: `<ul>
+        tip: '綠殼後 COPY 的背面必須保持空白，以便後續作業填寫',
+        placeholder: '幾件？哪些客戶？'
+      },
+      {
+        phase: 1,
+        title: '拆紙樣、釘異議單',
+        detail: `<ul>
       <li>拆開客戶寄來的紙樣</li>
       <li>每件釘一張 A4 客訴異議單（一件一張）</li>
     </ul>`,
-    tip: '工具：剪刀、釘書機',
-    placeholder: '今日幾件？客戶名稱？'
-  },
-  {
-    phase: 1,
-    title: '品管課長看紙樣',
-    detail: `<ul>
+        tip: '工具：剪刀、釘書機',
+        placeholder: '今日幾件？客戶名稱？'
+      },
+      {
+        phase: 1,
+        title: '品管課長看紙樣',
+        detail: `<ul>
       <li>將紙樣交給品管課長確認</li>
       <li>等品管看完後再進行後續</li>
     </ul>`,
-    tip: '',
-    placeholder: '品管意見？'
-  },
-  {
-    phase: 1,
-    title: '比對單據、補批號',
-    detail: `<ul>
+        tip: '',
+        placeholder: '品管意見？'
+      },
+      {
+        phase: 1,
+        title: '比對單據、補批號',
+        detail: `<ul>
       <li>找到對應的客訴異議單</li>
       <li>補上批號</li>
       <li>整理好放副理桌旁</li>
     </ul>`,
-    tip: '',
-    placeholder: '有無找不到的單據？批號範圍？'
-  },
-  {
-    phase: 2,
-    title: '副理簽核',
-    detail: `<ul>
+        tip: '',
+        placeholder: '有無找不到的單據？批號範圍？'
+      },
+      {
+        phase: 2,
+        title: '副理簽核',
+        detail: `<ul>
       <li>等業務副理審核並簽核</li>
       <li>確認接受處理或不處理</li>
       <li>可先掃描成 PDF → 讓 AI OCR 備份存檔</li>
     </ul>`,
-    tip: '需要副理確認才能進行下一步',
-    placeholder: '簽核結果？有幾件不處理？'
-  },
-  {
-    phase: 2,
-    title: 'KEY 入 ERP、給編號',
-    detail: `<ul>
+        tip: '需要副理確認才能進行下一步',
+        placeholder: '簽核結果？有幾件不處理？'
+      },
+      {
+        phase: 2,
+        title: 'KEY 入 ERP、給編號',
+        detail: `<ul>
       <li>登入 ERP 系統輸入客訴資料</li>
       <li>給每張異議單一個編號</li>
     </ul>
     <div style="background:#fdf8f0;border-radius:8px;padding:8px 12px;margin-top:8px;font-size:12px;color:#9a7848;border-left:2px solid #d4a820;">
       編號格式：<b>YYMMXXXX</b>　例：<b>26040001</b> = 2026年04月第1張
     </div>`,
-    tip: '',
-    placeholder: '本次客訴編號範圍？（如 No.111 ～ 122）'
-  },
-  {
-    phase: 2,
-    title: 'FAX 回客戶（當天完成）',
-    detail: `<ul>
+        tip: '',
+        placeholder: '本次客訴編號範圍？（如 No.111 ～ 122）'
+      },
+      {
+        phase: 2,
+        title: 'FAX 回客戶（當天完成）',
+        detail: `<ul>
       <li>按客戶別分類</li>
       <li>傳真異議單給客戶</li>
       <li>通知客戶：此案接受處理 or 不處理</li>
     </ul>`,
-    tip: '⏰ 當天要做完，不能拖到明天',
-    placeholder: '傳真幾件？編號範圍？'
-  },
-  {
-    phase: 2,
-    title: 'COPY 分發',
-    detail: `<ul>
-      <li>一份給 <b>#228 秀雲姐</b></li>
-      <li>一份給排車小姐（本月：<b>#231 秀芬姐</b>、<b>#230 瓊雯姐</b>）</li>
+        tip: '⏰ 當天要做完，不能拖到明天',
+        placeholder: '傳真幾件？編號範圍？'
+      },
+      {
+        phase: 2,
+        title: 'COPY 分發',
+        detail: `<ul>
+      <li>一份給 <b>#228 秀芬姐</b></li>
+      <li>一份給排車小姐（本月：<b>#231 秀雲姐</b>、<b>#230 灑萍姐</b>）</li>
     </ul>`,
-    tip: '注意本月排車小姐是誰，不要給錯',
-    placeholder: '分發完成？'
-  },
-  {
-    phase: 2,
-    title: '原稿串檔歸檔',
-    detail: `<ul>
+        tip: '注意本月排車小姐是誰，不要給錯',
+        placeholder: '分發完成？'
+      },
+      {
+        phase: 2,
+        title: '原稿串檔歸檔',
+        detail: `<ul>
       <li>將原稿串起來</li>
       <li>依日期或客戶別整理歸檔</li>
     </ul>`,
-    tip: '',
-    placeholder: '備註'
-  }
-];
+        tip: '',
+        placeholder: '備註'
+      }
+    ];
 
-const TOTAL = STEPS.length;
-let checked    = new Array(TOTAL).fill(false);
-let timestamps = new Array(TOTAL).fill('');
-let expanded   = new Array(TOTAL).fill(false);
+    const TOTAL = STEPS.length;
+    let checked = new Array(TOTAL).fill(false);
+    let timestamps = new Array(TOTAL).fill('');
+    let expanded = new Array(TOTAL).fill(false);
 
-function pad(n) { return String(n).padStart(2, '0'); }
+    function pad(n) { return String(n).padStart(2, '0'); }
 
-function fmtDate(ts) {
-  const parts = ts.split('/');
-  if (parts.length < 3) return '';
-  return parseInt(parts[1], 10) + '/' + parseInt(parts[2], 10);
-}
+    function fmtDate(ts) {
+      const parts = ts.split('/');
+      if (parts.length < 3) return '';
+      return parseInt(parts[1], 10) + '/' + parseInt(parts[2], 10);
+    }
 
-function getTodayKey() {
-  const d = new Date();
-  return 'complaint_' + d.getFullYear() + pad(d.getMonth() + 1) + pad(d.getDate());
-}
+    function getTodayKey() {
+      const d = new Date();
+      return 'complaint_' + d.getFullYear() + pad(d.getMonth() + 1) + pad(d.getDate());
+    }
 
-function formatTime(d) {
-  const yyyy = d.getFullYear(), mm = pad(d.getMonth() + 1), dd = pad(d.getDate());
-  let h = d.getHours(), ampm = 'AM';
-  if (h >= 12) { ampm = 'PM'; if (h > 12) h -= 12; }
-  if (h === 0) h = 12;
-  return `${yyyy}/${mm}/${dd} ${pad(h)}:${pad(d.getMinutes())} ${ampm}`;
-}
+    function formatTime(d) {
+      const yyyy = d.getFullYear(), mm = pad(d.getMonth() + 1), dd = pad(d.getDate());
+      let h = d.getHours(), ampm = 'AM';
+      if (h >= 12) { ampm = 'PM'; if (h > 12) h -= 12; }
+      if (h === 0) h = 12;
+      return `${yyyy}/${mm}/${dd} ${pad(h)}:${pad(d.getMinutes())} ${ampm}`;
+    }
 
-function loadToday() {
-  const saved = localStorage.getItem(getTodayKey());
-  if (!saved) return;
-  const d = JSON.parse(saved);
-  checked    = d.checked    || new Array(TOTAL).fill(false);
-  timestamps = d.timestamps || new Array(TOTAL).fill('');
-  while (checked.length    < TOTAL) checked.push(false);
-  while (timestamps.length < TOTAL) timestamps.push('');
-}
+    function loadToday() {
+      const saved = localStorage.getItem(getTodayKey());
+      if (!saved) return;
+      const d = JSON.parse(saved);
+      checked = d.checked || new Array(TOTAL).fill(false);
+      timestamps = d.timestamps || new Array(TOTAL).fill('');
+      while (checked.length < TOTAL) checked.push(false);
+      while (timestamps.length < TOTAL) timestamps.push('');
+    }
 
-function saveToday() {
-  const notes = STEPS.map((_, i) => {
-    const el = document.getElementById('note_' + i);
-    return el ? el.value : '';
-  });
-  const data = {
-    checked, timestamps, notes,
-    date: new Date().toLocaleDateString('zh-TW', { year:'numeric', month:'long', day:'numeric', weekday:'short' })
-  };
-  localStorage.setItem(getTodayKey(), JSON.stringify(data));
-  showSaveToast();
-}
+    function saveToday() {
+      const notes = STEPS.map((_, i) => {
+        const el = document.getElementById('note_' + i);
+        return el ? el.value : '';
+      });
+      const data = {
+        checked, timestamps, notes,
+        date: new Date().toLocaleDateString('zh-TW', { year: 'numeric', month: 'long', day: 'numeric', weekday: 'short' })
+      };
+      localStorage.setItem(getTodayKey(), JSON.stringify(data));
+      showSaveToast();
+    }
 
-function showSaveToast() {
-  const t = document.getElementById('saveToast');
-  if (!t) return;
-  t.classList.add('show');
-  clearTimeout(t._timer);
-  t._timer = setTimeout(() => t.classList.remove('show'), 1800);
-}
+    function showSaveToast() {
+      const t = document.getElementById('saveToast');
+      if (!t) return;
+      t.classList.add('show');
+      clearTimeout(t._timer);
+      t._timer = setTimeout(() => t.classList.remove('show'), 1800);
+    }
 
-function init() {
-  document.getElementById('dateDisplay').textContent =
-    new Date().toLocaleDateString('zh-TW', { year:'numeric', month:'long', day:'numeric', weekday:'short' });
-  loadToday();
-  renderSteps();
-}
+    function init() {
+      document.getElementById('dateDisplay').textContent =
+        new Date().toLocaleDateString('zh-TW', { year: 'numeric', month: 'long', day: 'numeric', weekday: 'short' });
+      loadToday();
+      renderSteps();
+    }
 
-function phase1AllSkipped() {
-  return STEPS.every((s, i) => s.phase !== 1 || checked[i] === 'skip' || checked[i] === true);
-}
+    function phase1AllSkipped() {
+      return STEPS.every((s, i) => s.phase !== 1 || checked[i] === 'skip' || checked[i] === true);
+    }
 
-function renderSteps() {
-  const saved      = JSON.parse(localStorage.getItem(getTodayKey()) || '{}');
-  const savedNotes = saved.notes || [];
-  const container  = document.getElementById('steps');
-  container.innerHTML = '';
+    function renderSteps() {
+      const saved = JSON.parse(localStorage.getItem(getTodayKey()) || '{}');
+      const savedNotes = saved.notes || [];
+      const container = document.getElementById('steps');
+      container.innerHTML = '';
 
-  let lastPhase   = null;
-  const firstActive = firstUnchecked();
+      let lastPhase = null;
+      const firstActive = firstUnchecked();
 
-  STEPS.forEach((s, i) => {
-    // 在第一個 phase-2 卡片前插入等待分隔線
-    if (s.phase === 2 && lastPhase === 1) {
-      const p1Done = phase1AllSkipped();
-      const div = document.createElement('div');
-      div.className = 'phase-divider';
-      div.innerHTML = `
+      STEPS.forEach((s, i) => {
+        // 在第一個 phase-2 卡片前插入等待分隔線
+        if (s.phase === 2 && lastPhase === 1) {
+          const p1Done = phase1AllSkipped();
+          const div = document.createElement('div');
+          div.className = 'phase-divider';
+          div.innerHTML = `
         <div class="phase-wait-tag">⏸　等待紙樣到廠</div>
         ${!p1Done
-          ? `<button class="btn-skip-phase" onclick="skipPhase1()">紙樣已在廠，直接從 STEP 5 開始 ↓</button>`
-          : `<button class="btn-unskip-phase" onclick="unskipPhase1()">↩ 復原前半段（STEP 1-4）</button>`}
+              ? `<button class="btn-skip-phase" onclick="skipPhase1()">紙樣已在廠，直接從 STEP 5 開始 ↓</button>`
+              : `<button class="btn-unskip-phase" onclick="unskipPhase1()">↩ 復原前半段（STEP 1-4）</button>`}
       `;
-      container.appendChild(div);
-    }
-    lastPhase = s.phase;
+          container.appendChild(div);
+        }
+        lastPhase = s.phase;
 
-    const isSkip   = checked[i] === 'skip';
-    const isDone   = checked[i] === true;
-    const isActive = !isSkip && !isDone && i === firstActive;
+        const isSkip = checked[i] === 'skip';
+        const isDone = checked[i] === true;
+        const isActive = !isSkip && !isDone && i === firstActive;
 
-    const card = document.createElement('div');
-    card.className = 'step-card' + (isDone ? ' done' : isSkip ? ' skip' : isActive ? ' active' : '');
-    card.innerHTML = `
+        const card = document.createElement('div');
+        card.className = 'step-card' + (isDone ? ' done' : isSkip ? ' skip' : isActive ? ' active' : '');
+        card.innerHTML = `
       <div class="step-header" onclick="${isSkip ? '' : 'toggleExpand(' + i + ')'}">
         <span class="step-num">STEP ${i + 1}</span>
         <span class="step-title">${s.title}</span>
@@ -542,116 +954,117 @@ function renderSteps() {
             onchange="saveToday()">${savedNotes[i] || ''}</textarea>
         </div>` : ''}
     `;
-    container.appendChild(card);
-  });
+        container.appendChild(card);
+      });
 
-  updateProgress();
-}
-
-function firstUnchecked() {
-  return checked.findIndex(v => v !== true && v !== 'skip');
-}
-
-function toggleCheck(i) {
-  if (checked[i] === 'skip') return;
-  checked[i]    = !checked[i];
-  timestamps[i] = checked[i] === true ? formatTime(new Date()) : '';
-  saveToday();
-  renderSteps();
-  const allFinished = checked.every(v => v === true || v === 'skip');
-  document.getElementById('allDone').style.display = allFinished ? 'block' : 'none';
-}
-
-function toggleExpand(i) {
-  expanded[i] = !expanded[i];
-  renderSteps();
-}
-
-function skipPhase1() {
-  STEPS.forEach((s, i) => {
-    if (s.phase === 1 && checked[i] !== true) checked[i] = 'skip';
-  });
-  saveToday();
-  renderSteps();
-}
-
-function unskipPhase1() {
-  STEPS.forEach((s, i) => {
-    if (s.phase === 1 && checked[i] === 'skip') checked[i] = false;
-  });
-  saveToday();
-  renderSteps();
-}
-
-function effectiveTotal() {
-  return STEPS.filter((_, i) => checked[i] !== 'skip').length;
-}
-
-function doneCnt() {
-  return checked.filter(v => v === true).length;
-}
-
-function updateProgress() {
-  const done  = doneCnt();
-  const total = effectiveTotal();
-  document.getElementById('progressFill').style.width = total ? (done / total * 100) + '%' : '0%';
-  document.getElementById('counter').textContent = done + ' / ' + total + ' 完成';
-}
-
-function resetAll() {
-  if (!confirm('確定要重新開始今日記錄？')) return;
-  checked    = new Array(TOTAL).fill(false);
-  timestamps = new Array(TOTAL).fill('');
-  expanded   = new Array(TOTAL).fill(false);
-  localStorage.removeItem(getTodayKey());
-  document.getElementById('allDone').style.display = 'none';
-  renderSteps();
-}
-
-function switchTab(tab, el) {
-  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-  el.classList.add('active');
-  if (tab === 'today') {
-    document.getElementById('todayPanel').classList.remove('hide');
-    document.getElementById('historyPanel').classList.remove('show');
-  } else {
-    document.getElementById('todayPanel').classList.add('hide');
-    document.getElementById('historyPanel').classList.add('show');
-    renderHistory('');
-  }
-}
-
-function renderHistory(keyword) {
-  const keys = Object.keys(localStorage).filter(k => k.startsWith('complaint_')).sort().reverse();
-  if (keys.length === 0) {
-    document.getElementById('historyContent').innerHTML = '<div class="no-history">還沒有歷史記錄</div>';
-    return;
-  }
-  let html = '';
-  keys.forEach(key => {
-    const data  = JSON.parse(localStorage.getItem(key));
-    const notes = data.notes      || [];
-    const ts    = data.timestamps || [];
-    if (keyword) {
-      const kw = keyword.toLowerCase();
-      if (!notes.some(n => n && n.toLowerCase().includes(kw))) return;
+      updateProgress();
     }
-    html += `<div class="history-date">✦　${data.date || key}</div>`;
-    STEPS.forEach((s, i) => {
-      if (!data.checked || data.checked[i] !== true) return;
-      html += `<div class="history-item">
+
+    function firstUnchecked() {
+      return checked.findIndex(v => v !== true && v !== 'skip');
+    }
+
+    function toggleCheck(i) {
+      if (checked[i] === 'skip') return;
+      checked[i] = !checked[i];
+      timestamps[i] = checked[i] === true ? formatTime(new Date()) : '';
+      saveToday();
+      renderSteps();
+      const allFinished = checked.every(v => v === true || v === 'skip');
+      document.getElementById('allDone').style.display = allFinished ? 'block' : 'none';
+    }
+
+    function toggleExpand(i) {
+      expanded[i] = !expanded[i];
+      renderSteps();
+    }
+
+    function skipPhase1() {
+      STEPS.forEach((s, i) => {
+        if (s.phase === 1 && checked[i] !== true) checked[i] = 'skip';
+      });
+      saveToday();
+      renderSteps();
+    }
+
+    function unskipPhase1() {
+      STEPS.forEach((s, i) => {
+        if (s.phase === 1 && checked[i] === 'skip') checked[i] = false;
+      });
+      saveToday();
+      renderSteps();
+    }
+
+    function effectiveTotal() {
+      return STEPS.filter((_, i) => checked[i] !== 'skip').length;
+    }
+
+    function doneCnt() {
+      return checked.filter(v => v === true).length;
+    }
+
+    function updateProgress() {
+      const done = doneCnt();
+      const total = effectiveTotal();
+      document.getElementById('progressFill').style.width = total ? (done / total * 100) + '%' : '0%';
+      document.getElementById('counter').textContent = done + ' / ' + total + ' 完成';
+    }
+
+    function resetAll() {
+      if (!confirm('確定要重新開始今日記錄？')) return;
+      checked = new Array(TOTAL).fill(false);
+      timestamps = new Array(TOTAL).fill('');
+      expanded = new Array(TOTAL).fill(false);
+      localStorage.removeItem(getTodayKey());
+      document.getElementById('allDone').style.display = 'none';
+      renderSteps();
+    }
+
+    function switchTab(tab, el) {
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      el.classList.add('active');
+      if (tab === 'today') {
+        document.getElementById('todayPanel').classList.remove('hide');
+        document.getElementById('historyPanel').classList.remove('show');
+      } else {
+        document.getElementById('todayPanel').classList.add('hide');
+        document.getElementById('historyPanel').classList.add('show');
+        renderHistory('');
+      }
+    }
+
+    function renderHistory(keyword) {
+      const keys = Object.keys(localStorage).filter(k => k.startsWith('complaint_')).sort().reverse();
+      if (keys.length === 0) {
+        document.getElementById('historyContent').innerHTML = '<div class="no-history">還沒有歷史記錄</div>';
+        return;
+      }
+      let html = '';
+      keys.forEach(key => {
+        const data = JSON.parse(localStorage.getItem(key));
+        const notes = data.notes || [];
+        const ts = data.timestamps || [];
+        if (keyword) {
+          const kw = keyword.toLowerCase();
+          if (!notes.some(n => n && n.toLowerCase().includes(kw))) return;
+        }
+        html += `<div class="history-date">✦　${data.date || key}</div>`;
+        STEPS.forEach((s, i) => {
+          if (!data.checked || data.checked[i] !== true) return;
+          html += `<div class="history-item">
         <div class="history-step">
           <span class="history-step-name">STEP ${i + 1}　${s.title}</span>
           <span class="history-step-time">${ts[i] ? ts[i].slice(11) : ''}</span>
         </div>
         ${notes[i] ? '<div class="history-note">' + notes[i] + '</div>' : ''}
       </div>`;
-    });
-  });
-  document.getElementById('historyContent').innerHTML = html || '<div class="no-history">找不到符合的記錄</div>';
-}
+        });
+      });
+      document.getElementById('historyContent').innerHTML = html || '<div class="no-history">找不到符合的記錄</div>';
+    }
 
-init();
-</script>
+    init();
+  </script>
 </body>
+
 </html>
