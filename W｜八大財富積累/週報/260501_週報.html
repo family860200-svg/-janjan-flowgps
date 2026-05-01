@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FlowGPS 週報｜2026 年 5 月第一週</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;700;900&family=Noto+Sans+TC:wght@400;500;700&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --ink: #1a1a1a;
+    --red: #c0392b;
+    --gold: #b8860b;
+    --cream: #f9f5ef;
+    --gray: #6b6b6b;
+    --light: #e8e2d8;
+  }
+
+  body {
+    background: var(--cream);
+    color: var(--ink);
+    font-family: 'Noto Serif TC', serif;
+    font-size: 14px;
+    line-height: 1.6;
+  }
+
+  /* ─── MASTHEAD ─── */
+  .masthead {
+    text-align: center;
+    padding: 24px 40px 16px;
+    border-bottom: 3px double var(--ink);
+  }
+  .masthead-date {
+    font-family: 'Noto Sans TC', sans-serif;
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--gray);
+    margin-bottom: 6px;
+  }
+  .masthead h1 {
+    font-size: 42px;
+    font-weight: 900;
+    letter-spacing: -1px;
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+  .masthead-sub {
+    font-size: 13px;
+    color: var(--gray);
+    font-style: italic;
+  }
+  .masthead-rule {
+    border: none;
+    border-top: 1px solid var(--ink);
+    margin: 10px 0 6px;
+  }
+  .masthead-tagline {
+    font-size: 11px;
+    letter-spacing: 4px;
+    color: var(--gray);
+    font-family: 'Noto Sans TC', sans-serif;
+  }
+
+  /* ─── BREAKING BAR ─── */
+  .breaking-bar {
+    background: var(--ink);
+    color: white;
+    padding: 6px 40px;
+    font-family: 'Noto Sans TC', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .breaking-bar span.label {
+    background: var(--red);
+    padding: 2px 8px;
+    font-size: 11px;
+  }
+
+  /* ─── LAYOUT ─── */
+  .newspaper {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 20px 40px 40px;
+  }
+
+  .columns-3 {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 24px;
+    border-top: 2px solid var(--ink);
+    padding-top: 20px;
+  }
+  .columns-2 {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 24px;
+  }
+  .full-width {
+    border-top: 2px solid var(--ink);
+    padding-top: 16px;
+    margin-top: 20px;
+  }
+  .col { border-right: 1px solid var(--light); padding-right: 20px; }
+  .col:last-child { border-right: none; padding-right: 0; }
+
+  /* ─── SECTION LABELS ─── */
+  .section-label {
+    font-family: 'Noto Sans TC', sans-serif;
+    font-size: 10px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--gray);
+    border-bottom: 1px solid var(--light);
+    padding-bottom: 4px;
+    margin-bottom: 10px;
+  }
+
+  /* ─── HEADLINES ─── */
+  h2.headline {
+    font-size: 20px;
+    font-weight: 900;
+    line-height: 1.2;
+    margin-bottom: 8px;
+  }
+  h2.headline.big {
+    font-size: 28px;
+  }
+  h3.sub-headline {
+    font-size: 15px;
+    font-weight: 700;
+    margin-bottom: 6px;
+    line-height: 1.3;
+  }
+  .deck {
+    font-style: italic;
+    color: var(--gray);
+    font-size: 13px;
+    margin-bottom: 10px;
+    border-left: 3px solid var(--red);
+    padding-left: 8px;
+  }
+  p { margin-bottom: 8px; font-size: 13.5px; }
+
+  /* ─── PULLQUOTE ─── */
+  .pullquote {
+    font-size: 17px;
+    font-weight: 700;
+    font-style: italic;
+    color: var(--ink);
+    border-top: 2px solid var(--ink);
+    border-bottom: 2px solid var(--ink);
+    padding: 12px 0;
+    margin: 16px 0;
+    text-align: center;
+    line-height: 1.4;
+  }
+
+  /* ─── STATS BOX ─── */
+  .stats-box {
+    background: var(--ink);
+    color: white;
+    padding: 14px;
+    margin: 12px 0;
+  }
+  .stats-box .label {
+    font-family: 'Noto Sans TC', sans-serif;
+    font-size: 10px;
+    letter-spacing: 2px;
+    opacity: 0.7;
+    margin-bottom: 4px;
+  }
+  .stats-box .number {
+    font-size: 36px;
+    font-weight: 900;
+    line-height: 1;
+  }
+  .stats-box .unit {
+    font-size: 13px;
+    opacity: 0.8;
+  }
+
+  /* ─── PILL TAGS ─── */
+  .tags { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0; }
+  .tag {
+    font-family: 'Noto Sans TC', sans-serif;
+    font-size: 11px;
+    padding: 2px 8px;
+    border: 1px solid var(--ink);
+    border-radius: 2px;
+  }
+  .tag.gold { border-color: var(--gold); color: var(--gold); }
+  .tag.red { border-color: var(--red); color: var(--red); }
+
+  /* ─── WEALTH TABLE ─── */
+  .wealth-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12.5px;
+    margin-top: 8px;
+  }
+  .wealth-table th {
+    background: var(--ink);
+    color: white;
+    padding: 6px 8px;
+    text-align: left;
+    font-family: 'Noto Sans TC', sans-serif;
+    font-weight: 500;
+    font-size: 11px;
+  }
+  .wealth-table td {
+    padding: 6px 8px;
+    border-bottom: 1px solid var(--light);
+    vertical-align: top;
+  }
+  .wealth-table tr:nth-child(even) td { background: rgba(0,0,0,0.03); }
+  .stars { color: var(--gold); letter-spacing: -2px; }
+
+  /* ─── DIVIDER ─── */
+  .divider {
+    text-align: center;
+    margin: 16px 0;
+    color: var(--gray);
+    font-size: 18px;
+    letter-spacing: 8px;
+  }
+
+  /* ─── FOOTER ─── */
+  .footer {
+    border-top: 3px double var(--ink);
+    padding-top: 12px;
+    margin-top: 24px;
+    text-align: center;
+    font-family: 'Noto Sans TC', sans-serif;
+    font-size: 11px;
+    color: var(--gray);
+    letter-spacing: 1px;
+  }
+
+  /* ─── CHECKLIST ─── */
+  .checklist { list-style: none; margin: 8px 0; }
+  .checklist li { padding: 3px 0; font-size: 13px; padding-left: 18px; position: relative; }
+  .checklist li::before { content: '✓'; position: absolute; left: 0; color: var(--gold); font-weight: 700; }
+  .checklist li.pending::before { content: '○'; color: var(--gray); }
+
+  .badge {
+    display: inline-block;
+    background: var(--red);
+    color: white;
+    font-family: 'Noto Sans TC', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 2px 7px;
+    margin-right: 4px;
+    border-radius: 2px;
+  }
+  .badge.green { background: #27ae60; }
+  .badge.gold { background: var(--gold); }
+  .badge.blue { background: #2980b9; }
+
+  @media print {
+    body { font-size: 12px; }
+    .masthead h1 { font-size: 36px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- MASTHEAD -->
+<div class="masthead">
+  <div class="masthead-date">2026 年 4 月 26 日 ─ 5 月 1 日　Vol. 4　No. 1</div>
+  <h1>FlowGPS 週報</h1>
+  <div class="masthead-sub">JANJAN 的個人管理系統週刊　by 阿助</div>
+  <hr class="masthead-rule">
+  <div class="masthead-tagline">系統大升級 · FlowGPS 關卡突破 · 強效斷捨離</div>
+</div>
+
+<!-- BREAKING BAR -->
+<div class="breaking-bar">
+  <span class="label">本週焦點</span>
+  <span>🚀 FlowGPS 系統四關連破</span>
+  <span>🗑️ 舊資料果斷斷捨離</span>
+  <span>🏍️ 三台機車保險全數歸檔</span>
+</div>
+
+<div class="newspaper">
+
+  <!-- ROW 1: 3 COLUMNS -->
+  <div class="columns-3" style="margin-top: 20px;">
+
+    <!-- COL 1-2: LEAD STORY -->
+    <div class="col" style="grid-column: span 2;">
+      <div class="section-label">頭版要聞</div>
+      <h2 class="headline big">系統與現實的雙重推進<br>忙碌壓縮中仍保有清晰節奏</h2>
+      <div class="deck">這週面臨「沒時間是真沒時間」的高壓工作，但在 FlowGPS 系統的輔助下，反而完成了許多行政收尾與系統基礎建置。</div>
+
+      <div class="columns-2">
+        <div>
+          <p><strong>系統建置躍進</strong>：4/27 一早完成公司環境大同步，修復伺服器 Bug，緊接著在 4/29 早上 05:16 起床，一口氣連破 FlowGPS 四道關卡（包含玩家日誌、行動副本、阿抗日誌），正式將系統的地基打穩。</p>
+          <p><strong>現實任務收尾</strong>：公司端的客訴處理推進至放尾階段。三台機車、五個保單項目全部搞定。最值得一提的是，趁著人事異動，一口氣清空了 1 年前的外銷客訴資料——「過去就過去，不留念」，斷捨離得非常乾淨漂亮。</p>
+          <p><strong>家庭與能量</strong>：本週適逢生理期冬季，能量向內。但仍在前晚開會到 11 點完成女兒資料整理，今早（5/1）更一口氣完成倒 6 包垃圾與刷洗廚具，用充滿掌控感的日常 Routine 替一整天暖機。</p>
+
+          <div class="tags">
+            <span class="tag gold">FlowGPS 四關連破 ✓</span>
+            <span class="tag gold">機車保險歸檔 ✓</span>
+            <span class="tag">女兒資料整理 ✓</span>
+            <span class="tag">客訴資料斷捨離 ✓</span>
+          </div>
+        </div>
+        <div>
+          <div class="stats-box">
+            <div class="label">本週完成重大待辦</div>
+            <div class="number">12+</div>
+            <div class="unit">含家務與專案</div>
+          </div>
+          <div class="stats-box" style="background: #27ae60; margin-top: 8px;">
+            <div class="label">FlowGPS 系統建立</div>
+            <div class="number">✓</div>
+            <div class="unit">成長帳戶 ★★★</div>
+          </div>
+          <div class="stats-box" style="background: #8e44ad; margin-top: 8px;">
+            <div class="label">舊資料斷捨離</div>
+            <div class="number">1年</div>
+            <div class="unit">體驗帳戶 ★★★</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- COL 3: LIFE -->
+    <div class="col">
+      <div class="section-label">生活快訊</div>
+
+      <h3 class="sub-headline">🧹 早晨的強大儀式感</h3>
+      <p>5/1 早上 07:30，一口氣清理了 6 包垃圾與回收物，並把前晚焦黑的鍋子刷得閃閃發亮。Routine（R）帶來的環境掌控感，是最好的開機儀式。</p>
+
+      <div class="pullquote">「過去就過去<br>不留念」</div>
+
+      <h3 class="sub-headline">💊 健康護理超級提醒</h3>
+      <p>本週特別在系統中加上了 ⚠️⚠️⚠️ 每日三次胃潰瘍吃藥提醒。身體是一切的本錢，特別是生理期與高壓工作下，照顧自己更是 P0 級任務。</p>
+
+      <div class="divider">— ✦ —</div>
+
+      <h3 class="sub-headline">📱 Threads 素材儲備</h3>
+      <p>分析了幾個絕佳的選題，包含「46 歲業務接手前輩工作」與「日本客戶來訪的職場故事」，準備轉化為強大素材。</p>
+
+      <div class="section-label" style="margin-top: 16px;">本週完成 ✓</div>
+      <ul class="checklist">
+        <li>FlowGPS 第一關主進階打通</li>
+        <li>女兒資料整理（熬夜開會完成）</li>
+        <li>幫女兒預約美髮師（5/1 12:30）</li>
+        <li>機車保險三台確認簽名回傳</li>
+        <li>公司客訴放尾與紙樣準備</li>
+      </ul>
+    </div>
+
+  </div>
+
+  <!-- DIVIDER -->
+  <div class="divider" style="margin: 20px 0 0;">—————————————————————————</div>
+
+  <!-- ROW 2: 3 COLUMNS -->
+  <div class="columns-3" style="border-top: 1px solid var(--light); padding-top: 16px;">
+
+    <!-- COL 1: 工具報導 -->
+    <div class="col">
+      <div class="section-label">系統報導</div>
+      <h3 class="sub-headline">阿抗日誌建立<br>直球對決三大阻力</h3>
+      <p>在打通 FlowGPS 第 1.4 關時，正式建立了 <code>阿抗日誌.md</code>。把「等能量夠了再做」、「先把這件小事做完」、「想太多還沒開始」三招標記出來。</p>
+      <p>這不是懺悔書，而是真正的攻略本。打贏記，打輸也記。本週的 Boss 戰：05:16 醒來不給阻力開口機會，直接打怪升級。</p>
+      <div class="tags">
+        <span class="tag">阿抗日誌</span>
+        <span class="tag">行動副本</span>
+        <span class="tag gold">日報伺服器修復</span>
+      </div>
+    </div>
+
+    <!-- COL 2: 系統同步 -->
+    <div class="col">
+      <div class="section-label">工作隨想</div>
+      <h3 class="sub-headline">真實的高壓日常<br>壓縮感下的韌性</h3>
+      <p>「每天都被壓縮的緊緊的，真的不能像之前一樣，任性就請假，因為請假了工作只會累積越來越多。」</p>
+      <p>聽起來像抱怨，但這正是真實的工作現況。在如此緊湊的縫隙中，依然能穩住節奏、完成斷捨離、將任務一一推進，這就是 46 歲的韌性與價值。</p>
+    </div>
+
+    <!-- COL 3: 本週智慧 -->
+    <div class="col">
+      <div class="section-label">本週智慧結晶</div>
+      <h3 class="sub-headline">環境掌控感<br>啟動一天的最佳儀式</h3>
+
+      <div class="pullquote" style="font-size: 14px;">
+        「R類維持工作<br>雖然耗時耗力<br>卻能帶來<br>極強的掌控感」
+      </div>
+
+      <p>很多人覺得家務浪費時間，但在高壓工作中，一個清爽的環境與一洗而淨的鍋子，其實是幫大腦重新開機的最好方式。</p>
+
+      <div class="section-label" style="margin-top: 16px;">時間日誌試行計畫（New!）</div>
+      <p>啟動為期三天（5/1-5/3）的「時間日誌分析試行」，指揮官報時，阿助紀錄，並在晚間分析能量分配，找出黃金晨型節奏！</p>
+    </div>
+
+  </div>
+
+  <!-- ROW 3: WEALTH TABLE + NEXT WEEK -->
+  <div class="full-width">
+    <div class="columns-2">
+
+      <!-- WEALTH ACCOUNTS -->
+      <div>
+        <div class="section-label">本週八大財富帳戶結算</div>
+        <table class="wealth-table">
+          <thead>
+            <tr>
+              <th>帳戶</th>
+              <th>本週亮點</th>
+              <th>評分</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>🌱 成長</td>
+              <td>FlowGPS 四關連破，阿抗日誌建立</td>
+              <td><span class="stars">★★★</span></td>
+            </tr>
+            <tr>
+              <td>✈️ 體驗</td>
+              <td>果斷斷捨離1年外銷資料，心境大掃除</td>
+              <td><span class="stars">★★★</span></td>
+            </tr>
+            <tr>
+              <td>🏠 家庭</td>
+              <td>完成女兒資料整理、幫女兒預約美髮</td>
+              <td><span class="stars">★★</span></td>
+            </tr>
+            <tr>
+              <td>💰 金錢</td>
+              <td>機車三台保險處理完畢</td>
+              <td><span class="stars">★★</span></td>
+            </tr>
+            <tr>
+              <td>⚒️ 技能</td>
+              <td>修復 Node.js 伺服器路徑 Bug，完成環境同步</td>
+              <td><span class="stars">★★</span></td>
+            </tr>
+            <tr>
+              <td>💪 健康</td>
+              <td>覺察生理季能量變化，早中晚胃藥超強提醒</td>
+              <td><span class="stars">★★</span></td>
+            </tr>
+            <tr>
+              <td>🤝 人脈</td>
+              <td>公司客訴轉型推進</td>
+              <td><span class="stars">★</span></td>
+            </tr>
+            <tr>
+              <td>🫶 服務</td>
+              <td>協助家人買咖啡奶茶</td>
+              <td><span class="stars">★</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- NEXT WEEK -->
+      <div>
+        <div class="section-label">下週作戰計畫（5/2 起）</div>
+        <h3 class="sub-headline">🎯 迎接五月挑戰</h3>
+        <p>五月正式開始，除了工作主線，還有密集的進修與家庭活動等著推進。</p>
+
+        <div style="margin: 12px 0;">
+          <div><span class="badge red">P0</span> 客訴異議單交接準備</div>
+          <p style="font-size: 12px; color: var(--gray); margin: 4px 0 8px 50px;">思考優化流程、統一版本與大小（預計五月交接）</p>
+
+          <div><span class="badge red">P0</span> 5/2～5/3 孩子王培訓課程</div>
+          <p style="font-size: 12px; color: var(--gray); margin: 4px 0 8px 50px;">週末密集的進修與場域學習</p>
+
+          <div><span class="badge gold">P1</span> 5/6 母親節餐會</div>
+          <p style="font-size: 12px; color: var(--gray); margin: 4px 0 8px 50px;">與爸媽和弟弟妹妹的重要家庭時光</p>
+
+          <div><span class="badge gold">P1</span> 時間日誌分析計畫</div>
+          <p style="font-size: 12px; color: var(--gray); margin: 4px 0 8px 50px;">持續這三天的試行，追蹤自己的黃金能量區間</p>
+
+          <div><span class="badge blue">P2</span> 假日金錢約會</div>
+          <p style="font-size: 12px; color: var(--gray); margin: 4px 0 8px 50px;">週末找時間打開 YNAB 對帳與理財</p>
+        </div>
+
+        <div class="pullquote" style="font-size: 14px;">
+          黃金生產力在上午<br>晚上就好好降落
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="footer">
+    <p>FlowGPS Weekly Report　Vol. 4 No. 1　2026.05.01</p>
+    <p style="margin-top: 4px;">由阿助自動生成，隨時隨地記錄您的步伐 🗞️</p>
+  </div>
+
+</div>
+</body>
+</html>
