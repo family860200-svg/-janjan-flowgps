@@ -1,145 +1,108 @@
 const fs = require('fs');
 const path = require('path');
-const https = require('https');
-const { exec } = require('child_process');
 
 const ROOT = path.resolve(__dirname, '../..');
-const CONFIG_PATH = path.join(__dirname, 'config.json');
+const TODO_PATH = path.join(ROOT, 'F｜行動聚焦漏斗', '玩家待辦任務.md');
 
-// 顯示巨大通知視窗
-function showHugePopup(title, timeStr) {
-  const psScript = `
-    Add-Type -AssemblyName PresentationFramework
-    [xml]$xaml = @"
-    <Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Title="FlowGPS 強力提醒" Width="800" Height="400" Topmost="True" WindowStartupLocation="CenterScreen" Background="#FFD32F2F" WindowStyle="ToolWindow">
-        <Grid>
-            <TextBlock Name="MsgText" Text="🚨 ${timeStr} 🚨\`n\`n${title}" FontSize="42" FontWeight="Bold" Foreground="White" HorizontalAlignment="Center" Margin="20,40,20,0" TextAlignment="Center" TextWrapping="Wrap"/>
-            <Button Name="BtnClose" Content="我知道了，馬上去辦！" Width="320" Height="80" FontSize="28" FontWeight="Bold" Background="#FFFFFFFF" Foreground="#FFD32F2F" VerticalAlignment="Bottom" Margin="0,0,0,40"/>
-        </Grid>
-    </Window>
-"@
-    $reader = (New-Object System.Xml.XmlNodeReader($xaml))
-    $win = [Windows.Markup.XamlReader]::Load($reader)
-    $btn = $win.FindName("BtnClose")
-    $btn.add_Click({$win.Close()})
-    $win.ShowDialog() | Out-Null
-  `;
-  
-  exec(`powershell -NoProfile -Command "${psScript.replace(/"/g, '\\"').replace(/\n/g, '')}"`);
+// ── Mac 強制彈窗（不點不消失） ───────────────────────
+function notify(headline, body, urgent = false) {
+  const icon = urgent ? 'stop' : 'caution';
+  const btn  = urgent ? '🔥 馬上去！' : '知道了！';
+  const msg  = `${headline}\\n\\n${body}`;
+  // display dialog 會強制跳出、擋在最前面，不點不消失
+  const script = `display dialog "${msg.replace(/"/g, '\\"')}" with title "FlowGPS 提醒系統" buttons {"${btn}"} default button 1 with icon ${icon}`;
+  require('child_process').exec(`osascript -e '${script.replace(/'/g, "'\\''")}'`);
+  console.log(`\n🔔 [${new Date().toLocaleTimeString('zh-TW')}] ${headline} — ${body}`);
 }
 
-function fetchIcs(url) {
-  return new Promise((resolve) => {
-    if (!url || !url.startsWith('http')) return resolve('');
-    https.get(url, res => {
-      let data = '';
-      res.on('data', chunk => data += chunk);
-      res.on('end', () => resolve(data));
-    }).on('error', () => resolve(''));
-  });
-}
+// ── 解析待辦 Markdown ──────────────────────────────────
+// 觸發條件：重要＋緊急（Q1）的 section，且有明確 HH:MM 時間
+// Q1 對應 section：
+//   - ## 📅 本週行程（含今日待辦子段落）
+//   - ## 🔴 五月主線（工作）
+const Q1_SECTIONS = [
+  '📅 本週行程',       // 部分比對（前綴）
+  '🔴 五月主線（工作）', // 完整比對
+];
 
-function parseIcsDate(dateStr) {
-  if (!dateStr) return null;
-  // 格式如 20260430T100000Z 或 20260430T100000
-  const match = dateStr.match(/^(\d{4})(\d{2})(\d{2})T(\d{2})(\d{2})(\d{2})(Z)?/);
-  if (!match) return null;
-  const [_, y, m, d, h, mn, s, z] = match;
-  let date = new Date(Date.UTC(y, m - 1, d, h, mn, s));
-  if (!z) { // 沒有Z表示本地時間
-    date = new Date(y, m - 1, d, h, mn, s);
-  } else {
-    // 如果是Z，轉為本地時間（自動處理時區）
-  }
-  return date;
-}
-
-async function getTodayEvents() {
+function getTodayEvents() {
   const events = [];
-  const now = new Date();
-  
-  // 1. 解析 Markdown
-  const todoMdPath = path.join(ROOT, 'F｜行動聚焦漏斗', '玩家待辦任務.md');
-  if (fs.existsSync(todoMdPath)) {
-    const todoMd = fs.readFileSync(todoMdPath, 'utf8');
-    for (const line of todoMd.split('\n')) {
-      if (line.match(/- \[( |x)\]/)) {
-        const timeMatch = line.match(/@(\d{1,2}):(\d{2})/);
-        // 只提醒尚未打勾的任務
-        if (timeMatch && !line.includes('[x]')) {
-          const h = parseInt(timeMatch[1], 10);
-          const mn = parseInt(timeMatch[2], 10);
-          const title = line.replace(/- \[( |x)\]/, '').trim();
-          const eventTime = new Date(now.getFullYear(), now.getMonth(), now.getDate(), h, mn, 0);
-          events.push({ title, time: eventTime, source: 'Markdown' });
-        }
-      }
-    }
-  }
+  if (!fs.existsSync(TODO_PATH)) return events;
 
-  // 2. 解析 Google Calendar (簡易版解析)
-  let config = {};
-  if (fs.existsSync(CONFIG_PATH)) {
-    config = JSON.parse(fs.readFileSync(CONFIG_PATH, 'utf8'));
-  }
-  
-  if (config.google_calendar_ical_url && config.google_calendar_ical_url.startsWith('http')) {
-    const icsData = await fetchIcs(config.google_calendar_ical_url);
-    const lines = icsData.split(/\r?\n/);
-    let inEvent = false;
-    let currentEvent = {};
-    
-    for (const line of lines) {
-      if (line.startsWith('BEGIN:VEVENT')) {
-        inEvent = true;
-        currentEvent = {};
-      } else if (line.startsWith('END:VEVENT')) {
-        inEvent = false;
-        if (currentEvent.start && currentEvent.title) {
-          // 只篩選今天的行程
-          if (currentEvent.start.getDate() === now.getDate() && currentEvent.start.getMonth() === now.getMonth()) {
-            events.push({ title: currentEvent.title, time: currentEvent.start, source: 'Calendar' });
-          }
-        }
-      } else if (inEvent) {
-        if (line.startsWith('SUMMARY:')) currentEvent.title = line.substring(8);
-        else if (line.startsWith('DTSTART')) {
-          const dateStr = line.split(':')[1];
-          currentEvent.start = parseIcsDate(dateStr);
-        }
-      }
+  const now = new Date();
+  const md = fs.readFileSync(TODO_PATH, 'utf8');
+  const lines = md.split('\n');
+
+  let inQ1 = false;
+
+  for (const line of lines) {
+    // 遇到 ## 段落，判斷是否為 Q1
+    if (line.startsWith('## ')) {
+      const title = line.replace('## ', '').trim();
+      inQ1 = Q1_SECTIONS.some(q => title.startsWith(q) || title === q);
+      continue;
     }
+    // ### 子段落：本週行程裡的子段落（今日待辦、明日行程…）仍在 Q1 範圍內
+    // 非 Q1 section 直接跳過
+    if (!inQ1) continue;
+
+    // 只看未完成的 [ ]
+    if (!line.match(/- \[ \]/)) continue;
+
+    // 必須有明確時間 HH:MM 才提醒
+    const timeMatch = line.match(/(\d{1,2}):(\d{2})/);
+    if (!timeMatch) continue;
+
+    const h = parseInt(timeMatch[1], 10);
+    const mn = parseInt(timeMatch[2], 10);
+    const title = line
+      .replace(/- \[ \]\s*/, '')
+      .replace(/\d{1,2}:\d{2}\s*/, '')
+      .replace(/[⚠️🎉🎯📌✅❌💡⭐]/gu, '')
+      .trim();
+
+    const eventTime = new Date(now.getFullYear(), now.getMonth(), now.getDate(), h, mn, 0);
+    events.push({ title, time: eventTime });
   }
 
   return events;
 }
 
-// 記錄已經提醒過的事件 (避免每分鐘重複彈出)
-const alertedEvents = new Set();
+// ── 已提醒紀錄（避免重複） ────────────────────────────
+const alerted = new Set();
 
-async function checkAndAlert() {
-  const events = await getTodayEvents();
+function checkAndAlert() {
+  const events = getTodayEvents();
   const now = new Date();
-  
+
   for (const ev of events) {
     const diffMs = ev.time.getTime() - now.getTime();
-    const diffMins = Math.floor(diffMs / 60000);
-    
-    const eventKey = `${ev.title}_${ev.time.getTime()}`;
-    
-    if (diffMins === 30 && !alertedEvents.has(`${eventKey}_30`)) {
-      showHugePopup(`即將在 30 分鐘後開始：\n${ev.title}`, `預備提醒 (${ev.time.getHours().toString().padStart(2, '0')}:${ev.time.getMinutes().toString().padStart(2, '0')})`);
-      alertedEvents.add(`${eventKey}_30`);
-    }
-    else if (diffMins === 5 && !alertedEvents.has(`${eventKey}_5`)) {
-      showHugePopup(`🔥 只剩 5 分鐘了！🔥\n請立刻放下手邊工作：\n${ev.title}`, `最後通牒 (${ev.time.getHours().toString().padStart(2, '0')}:${ev.time.getMinutes().toString().padStart(2, '0')})`);
-      alertedEvents.add(`${eventKey}_5`);
+    const diffMins = Math.round(diffMs / 60000);
+    const key = `${ev.title}_${ev.time.getTime()}`;
+    const timeStr = ev.time.toLocaleTimeString('zh-TW', { hour: '2-digit', minute: '2-digit' });
+
+    if (diffMins === 30 && !alerted.has(`${key}_30`)) {
+      notify('⏰ 預備提醒', `30 分鐘後要出發／開始：\n${ev.title}（${timeStr}）`);
+      alerted.add(`${key}_30`);
+    } else if (diffMins === 10 && !alerted.has(`${key}_10`)) {
+      notify('🔔 快到了！10 分鐘！', `請放下手邊工作準備：\n${ev.title}（${timeStr}）`, true);
+      alerted.add(`${key}_10`);
+    } else if (diffMins === 0 && !alerted.has(`${key}_0`)) {
+      notify('🚨 時間到！現在馬上！', `${ev.title}`, true);
+      alerted.add(`${key}_0`);
     }
   }
 }
 
-console.log("🕒 FlowGPS 提醒防呆系統已啟動，背景輪詢中...");
-// 啟動時先檢查一次
+// ── 啟動 ─────────────────────────────────────────────
+const events = getTodayEvents();
+console.log(`🕒 FlowGPS 提醒防呆系統已啟動（Mac）`);
+console.log(`📋 今日共 ${events.length} 個時間提醒：`);
+events.forEach(ev => {
+  const t = ev.time.toLocaleTimeString('zh-TW', { hour: '2-digit', minute: '2-digit' });
+  console.log(`   ${t}  ${ev.title}`);
+});
+console.log('');
+
 checkAndAlert();
-// 每 1 分鐘輪詢一次
-setInterval(checkAndAlert, 60000);
+setInterval(checkAndAlert, 60000); // 每分鐘輪詢

@@ -470,6 +470,19 @@
     margin-left: 12px;
   }
   .refresh-btn:hover { transform: translate(-1px, -1px); box-shadow: 4px 4px 0 #000; }
+  /* 八大財富按鈕 */
+  .wealth-toggle { display:flex; flex-wrap:wrap; gap:8px; margin-top:6px; }
+  .wealth-btn {
+    display:flex; flex-direction:column; align-items:center;
+    padding:8px 10px; border:2px solid #000; background:#fff;
+    cursor:pointer; font-family:'Montserrat',sans-serif; font-weight:700;
+    font-size:10px; box-shadow:3px 3px 0 #000;
+    transition:transform 100ms,box-shadow 100ms; min-width:60px; gap:3px;
+  }
+  .wealth-btn.active { background:var(--yellow); transform:translate(-2px,-2px); box-shadow:5px 5px 0 #000; }
+  .wealth-btn:hover { transform:translate(-1px,-1px); box-shadow:4px 4px 0 #000; }
+  .wealth-btn .w-emoji { font-size:18px; line-height:1; }
+  .wealth-btn .w-name { font-size:9px; letter-spacing:0.5px; }
 </style>
 </head>
 <body>
@@ -548,7 +561,7 @@ async function saveWorkOkr() {
 }
 
 function renderWorkCard(todos) {
-  const workSection = todos.find(s => s.title === '🔴 四月主線（工作）');
+  const workSection = todos.find(s => s.title === '🔴 五月主線（工作）');
   const workItems = workSection ? workSection.items.filter(i => !i.done) : [];
   const todosHtml = workItems.length
     ? workItems.map(i => `<div class="okr-todo-item">· ${escHtml(i.text)}</div>`).join('')
@@ -594,11 +607,12 @@ function renderWorkCard(todos) {
 
 // Eisenhower mapping by section title
 const eisenhowerMap = {
-  '🔴 四月主線': 'q1',
-  '💰 家庭財務': 'q2',
-  '🟡 健康日常': 'q2',
-  '🟠 系統維護': 'q3',
-  '🔵 支線任務（空檔推進）': 'q4',
+  '🔴 五月主線（工作）':       'q1',
+  '📅 本週行程（5/6 ～ 5/11）': 'q1',
+  '🔴 五月主線（個人與健康）': 'q2',
+  '💰 家庭財務與行政':         'q2',
+  '📅 週末與女兒行程':         'q3',
+  '🛒 考慮購買與支線':         'q4',
 };
 
 function renderEisenhower(sections) {
@@ -649,16 +663,17 @@ function renderEisenhower(sections) {
 
 // Section color map
 const sectionColors = {
-  '🔴 四月主線': 'card-red',
-  '💰 家庭財務': 'card-yellow',
-  '🟡 健康日常': 'card-lime',
-  '🟠 系統維護': 'card-cyan',
-  '🔵 支線任務（空檔推進）': 'card-purple',
-  '✅ 已完成': 'card-white',
+  '🔴 五月主線（工作）':       'card-red',
+  '🔴 五月主線（個人與健康）': 'card-lime',
+  '💰 家庭財務與行政':         'card-yellow',
+  '📅 週末與女兒行程':         'card-cyan',
+  '🛒 考慮購買與支線':         'card-purple',
+  '📅 本週行程（5/6 ～ 5/11）':'card-pink',
+  '✅ 已完成':                 'card-white',
 };
 
 function renderTodos(sections) {
-  return sections.filter(s => s.title !== '✅ 已完成' && s.title !== '🔴 四月主線（工作）' && s.items.length > 0).map(s => {
+  return sections.filter(s => s.title !== '✅ 已完成' && s.title !== '🔴 五月主線（工作）' && s.items.length > 0).map(s => {
     const color = sectionColors[s.title] || 'card-pink';
     const items = s.items.map(item => `
       <div class="todo-item ${item.done ? 'done' : ''} ${item.indent ? 'indent' : ''}">
@@ -801,6 +816,11 @@ function render(data) {
           </div>
 
           <div class="flow-section">
+            <div class="flow-label">🏆 今日八大財富（點一下 ＋1，再點取消）</div>
+            <div class="wealth-toggle" id="wealth-toggle"></div>
+          </div>
+
+          <div class="flow-section">
             <div class="flow-label">💡 今天閃過的念頭</div>
             <textarea class="flow-input" id="flow-idea" placeholder="靈感、直覺、突然想到的…關鍵字就好，不用完整句子" rows="2"></textarea>
           </div>
@@ -845,10 +865,13 @@ function render(data) {
           </div>
 
           <div style="margin-top:12px;display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
-            <button class="btn" onclick="saveFlowJournal()" style="background:#B8FF3C;">💾 儲存</button>
-            <span style="font-size:12px;font-weight:700;">📅 查看：</span>
-            <select id="flow-date-select" onchange="loadFlowJournal(this.value)" style="border:2px solid #000;padding:6px 10px;font-weight:700;font-size:12px;box-shadow:2px 2px 0 #000;cursor:pointer;">
-            </select>
+            <button class="btn" onclick="saveFlowJournal()" style="background:#B8FF3C;" id="flow-save-btn">💾 儲存今日</button>
+            <button class="btn" onclick="showHistory()" style="background:var(--cyan);">📖 歷史日誌</button>
+            <span id="flow-save-toast" style="font-size:12px;font-weight:700;color:#555;opacity:0;transition:opacity 0.4s;"></span>
+          </div>
+          <!-- 日期切換（小字，隱藏在「目前查看」顯示） -->
+          <div style="margin-top:8px;font-size:11px;font-weight:600;color:#888;display:flex;align-items:center;gap:6px;">
+            📅 目前查看：<select id="flow-date-select" onchange="loadFlowJournal(this.value)" style="border:1.5px solid #aaa;padding:3px 6px;font-size:11px;font-weight:700;cursor:pointer;"></select>
           </div>
         </div>
       </div>
@@ -933,6 +956,52 @@ async function editNote(dateKey, index) {
 
 // ── FLOW 日誌 ──────────────────────────────────────────
 let _dripItems = [];
+let _wealthToday = {};
+const W_NAMES = ['成長','健康','家庭','技藝','金錢','人脈','體驗','服務'];
+const W_EMOJI = {'成長':'🌱','健康':'💊','家庭':'👨‍👩‍👧','技藝':'🎨','金錢':'💰','人脈':'🤝','體驗':'🌴','服務':'🕊️'};
+
+function renderWealthToggle() {
+  const el = document.getElementById('wealth-toggle');
+  if (!el) return;
+  el.innerHTML = W_NAMES.map(n => {
+    const on = _wealthToday[n] ? 'active' : '';
+    return `<button class="wealth-btn ${on}" onclick="toggleWealth('${n}')">
+      <span class="w-emoji">${W_EMOJI[n]}</span>
+      <span class="w-name">${n}</span>
+    </button>`;
+  }).join('');
+}
+
+function toggleWealth(name) {
+  _wealthToday[name] = _wealthToday[name] ? 0 : 1;
+  renderWealthToggle();
+  silentSave();
+}
+
+async function silentSave() {
+  await fetch('/api/flow-journal', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ journal: buildJournal() })
+  });
+}
+
+function buildJournal() {
+  return {
+    boss: document.getElementById('flow-boss')?.value || '',
+    idea: document.getElementById('flow-idea')?.value || '',
+    f: document.getElementById('flow-f')?.value || '',
+    l: document.getElementById('flow-l')?.value || '',
+    o: document.getElementById('flow-o')?.value || '',
+    w: document.getElementById('flow-w')?.value || '',
+    drip: _dripItems,
+    review: document.getElementById('flow-review')?.value || '',
+    med_morning: document.getElementById('med-morning')?.checked || false,
+    med_noon: document.getElementById('med-noon')?.checked || false,
+    med_evening: document.getElementById('med-evening')?.checked || false,
+    wealth: _wealthToday,
+  };
+}
 
 function addDrip() {
   const type = document.getElementById('drip-type').value;
@@ -958,25 +1027,23 @@ function renderDrip() {
 }
 
 async function saveFlowJournal() {
-  const journal = {
-    boss: document.getElementById('flow-boss').value,
-    idea: document.getElementById('flow-idea').value,
-    f: document.getElementById('flow-f').value,
-    l: document.getElementById('flow-l').value,
-    o: document.getElementById('flow-o').value,
-    w: document.getElementById('flow-w').value,
-    drip: _dripItems,
-    review: document.getElementById('flow-review').value,
-    med_morning: document.getElementById('med-morning').checked,
-    med_noon: document.getElementById('med-noon').checked,
-    med_evening: document.getElementById('med-evening').checked,
-  };
-  await fetch('/api/flow-journal', {
+  const journal = buildJournal();
+  const res = await fetch('/api/flow-journal', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ journal })
   });
-  alert('✅ FLOW 日誌已儲存！');
+  const ok = res.ok;
+  const toast = document.getElementById('flow-save-toast');
+  if (toast) {
+    toast.textContent = ok ? '✅ 已儲存！' : '❌ 儲存失敗';
+    toast.style.color = ok ? '#228822' : '#cc2222';
+    toast.style.opacity = '1';
+    clearTimeout(toast._t);
+    toast._t = setTimeout(() => { toast.style.opacity = '0'; }, 2500);
+  }
+  // 更新日期選單（今天這筆一定要出現）
+  await loadFlowJournal();
 }
 
 async function loadFlowJournal(dateKey) {
@@ -1016,28 +1083,11 @@ async function loadFlowJournal(dateKey) {
   document.getElementById('med-morning').checked = j.med_morning || false;
   document.getElementById('med-noon').checked = j.med_noon || false;
   document.getElementById('med-evening').checked = j.med_evening || false;
+  _wealthToday = j.wealth || {};
+  renderWealthToggle();
 }
 
-async function saveMed() {
-  const j = {
-    boss: document.getElementById('flow-boss').value,
-    idea: document.getElementById('flow-idea').value,
-    f: document.getElementById('flow-f').value,
-    l: document.getElementById('flow-l').value,
-    o: document.getElementById('flow-o').value,
-    w: document.getElementById('flow-w').value,
-    drip: _dripItems,
-    review: document.getElementById('flow-review').value,
-    med_morning: document.getElementById('med-morning').checked,
-    med_noon: document.getElementById('med-noon').checked,
-    med_evening: document.getElementById('med-evening').checked,
-  };
-  await fetch('/api/flow-journal', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ journal: j })
-  });
-}
+async function saveMed() { await silentSave(); }
 
 function getTodayKey() {
   const now = new Date();
@@ -1048,6 +1098,67 @@ function getTodayKey() {
 }
 
 loadData();
+</script>
+
+<!-- 歷史日誌 Modal -->
+<div id="history-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:9999;overflow-y:auto;padding:40px 20px;">
+  <div style="max-width:700px;margin:0 auto;background:#fff;border:3px solid #000;box-shadow:8px 8px 0 #000;padding:0;border-radius:0;">
+    <div style="background:#000;color:#FFE100;padding:16px 24px;display:flex;justify-content:space-between;align-items:center;">
+      <span style="font-size:16px;font-weight:900;letter-spacing:1px;">📖 FLOW 歷史日誌</span>
+      <button onclick="closeHistory()" style="background:none;border:none;color:#FFE100;font-size:24px;cursor:pointer;font-weight:900;">✕</button>
+    </div>
+    <div id="history-modal-body" style="padding:24px;"></div>
+  </div>
+</div>
+
+<script>
+async function showHistory() {
+  const modal = document.getElementById('history-modal');
+  const body = document.getElementById('history-modal-body');
+  modal.style.display = 'block';
+  body.innerHTML = '<p style="color:#aaa;font-weight:700;">載入中…</p>';
+
+  const res = await fetch('/api/flow-journal');
+  const data = await res.json();
+  const dates = data.dates || [];
+
+  if (!dates.length) {
+    body.innerHTML = '<p style="color:#aaa;font-weight:700;">還沒有任何日誌記錄</p>';
+    return;
+  }
+
+  // 逐一載入每天資料
+  const entries = await Promise.all(dates.map(async dk => {
+    const r = await fetch(`/api/flow-journal?date=${dk}`);
+    const d = await r.json();
+    return { dk, journal: d.journal };
+  }));
+
+  body.innerHTML = entries.map(({ dk, journal: j }) => {
+    if (!j) return '';
+    const dateStr = `20${dk.slice(0,2)}/${dk.slice(2,4)}/${dk.slice(4,6)}`;
+    const boss   = j.boss   ? `<div style="margin:6px 0;font-size:13px;"><b>🎯 Boss：</b>${escHtml(j.boss)}</div>` : '';
+    const review = j.review ? `<div style="margin:6px 0;font-size:13px;white-space:pre-wrap;"><b>💡 覆盤：</b>${escHtml(j.review)}</div>` : '';
+    const drip   = j.drip && j.drip.length
+      ? `<div style="margin:6px 0;font-size:12px;color:#555;"><b>⚡ DRIP：</b>${j.drip.map(d => `<span style="background:#eee;padding:1px 6px;margin:2px;display:inline-block;">[${d.type}] ${escHtml(d.activity)}</span>`).join('')}</div>` : '';
+    const med    = (j.med_morning || j.med_noon || j.med_evening)
+      ? `<div style="font-size:11px;color:#888;">💊 ${j.med_morning?'早✅':'早❌'} ${j.med_noon?'午✅':'午❌'} ${j.med_evening?'晚✅':'晚❌'}</div>` : '';
+    const hasContent = j.boss || j.review || (j.drip && j.drip.length);
+    if (!hasContent) return '';
+    return `<div style="border:2px solid #000;margin-bottom:16px;box-shadow:3px 3px 0 #000;">
+      <div style="background:#FFE100;padding:8px 16px;font-size:13px;font-weight:900;border-bottom:2px solid #000;">📅 ${dateStr}</div>
+      <div style="padding:12px 16px;">${boss}${review}${drip}${med}</div>
+    </div>`;
+  }).join('') || '<p style="color:#aaa;font-weight:700;">沒有有內容的記錄</p>';
+}
+
+function closeHistory() {
+  document.getElementById('history-modal').style.display = 'none';
+}
+// 點遮罩關閉
+document.getElementById('history-modal').addEventListener('click', function(e) {
+  if (e.target === this) closeHistory();
+});
 </script>
 </body>
 </html>

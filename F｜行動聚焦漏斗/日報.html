@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>阿抗日報</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Microsoft JhengHei', 'PingFang TC', sans-serif;
+  background: #f5f3ef;
+  color: #2d2520;
+  font-size: 15px;
+  min-height: 100vh;
+  padding-bottom: 60px;
+}
+
+/* ── HEADER ── */
+.header {
+  background: linear-gradient(135deg, #2d2520 0%, #4a3828 100%);
+  color: #fff;
+  padding: 20px 24px 16px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+}
+.header-left h1 { font-size: 20px; letter-spacing: 3px; font-weight: 700; }
+.header-left .sub { font-size: 11px; color: #c8a870; letter-spacing: 2px; margin-top: 3px; }
+.header-right { text-align: right; }
+.header-date { font-size: 22px; font-weight: 700; color: #f0d090; letter-spacing: 1px; }
+.header-weekday { font-size: 11px; color: #c0a878; margin-top: 2px; }
+
+/* ── BOSS BAR ── */
+.boss-bar {
+  background: #3d2e22;
+  padding: 12px 24px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.boss-label { font-size: 11px; color: #c8a870; letter-spacing: 2px; white-space: nowrap; }
+.boss-input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid #6a5040;
+  color: #f5e8d0;
+  font-size: 14px;
+  font-family: inherit;
+  padding: 2px 4px;
+  letter-spacing: 0.5px;
+}
+.boss-input:focus { outline: none; border-bottom-color: #d4a820; }
+.boss-input::placeholder { color: #806050; }
+
+/* ── MED TRACKER ── */
+.med-bar {
+  background: #faf8f4;
+  border-bottom: 1px solid #ede8e0;
+  padding: 10px 24px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.med-label { font-size: 11px; color: #a09080; letter-spacing: 1px; }
+.med-btns { display: flex; gap: 8px; }
+.med-btn {
+  padding: 5px 16px;
+  border-radius: 20px;
+  border: 1.5px solid #d8c8a8;
+  background: #fff;
+  font-size: 12px;
+  font-family: inherit;
+  cursor: pointer;
+  color: #9a8878;
+  transition: all 0.2s;
+  letter-spacing: 0.5px;
+}
+.med-btn.done {
+  background: #b8c8a8;
+  border-color: #b8c8a8;
+  color: #fff;
+}
+
+/* ── SECTION ── */
+.section { padding: 16px 20px 0; }
+.section-title {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: #a09080;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.section-title::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: #e0d8cc;
+}
+
+/* ── EISENHOWER MATRIX ── */
+.matrix-wrap {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: auto auto;
+  gap: 8px;
+}
+.matrix-axis-top {
+  grid-column: 1 / -1;
+  display: flex;
+  justify-content: space-around;
+  font-size: 10px;
+  color: #b0a090;
+  letter-spacing: 1px;
+  padding: 0 4px;
+}
+.quadrant {
+  background: #fff;
+  border-radius: 10px;
+  padding: 10px 12px;
+  min-height: 100px;
+  box-shadow: 0 1px 6px rgba(80,60,40,0.07);
+}
+.q1 { border-top: 3px solid #d4504a; }
+.q2 { border-top: 3px solid #d4a820; }
+.q3 { border-top: 3px solid #a0b8d8; }
+.q4 { border-top: 3px solid #c0c0b8; }
+.q-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+.q-badge {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  padding: 2px 7px;
+  border-radius: 10px;
+}
+.q1 .q-badge { background: #fde8e8; color: #c04040; }
+.q2 .q-badge { background: #fdf3dc; color: #a07820; }
+.q3 .q-badge { background: #e8eef8; color: #5080b0; }
+.q4 .q-badge { background: #f0f0ec; color: #808078; }
+.q-name { font-size: 10px; color: #b0a090; }
+
+.task-list { list-style: none; padding: 0; }
+.task-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 4px 0;
+  font-size: 13px;
+  color: #4a3828;
+  line-height: 1.4;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background 0.15s;
+}
+.task-item:hover { background: #f8f4ee; }
+.task-check {
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  border: 1.5px solid #d0c0a8;
+  flex-shrink: 0;
+  margin-top: 1px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 9px;
+  color: transparent;
+  transition: all 0.2s;
+}
+.task-item.done .task-check {
+  background: #b8c8a8;
+  border-color: #b8c8a8;
+  color: #fff;
+}
+.task-item.done .task-text {
+  text-decoration: line-through;
+  color: #b0a898;
+}
+.task-text { flex: 1; }
+.add-task {
+  display: flex;
+  gap: 6px;
+  margin-top: 8px;
+}
+.add-input {
+  flex: 1;
+  border: none;
+  border-bottom: 1px dashed #d8ccc0;
+  background: transparent;
+  font-size: 12px;
+  font-family: inherit;
+  color: #5a4838;
+  padding: 2px 4px;
+}
+.add-input:focus { outline: none; border-bottom-color: #d4a820; }
+.add-input::placeholder { color: #c0b0a0; }
+.add-btn {
+  background: none;
+  border: none;
+  font-size: 16px;
+  cursor: pointer;
+  color: #d4a820;
+  line-height: 1;
+  padding: 0 2px;
+}
+
+/* ── DRIP LOG ── */
+.drip-wrap {
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 1px 6px rgba(80,60,40,0.07);
+  overflow: hidden;
+}
+.drip-header {
+  display: grid;
+  grid-template-columns: 60px 50px 1fr;
+  gap: 0;
+  background: #f5efe5;
+  padding: 7px 12px;
+  font-size: 10px;
+  color: #a09080;
+  letter-spacing: 1px;
+}
+.drip-row {
+  display: grid;
+  grid-template-columns: 60px 50px 1fr;
+  gap: 0;
+  padding: 6px 12px;
+  border-top: 1px solid #f0ece6;
+  align-items: center;
+}
+.drip-time { font-size: 12px; color: #a09080; }
+.drip-tag {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 8px;
+  text-align: center;
+  width: 32px;
+}
+.tag-P { background: #fde8e8; color: #c04040; }
+.tag-I { background: #fdf3dc; color: #a07820; }
+.tag-R { background: #e8eef8; color: #5080b0; }
+.tag-D { background: #f0f0ec; color: #808078; }
+.drip-desc { font-size: 13px; color: #4a3828; }
+.drip-new {
+  display: grid;
+  grid-template-columns: 60px 50px 1fr auto;
+  gap: 6px;
+  padding: 8px 12px;
+  border-top: 1px solid #f0ece6;
+  background: #fdf9f4;
+  align-items: center;
+}
+.drip-new input {
+  border: none;
+  border-bottom: 1px dashed #d8ccc0;
+  background: transparent;
+  font-size: 12px;
+  font-family: inherit;
+  color: #5a4838;
+  padding: 2px 4px;
+  width: 100%;
+}
+.drip-new input:focus { outline: none; border-bottom-color: #d4a820; }
+.drip-new input::placeholder { color: #c0b0a0; }
+select.drip-sel {
+  border: none;
+  border-bottom: 1px dashed #d8ccc0;
+  background: transparent;
+  font-size: 12px;
+  font-family: inherit;
+  color: #5a4838;
+  padding: 2px 2px;
+  width: 48px;
+  cursor: pointer;
+}
+select.drip-sel:focus { outline: none; }
+.drip-add-btn {
+  background: #d4a820;
+  border: none;
+  border-radius: 12px;
+  color: #fff;
+  font-size: 11px;
+  padding: 4px 10px;
+  cursor: pointer;
+  font-family: inherit;
+  white-space: nowrap;
+}
+
+/* ── REVIEW ── */
+.review-area {
+  width: 100%;
+  padding: 10px 12px;
+  border: none;
+  border-radius: 10px;
+  background: #fff;
+  font-family: inherit;
+  font-size: 13px;
+  color: #4a3828;
+  line-height: 1.8;
+  resize: vertical;
+  min-height: 80px;
+  box-shadow: 0 1px 6px rgba(80,60,40,0.07);
+}
+.review-area:focus { outline: none; box-shadow: 0 0 0 2px #d4a82040; }
+
+/* ── SAVE ── */
+.bottom-bar {
+  padding: 16px 20px 0;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.save-btn {
+  background: #3d2e22;
+  color: #f0d090;
+  border: none;
+  border-radius: 20px;
+  padding: 9px 24px;
+  font-size: 13px;
+  font-family: inherit;
+  cursor: pointer;
+  letter-spacing: 1px;
+  transition: background 0.2s;
+}
+.save-btn:hover { background: #4a3828; }
+.toast {
+  font-size: 12px;
+  color: #b8c8a8;
+  opacity: 0;
+  transition: opacity 0.4s;
+  margin-left: 8px;
+}
+.toast.show { opacity: 1; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-left">
+    <h1>阿　抗　日　報</h1>
+    <div class="sub">FlowGPS · Daily Report</div>
+  </div>
+  <div class="header-right">
+    <div class="header-date" id="dateDisplay"></div>
+    <div class="header-weekday" id="weekdayDisplay"></div>
+  </div>
+</div>
+
+<div class="boss-bar">
+  <div class="boss-label">⚡ 今日 BOSS</div>
+  <input class="boss-input" id="bossInput" placeholder="今天最重要的一件事（90-90-1）" />
+</div>
+
+<div class="med-bar">
+  <div class="med-label">💊 吃藥</div>
+  <div class="med-btns">
+    <button class="med-btn" id="medMorning" onclick="toggleMed('morning')">早</button>
+    <button class="med-btn" id="medNoon" onclick="toggleMed('noon')">午</button>
+    <button class="med-btn" id="medEvening" onclick="toggleMed('evening')">晚</button>
+  </div>
+</div>
+
+<!-- 艾森豪矩陣 -->
+<div class="section">
+  <div class="section-title">艾森豪矩陣</div>
+  <div class="matrix-wrap">
+    <div class="matrix-axis-top">
+      <span>⬅ 重要</span>
+      <span>不重要 ➡</span>
+    </div>
+    <!-- Q1 重要＋緊急 -->
+    <div class="quadrant q1">
+      <div class="q-header">
+        <span class="q-badge">Q1</span>
+        <span class="q-name">立刻做</span>
+      </div>
+      <ul class="task-list" id="q1list"></ul>
+      <div class="add-task">
+        <input class="add-input" id="q1input" placeholder="＋ 新增" onkeydown="addTask(event,'q1')">
+        <button class="add-btn" onclick="addTask(null,'q1')">＋</button>
+      </div>
+    </div>
+    <!-- Q2 重要＋不緊急 -->
+    <div class="quadrant q2">
+      <div class="q-header">
+        <span class="q-badge">Q2</span>
+        <span class="q-name">排時間做</span>
+      </div>
+      <ul class="task-list" id="q2list"></ul>
+      <div class="add-task">
+        <input class="add-input" id="q2input" placeholder="＋ 新增" onkeydown="addTask(event,'q2')">
+        <button class="add-btn" onclick="addTask(null,'q2')">＋</button>
+      </div>
+    </div>
+    <!-- Q3 不重要＋緊急 -->
+    <div class="quadrant q3">
+      <div class="q-header">
+        <span class="q-badge">Q3</span>
+        <span class="q-name">委派／快做</span>
+      </div>
+      <ul class="task-list" id="q3list"></ul>
+      <div class="add-task">
+        <input class="add-input" id="q3input" placeholder="＋ 新增" onkeydown="addTask(event,'q3')">
+        <button class="add-btn" onclick="addTask(null,'q3')">＋</button>
+      </div>
+    </div>
+    <!-- Q4 不重要＋不緊急 -->
+    <div class="quadrant q4">
+      <div class="q-header">
+        <span class="q-badge">Q4</span>
+        <span class="q-name">消除或等等</span>
+      </div>
+      <ul class="task-list" id="q4list"></ul>
+      <div class="add-task">
+        <input class="add-input" id="q4input" placeholder="＋ 新增" onkeydown="addTask(event,'q4')">
+        <button class="add-btn" onclick="addTask(null,'q4')">＋</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- DRIP 時間日誌 -->
+<div class="section" style="margin-top:16px;">
+  <div class="section-title">DRIP 時間日誌</div>
+  <div class="drip-wrap">
+    <div class="drip-header">
+      <span>時間</span><span>DRIP</span><span>做了什麼</span>
+    </div>
+    <div id="dripLog"></div>
+    <div class="drip-new">
+      <input id="dripTime" placeholder="07:14" style="width:54px;">
+      <select class="drip-sel" id="dripTag">
+        <option>P</option>
+        <option>I</option>
+        <option>R</option>
+        <option>D</option>
+      </select>
+      <input id="dripDesc" placeholder="做了什麼…" onkeydown="if(event.key==='Enter')addDrip()">
+      <button class="drip-add-btn" onclick="addDrip()">記錄</button>
+    </div>
+  </div>
+</div>
+
+<!-- 今日回顧 -->
+<div class="section" style="margin-top:16px;">
+  <div class="section-title">今日回顧</div>
+  <textarea class="review-area" id="reviewArea" placeholder="今天有什麼收穫、卡關、或明天要注意的…" onchange="save()"></textarea>
+</div>
+
+<div class="bottom-bar">
+  <button class="save-btn" onclick="save()">✦ 儲存今日</button>
+  <span class="toast" id="toast">已儲存</span>
+</div>
+
+<script>
+const DAYS = ['日','一','二','三','四','五','六'];
+const MONTHS = ['一','二','三','四','五','六','七','八','九','十','十一','十二'];
+
+function getKey() {
+  const d = new Date();
+  return 'dailyReport_' + d.getFullYear() + pad(d.getMonth()+1) + pad(d.getDate());
+}
+function pad(n){ return String(n).padStart(2,'0'); }
+function nowTime(){
+  const d=new Date();
+  return pad(d.getHours())+':'+pad(d.getMinutes());
+}
+
+// ── Init Header ──
+(function(){
+  const d = new Date();
+  const m = d.getMonth()+1, day = d.getDate();
+  document.getElementById('dateDisplay').textContent = m + '月' + day + '日';
+  document.getElementById('weekdayDisplay').textContent = '（週' + DAYS[d.getDay()] + '）';
+})();
+
+// ── State ──
+let state = {
+  boss: '',
+  med: { morning: false, noon: false, evening: false },
+  matrix: { q1: [], q2: [], q3: [], q4: [] },
+  drip: [],
+  review: ''
+};
+
+function load(){
+  const saved = localStorage.getItem(getKey());
+  if(saved){ try{ state = JSON.parse(saved); }catch(e){} }
+}
+
+function save(){
+  state.boss = document.getElementById('bossInput').value;
+  state.review = document.getElementById('reviewArea').value;
+  localStorage.setItem(getKey(), JSON.stringify(state));
+  const t = document.getElementById('toast');
+  t.classList.add('show');
+  clearTimeout(t._t);
+  t._t = setTimeout(()=>t.classList.remove('show'), 1800);
+}
+
+// ── Med ──
+function toggleMed(slot){
+  state.med[slot] = !state.med[slot];
+  renderMed();
+  save();
+}
+function renderMed(){
+  ['morning','noon','evening'].forEach(s=>{
+    document.getElementById('med'+s.charAt(0).toUpperCase()+s.slice(1))
+      .classList.toggle('done', !!state.med[s]);
+  });
+}
+
+// ── Matrix ──
+function addTask(e, q){
+  if(e && e.key !== 'Enter') return;
+  const inp = document.getElementById(q+'input');
+  const text = inp.value.trim();
+  if(!text) return;
+  state.matrix[q].push({ text, done: false });
+  inp.value = '';
+  renderMatrix();
+  save();
+}
+function toggleTask(q, i){
+  state.matrix[q][i].done = !state.matrix[q][i].done;
+  renderMatrix();
+  save();
+}
+function deleteTask(q, i){
+  state.matrix[q].splice(i,1);
+  renderMatrix();
+  save();
+}
+function renderMatrix(){
+  ['q1','q2','q3','q4'].forEach(q=>{
+    const ul = document.getElementById(q+'list');
+    ul.innerHTML = '';
+    (state.matrix[q]||[]).forEach((t,i)=>{
+      const li = document.createElement('li');
+      li.className = 'task-item' + (t.done?' done':'');
+      li.innerHTML = `<span class="task-check">${t.done?'✓':''}</span><span class="task-text">${t.text}</span>`;
+      li.onclick = ()=>toggleTask(q,i);
+      li.ondblclick = (e)=>{ e.stopPropagation(); deleteTask(q,i); };
+      ul.appendChild(li);
+    });
+  });
+}
+
+// ── DRIP ──
+function addDrip(){
+  const time = document.getElementById('dripTime').value || nowTime();
+  const tag = document.getElementById('dripTag').value;
+  const desc = document.getElementById('dripDesc').value.trim();
+  if(!desc) return;
+  state.drip.push({ time, tag, desc });
+  document.getElementById('dripDesc').value = '';
+  document.getElementById('dripTime').value = '';
+  renderDrip();
+  save();
+}
+function renderDrip(){
+  const log = document.getElementById('dripLog');
+  log.innerHTML = '';
+  (state.drip||[]).forEach((row,i)=>{
+    const div = document.createElement('div');
+    div.className = 'drip-row';
+    div.innerHTML = `
+      <span class="drip-time">${row.time}</span>
+      <span class="drip-tag tag-${row.tag}">${row.tag}</span>
+      <span class="drip-desc">${row.desc}</span>`;
+    div.ondblclick = ()=>{ state.drip.splice(i,1); renderDrip(); save(); };
+    log.appendChild(div);
+  });
+}
+
+// ── Boot ──
+load();
+document.getElementById('bossInput').value = state.boss || '';
+document.getElementById('reviewArea').value = state.review || '';
+renderMed();
+renderMatrix();
+renderDrip();
+
+// auto-fill drip time on focus
+document.getElementById('dripTime').addEventListener('focus', function(){
+  if(!this.value) this.value = nowTime();
+});
+
+// auto-save on boss change
+document.getElementById('bossInput').addEventListener('change', save);
+</script>
+</body>
+</html>

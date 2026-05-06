@@ -119,6 +119,43 @@ const server = http.createServer((req, res) => {
     const dateKey = url.searchParams.get('date') || getTodayPrefix();
     const todoMd = fs.readFileSync(path.join(ROOT, 'F｜行動聚焦漏斗', '玩家待辦任務.md'), 'utf8');
     const allNotes = getAllNotes();
+
+    // ── 八大財富累積 ──
+    const WEALTH_NAMES = ['成長','健康','家庭','技藝','金錢','人脈','體驗','服務'];
+    const wealthTotal = {}; const wealthToday = {};
+    WEALTH_NAMES.forEach(n => { wealthTotal[n] = 0; wealthToday[n] = 0; });
+    const today = getTodayPrefix();
+    const jDir = path.join(ROOT, 'F｜行動聚焦漏斗');
+    try {
+      // 掃根目錄 + flow_journal 子目錄
+      const scanDirs = [jDir, path.join(jDir, 'flow_journal')];
+      for (const dir of scanDirs) {
+        if (!fs.existsSync(dir)) continue;
+        for (const f of fs.readdirSync(dir).filter(f => f.startsWith('flow_journal_') && f.endsWith('.json'))) {
+          try {
+            const dk = f.replace('flow_journal_','').replace('.json','');
+            const j = JSON.parse(fs.readFileSync(path.join(dir, f), 'utf8'));
+            if (j.wealth) {
+              WEALTH_NAMES.forEach(n => {
+                const v = Number(j.wealth[n]) || 0;
+                wealthTotal[n] += v;
+                if (dk === today) wealthToday[n] = v;
+              });
+            }
+            // 自動：全天三次藥都打勾 → 健康 +1
+            if (j.med_morning && j.med_noon && j.med_evening) wealthTotal['健康'] += 1;
+            if (dk === today && j.med_morning && j.med_noon && j.med_evening) wealthToday['健康'] += 1;
+          } catch {}
+        }
+      }
+      // 加入歷史補分（從 W_Wealth 活動紀錄換算）
+      const histFile = path.join(jDir, 'wealth_history.json');
+      if (fs.existsSync(histFile)) {
+        const hist = JSON.parse(fs.readFileSync(histFile, 'utf8'));
+        if (hist.wealth) WEALTH_NAMES.forEach(n => { wealthTotal[n] += Number(hist.wealth[n]) || 0; });
+      }
+    } catch {}
+
     const payload = {
       todos: parseTodos(todoMd),
       summary: getTodaySummary(),
@@ -126,6 +163,8 @@ const server = http.createServer((req, res) => {
       noteDates: Object.keys(allNotes).sort().reverse(),
       currentDate: dateKey,
       date: new Date().toLocaleDateString('zh-TW', { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' }),
+      wealth_total: wealthTotal,
+      wealth_today: wealthToday,
     };
     res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
     res.end(JSON.stringify(payload));
@@ -176,13 +215,23 @@ const server = http.createServer((req, res) => {
 
   if (url.pathname === '/api/flow-journal' && req.method === 'GET') {
     const dateKey = url.searchParams.get('date') || getTodayPrefixNow();
-    const file = path.join(ROOT, 'F｜行動聚焦漏斗', `flow_journal_${dateKey}.json`);
-    // 列出所有 flow_journal 日期
-    const dir = path.join(ROOT, 'F｜行動聚焦漏斗');
-    const dates = fs.readdirSync(dir)
-      .filter(f => f.startsWith('flow_journal_') && f.endsWith('.json'))
-      .map(f => f.replace('flow_journal_', '').replace('.json', ''))
-      .sort().reverse();
+    const jDir = path.join(ROOT, 'F｜行動聚焦漏斗');
+    const subDir = path.join(jDir, 'flow_journal');
+
+    // 掃兩個目錄，合併去重後排序
+    let allKeys = [];
+    for (const d of [jDir, subDir]) {
+      if (!fs.existsSync(d)) continue;
+      fs.readdirSync(d)
+        .filter(f => f.startsWith('flow_journal_') && f.endsWith('.json'))
+        .forEach(f => allKeys.push(f.replace('flow_journal_','').replace('.json','')));
+    }
+    const dates = [...new Set(allKeys)].sort().reverse();
+
+    // 從兩個位置找檔案
+    let file = path.join(jDir, `flow_journal_${dateKey}.json`);
+    if (!fs.existsSync(file)) file = path.join(subDir, `flow_journal_${dateKey}.json`);
+
     if (fs.existsSync(file)) {
       const journal = JSON.parse(fs.readFileSync(file, 'utf8'));
       res.writeHead(200, { 'Content-Type': 'application/json' });
@@ -193,6 +242,7 @@ const server = http.createServer((req, res) => {
     }
     return;
   }
+
 
   if (url.pathname === '/api/flow-journal' && req.method === 'POST') {
     let body = '';
@@ -272,11 +322,12 @@ function sendDiscordReport() {
 
     // 艾森豪矩陣分類（與 dashboard 相同）
     const eisenhowerMap = {
-      '🔴 四月主線': 'q1',
-      '💰 家庭財務': 'q2',
-      '🟡 健康日常': 'q2',
-      '🟠 系統維護': 'q3',
-      '🔵 支線任務（空檔推進）': 'q4',
+      '🔴 五月主線（工作）':       'q1',
+      '📅 本週行程（5/6 ～ 5/11）': 'q1',
+      '🔴 五月主線（個人與健康）': 'q2',
+      '💰 家庭財務與行政':         'q2',
+      '📅 週末與女兒行程':         'q3',
+      '🛒 考慮購買與支線':         'q4',
     };
     const q = { q1: [], q2: [], q3: [], q4: [] };
     const scheduleItems = [];
