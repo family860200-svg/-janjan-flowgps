@@ -280,7 +280,8 @@ Skill = AI 員工的標準作業程序（SOP）
 
 ### 🖥️ 日報（Dashboard）
 
-- **「打開日報」** = 啟動 `O｜系統持續優化/scripts/dashboard-server.js`，並開啟 http://localhost:3737
+- **「日報」指令** = 嚴格執行 `O｜系統持續優化/Ｚ 系統/workflows/daily-report.md` 中的工作流。絕對不要只是去開 `阿抗日誌.md` 或 `日報.html`。
+- **「打開日報」儀表板** = 啟動 `O｜系統持續優化/scripts/dashboard-server.js`，並開啟 http://localhost:3737
 - 啟動指令：`node "O｜系統持續優化/scripts/dashboard-server.js" &`
 - Port：**3737**（固定）
 - 如果 port 已佔用，不必換 port，直接 `open http://localhost:3737` 即可
