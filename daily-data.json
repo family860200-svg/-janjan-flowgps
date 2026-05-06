@@ -1,40 +1,50 @@
 {
-  "generatedAt": "2026-05-01T06:52:02+08:00",
+  "generatedAt": "2026-05-06T16:51:54+08:00",
   "tasks": {
     "urgent": [
-      { "title": "客訴處理接手上軌道（慢慢和客戶溝通轉型中）", "source": "FlowGPS", "dueDate": "" },
-      { "title": "客訴異議單：再想想優化的流程、統一版本與大小（預計五月交接）", "source": "FlowGPS", "dueDate": "2026-05-31" },
-      { "title": "房屋稅 5月 待繳款", "source": "FlowGPS", "dueDate": "2026-05-31" },
-      { "title": "所得稅 5月 待繳款", "source": "FlowGPS", "dueDate": "2026-05-31" }
+      { "title": "客訴處理接手上軌道", "source": "工作主線", "dueDate": "" },
+      { "title": "等副理審核客訴單（共 10 件）", "source": "工作主線", "dueDate": "" },
+      { "title": "客訴異議單流程優化", "source": "工作主線", "dueDate": "" },
+      { "title": "寄出紙樣（斯里蘭卡）", "source": "工作主線", "dueDate": "暫緩" },
+      { "title": "繳交房租", "source": "家庭財務", "dueDate": "2026-09-05" },
+      { "title": "牙醫回診", "source": "健康與行政", "dueDate": "2026-05-16" }
     ],
     "important": [
-      { "title": "婦女培力計劃：5 月起一連串活動開始", "source": "FlowGPS", "dueDate": "" },
-      { "title": "Threads 衝到 1000+ 追蹤", "source": "FlowGPS", "dueDate": "" },
-      { "title": "5/1 12:30：女兒燙頭髮", "source": "FlowGPS", "dueDate": "2026-05-01T12:30:00" },
-      { "title": "5/2：阿淇哥回診", "source": "FlowGPS", "dueDate": "2026-05-02" },
-      { "title": "孩子王培訓課程", "source": "FlowGPS", "dueDate": "2026-05-02" },
-      { "title": "母親節餐會（與爸媽和弟弟妹妹）", "source": "FlowGPS", "dueDate": "2026-05-06" },
-      { "title": "認識苑裡走讀與場域操作課程", "source": "FlowGPS", "dueDate": "2026-05-09" }
+      { "title": "婦女培力計劃", "source": "個人主線", "dueDate": "每週一" },
+      { "title": "Threads 衝 1000+ 追蹤", "source": "個人主線", "dueDate": "每日" },
+      { "title": "女兒：認識苑裡走讀", "source": "週末行程", "dueDate": "2026-05-09" },
+      { "title": "金錢約會（YNAB）", "source": "週末行程", "dueDate": "2026-05-10" }
     ],
     "quick": [
-      { "title": "⚠️⚠️⚠️ 每天吃藥（早中晚三次，胃潰瘍）⚠️⚠️⚠️", "source": "FlowGPS", "dueDate": "" },
-      { "title": "每天學習 AI（晚餐後，問一個 AI 問題，2 分鐘起步）", "source": "FlowGPS", "dueDate": "" },
-      { "title": "看中醫（5 月底前安排）", "source": "FlowGPS", "dueDate": "2026-05-31" },
-      { "title": "童綜合回診－肝膽腸胃科預約", "source": "FlowGPS", "dueDate": "2026-06-25" }
+      { "title": "🎯 今日 Boss (90-90-1 深耕)", "source": "今日待辦", "dueDate": "今日" },
+      { "title": "行事曆預約明日 Boss 90分鐘", "source": "系統與檢核", "dueDate": "今日" },
+      { "title": "確認 50 件清單標註", "source": "系統與檢核", "dueDate": "今日" },
+      { "title": "Discord 打卡 1.4 關", "source": "系統與檢核", "dueDate": "今日" },
+      { "title": "手工書第五、六章作業", "source": "系統與檢核", "dueDate": "今日晚間" },
+      { "title": "時間日誌試行 Day 2", "source": "系統與檢核", "dueDate": "今日" },
+      { "title": "🌟 每天學習 AI", "source": "系統與檢核", "dueDate": "今日晚間" },
+      { "title": "🌟 看 1 支短影片", "source": "系統與檢核", "dueDate": "今日晚間" },
+      { "title": "⚠️ 每天吃藥（早中晚）", "source": "健康日常", "dueDate": "每日" },
+      { "title": "💧 每日溫和挑戰（喝溫水）", "source": "健康日常", "dueDate": "每日" },
+      { "title": "看中醫安排", "source": "健康日常", "dueDate": "五月底前" },
+      { "title": "童綜合回診預約", "source": "健康日常", "dueDate": "2026-06-25前" }
     ],
     "backlog": [
-      { "title": "Discord 打卡 3 關（1.0、1.3、1.4）", "source": "FlowGPS", "dueDate": "" },
-      { "title": "高雄計畫——5 月或 6 月", "source": "FlowGPS", "dueDate": "" },
-      { "title": "晚間：第五章最後一個作業 ＋ 第六章皮革作業（手工書課程）", "source": "FlowGPS", "dueDate": "" },
-      { "title": "Threads 貼文優化", "source": "FlowGPS", "dueDate": "" },
-      { "title": "八大財富三個面向優化", "source": "FlowGPS", "dueDate": "" },
-      { "title": "手工書網站版面比例調整", "source": "FlowGPS", "dueDate": "" }
+      { "title": "買衛生紙一箱", "source": "支線任務", "dueDate": "" },
+      { "title": "Threads 貼文優化", "source": "支線任務", "dueDate": "" },
+      { "title": "八大財富面向優化", "source": "支線任務", "dueDate": "" },
+      { "title": "手工書網站版面調整", "source": "支線任務", "dueDate": "" },
+      { "title": "高雄之旅計劃", "source": "支線任務", "dueDate": "6月前" }
     ]
   },
-  "schedule": [],
+  "schedule": [
+    { "time": "09:30", "title": "確認梧棲行程攜帶物品" },
+    { "time": "10:00", "title": "抵達梧棲" },
+    { "time": "11:00", "title": "母親節餐會" }
+  ],
   "stats": {
-    "total": 21,
-    "done": 4,
-    "pending": 17
+    "total": 31,
+    "done": 7,
+    "pending": 24
   }
 }
