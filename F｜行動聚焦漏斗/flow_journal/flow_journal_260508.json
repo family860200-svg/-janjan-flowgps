@@ -19,7 +19,7 @@
     "技藝": 1
   },
   "review": "購買掛燙機、處理垃圾，並展開 Google AI 課程。身分認同與專業技能同步進階。",
-  "med_morning": false,
-  "med_noon": false,
-  "med_evening": false
+  "med_morning": true,
+  "med_noon": true,
+  "med_evening": true
 }
