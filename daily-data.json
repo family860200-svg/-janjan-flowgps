@@ -1,51 +1,53 @@
 {
-  "generatedAt": "2026-05-07T08:00:32+08:00",
+  "generatedAt": "2026-05-08T06:38:00+08:00",
   "tasks": {
     "urgent": [
-      { "title": "上班日，繼續推進客訴接手", "source": "今日行程(5/7)", "dueDate": "2026-05-07" },
-      { "title": "客訴異議單流程優化、統一版本", "source": "工作主線", "dueDate": "" },
-      { "title": "⏳ [等別人] 寄出紙樣（斯里蘭卡）", "source": "工作主線", "dueDate": "戰事穩定後" },
-      { "title": "繳交房租 $5,000", "source": "家庭財務", "dueDate": "2026-09-05" },
+      { "title": "幫阿淇哥處理勞保的事宜", "source": "家庭行政", "dueDate": "緊急" },
+      { "title": "客訴處理接手上軌道", "source": "工作主線", "dueDate": "" },
+      { "title": "等副理審核客訴單（共 10 件）", "source": "工作主線", "dueDate": "" },
+      { "title": "客訴異議單流程優化", "source": "工作主線", "dueDate": "" },
+      { "title": "寄出紙樣（斯里蘭卡）", "source": "工作主線", "dueDate": "暫緩" },
+      { "title": "繳交房租", "source": "家庭財務", "dueDate": "2026-09-05" },
       { "title": "牙醫回診", "source": "健康與行政", "dueDate": "2026-05-16" }
     ],
     "important": [
       { "title": "婦女培力計劃", "source": "個人主線", "dueDate": "每週一" },
-      { "title": "Threads 衝到 1000+ 追蹤", "source": "個人主線", "dueDate": "每日發文" },
-      { "title": "Google 計畫：確認平台登入", "source": "Google 計畫(線上自學)", "dueDate": "" },
-      { "title": "Google 計畫：確認加入 LINE", "source": "Google 計畫(線上自學)", "dueDate": "" },
-      { "title": "Google 計畫：開始課程", "source": "Google 計畫(線上自學)", "dueDate": "每週至少1單元" },
-      { "title": "女兒：認識苑裡走讀與場域操作課程", "source": "週末行程", "dueDate": "2026-05-09" },
-      { "title": "金錢約會（YNAB 對帳）", "source": "週末行程", "dueDate": "2026-05-10" }
+      { "title": "Threads 衝 1000+ 追蹤", "source": "個人主線", "dueDate": "每日" },
+      { "title": "女兒：認識苑裡走讀", "source": "週末行程", "dueDate": "2026-05-09（明天！）" },
+      { "title": "金錢約會（YNAB）", "source": "週末行程", "dueDate": "2026-05-10" }
     ],
     "quick": [
       { "title": "🎯 今日 Boss (90-90-1 深耕)", "source": "今日待辦", "dueDate": "今日" },
       { "title": "行事曆預約明日 Boss 90分鐘", "source": "系統與檢核", "dueDate": "今日" },
-      { "title": "確認 50 件行動清單標註", "source": "系統與檢核", "dueDate": "今日" },
+      { "title": "確認 50 件清單標註", "source": "系統與檢核", "dueDate": "今日" },
       { "title": "Discord 打卡 1.4 關", "source": "系統與檢核", "dueDate": "今日" },
-      { "title": "手工書第五、六章作業", "source": "系統與檢核", "dueDate": "今日晚間" },
-      { "title": "🌟 每天學習 AI (問 Claude Code 一個問題)", "source": "系統與檢核", "dueDate": "每日晚間" },
-      { "title": "🌟 看 1 支 Google 短影片", "source": "系統與檢核", "dueDate": "每日晚間" },
-      { "title": "⚠️ 每天吃藥（早中晚三次，胃潰瘍）", "source": "健康日常", "dueDate": "每日" },
-      { "title": "💧 每日溫和挑戰：先喝溫水，甜食減半", "source": "健康日常", "dueDate": "每日" },
-      { "title": "看中醫安排", "source": "健康日常", "dueDate": "2026-05-31" },
-      { "title": "童綜合回診－肝膽腸胃科", "source": "健康日常", "dueDate": "2026-06-25前" }
+      { "title": "時間日誌試行 Day 4", "source": "系統與檢核", "dueDate": "今日" },
+      { "title": "⚠️ 每天吃藥（早中晚）", "source": "健康日常", "dueDate": "每日" },
+      { "title": "💧 每日溫和挑戰（喝溫水）", "source": "健康日常", "dueDate": "每日" },
+      { "title": "看中醫安排", "source": "健康日常", "dueDate": "五月底前" },
+      { "title": "童綜合回診預約", "source": "健康日常", "dueDate": "2026-06-25前" }
     ],
     "backlog": [
-      { "title": "衛生紙一箱", "source": "考慮購買", "dueDate": "" },
+      { "title": "買衛生紙一箱", "source": "支線任務", "dueDate": "" },
       { "title": "Threads 貼文優化", "source": "支線任務", "dueDate": "" },
-      { "title": "八大財富三個面向優化", "source": "支線任務", "dueDate": "" },
-      { "title": "手工書網站版面比例調整", "source": "支線任務", "dueDate": "" },
-      { "title": "高雄之旅計劃", "source": "支線任務", "dueDate": "6月決定" },
-      { "title": "女兒：繪本/半日課程", "source": "週末行程", "dueDate": "2026-06-14" },
-      { "title": "女兒：親子嘉年華", "source": "週末行程", "dueDate": "2026-08-22" }
+      { "title": "八大財富面向優化", "source": "支線任務", "dueDate": "" },
+      { "title": "手工書網站版面調整", "source": "支線任務", "dueDate": "" },
+      { "title": "高雄之旅計劃", "source": "支線任務", "dueDate": "6月前" },
+      { "title": "幫女兒預約（待確認）", "source": "Inbox", "dueDate": "" },
+      { "title": "請假評換", "source": "Inbox", "dueDate": "" }
     ]
   },
   "schedule": [
-    { "time": "全天", "title": "上班日，繼續推進客訴接手" }
+    { "time": "07:00", "title": "出門上班" },
+    { "time": "07:30", "title": "抵達公司" },
+    { "time": "08:00", "title": "🎯 今日 Boss (90分鐘深耕)" },
+    { "time": "10:00", "title": "客訴單跟進與審核確認" },
+    { "time": "13:30", "title": "處理勞保相關事宜" },
+    { "time": "17:30", "title": "下班" }
   ],
   "stats": {
-    "total": 30,
-    "done": 12,
-    "pending": 30
+    "total": 31,
+    "done": 0,
+    "pending": 31
   }
 }
