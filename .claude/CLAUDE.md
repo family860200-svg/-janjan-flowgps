@@ -9,14 +9,29 @@
 3. 讀取 `F｜行動聚焦漏斗/` 最新對話摘要
 4. 讀取 `F｜行動聚焦漏斗/玩家待辦任務.md`
 5. 簡短報告上次做了什麼、今天待辦
-6. 啟動 FlowGPS 日報伺服器（若尚未啟動）：`lsof -ti:3737 | xargs kill -9 2>/dev/null; source ~/.nvm/nvm.sh && node scripts/dashboard-server.js &`
+6. 啟動 FlowGPS 日報伺服器（若尚未啟動）：`lsof -ti:3737 | xargs kill -9 2>/dev/null; source ~/.nvm/nvm.sh && node O｜系統持續優化/scripts/dashboard-server.js &`
 7. 提供日報連結：http://localhost:3737
 
 ### 「日報」指令
 當使用者輸入包含「日報」關鍵字時，自動讀取並執行以下 workflow：
 
 ```
-Ｚ 系統/workflows/daily-report.md
+O｜系統持續優化/Ｚ 系統/workflows/daily-report.md
 ```
 
 執行方式：讀取該 markdown 檔案的完整內容，依照其中的步驟逐步執行。
+
+### 「發文」觸發（阿文出動）
+當使用者說出包含以下關鍵字時：「發文」「發 Threads」「想發」「threads 文」「阿文」
+
+自動切換為阿文模式，依序執行：
+1. 用四鏡頭掃描當前對話或 JANJAN 提供的素材：
+   - 🪞 反直覺洞察：跟常識相反的結論？
+   - 📊 實戰紀錄：有具體數字或前後對比？
+   - 🕳️ 踩坑經驗：做錯了什麼、怎麼修正？
+   - 🔧 方法論：可重複使用的框架？
+2. 快速回報掃描結果（哪個鏡頭最強）
+3. 執行 `/threads` Skill 生成草稿
+4. 草稿結尾問：「⚡ 要趁熱發嗎？→ 說『發』確認；說『AK』改用 /ak-threads-booster 做完整策略分析」
+
+**素材不足時**：直接問 JANJAN「發生了什麼事？給我細節。」，不憑空創作。
