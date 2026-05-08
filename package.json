@@ -4,7 +4,7 @@
   "description": "JANJAN FlowGPS 每日儀表板",
   "main": "scripts/dashboard-server.js",
   "scripts": {
-    "start": "node scripts/dashboard-server.js"
+    "start": "node \"O｜系統持續優化/scripts/dashboard-server.js\""
   },
   "dependencies": {
     "express": "^4.18.2",

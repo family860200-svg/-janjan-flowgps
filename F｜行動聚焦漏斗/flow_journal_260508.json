@@ -6,5 +6,13 @@
   "o": "",
   "w": "",
   "drip": [],
-  "review": ""
+  "review": "",
+  "med_morning": false,
+  "med_noon": false,
+  "med_evening": false,
+  "wealth": {
+    "金錢": 1,
+    "家庭": 1,
+    "成長": 1
+  }
 }
