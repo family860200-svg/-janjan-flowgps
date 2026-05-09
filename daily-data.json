@@ -7,10 +7,10 @@
       { "title": "客訴處理：掌握新案 (17件)", "source": "工作主線", "dueDate": "今日" }
     ],
     "important": [
-      { "title": "女兒：認識苑裡走讀", "source": "週末行程", "dueDate": "2026-05-09（明天！）" },
+      { "title": "🚗 接送女兒：苑裡走讀 (20:00 接回)", "source": "週末行程", "dueDate": "今日" },
       { "title": "金錢約會（YNAB）", "source": "週末行程", "dueDate": "2026-05-10" },
       { "title": "客訴流程優化評估", "source": "工作主線", "dueDate": "2026-05-11 08:00" },
-      { "title": "致電牙醫改 5/16 回診時間", "source": "健康與行政", "dueDate": "今日" },
+      { "title": "🦷 牙醫回診 (20:30)", "source": "健康與行政", "dueDate": "2026-05-15" },
       { "title": "婦女培力計劃", "source": "個人主線", "dueDate": "每週一" }
     ],
     "quick": [
@@ -26,12 +26,10 @@
       { "title": "幫女兒預約（待確認）", "source": "Inbox", "dueDate": "" }
     ]
   },
-  "schedule": [
-    { "time": "08:00", "title": "🎯 今日 Boss (90-90-1 深耕)" },
-    { "time": "10:00", "title": "客訴單跟進與審核確認" },
-    { "time": "13:30", "title": "處理勞保相關事宜" },
-    { "time": "17:30", "title": "下班" },
-    { "time": "19:07", "title": "Google AI 課程開始" }
+    { "time": "上午", "title": "🚗 送女兒出門 / 致電牙醫 / 處理勞保" },
+    { "time": "下午", "title": "🎯 今日 Boss (Google AI 課程 或 手工書進度)" },
+    { "time": "20:00", "title": "🚗 接女兒回家" },
+    { "time": "21:00", "title": "✨ 黃金 ME TIME" }
   ],
   "stats": {
     "total": 16,
