@@ -1,34 +1,30 @@
 {
-  "generatedAt": "2026-05-11T20:37:26",
+  "generatedAt": "2026-05-12T06:25:52",
   "tasks": {
     "urgent": [
-      { "title": "婦女培力計劃（每週一）", "source": "FlowGPS", "dueDate": "2026-05-11" },
-      { "title": "客訴異議單優化：轉型 Mail 取代 FAX", "source": "FlowGPS", "dueDate": "2026-05-11" }
+      { "title": "客訴異議單優化：轉型 Mail 取代 FAX", "source": "FlowGPS", "dueDate": "2026-05-12" },
+      { "title": "客訴紙樣寄達追蹤", "source": "FlowGPS", "dueDate": "" }
     ],
     "important": [
       { "title": "Google 數位人才：第一階段線上自學", "source": "FlowGPS", "dueDate": "2026-08-10" },
-      { "title": "客訴紙樣寄達追蹤", "source": "FlowGPS", "dueDate": "" },
       { "title": "牙醫回診", "source": "FlowGPS", "dueDate": "2026-05-15" },
-      { "title": "童綜合回診－肝膽腸胃科預約", "source": "FlowGPS", "dueDate": "2026-06-25" },
-      { "title": "Threads 衝到 1000+ 追蹤", "source": "FlowGPS", "dueDate": "" }
+      { "title": "接送女兒面試（苗栗縣政府）", "source": "FlowGPS", "dueDate": "2026-05-16" },
+      { "title": "童綜合回診預約（二個月後）", "source": "FlowGPS", "dueDate": "2026-06-25" }
     ],
     "quick": [
       { "title": "看 1 支「Google 數位人才計畫」短影片", "source": "FlowGPS", "dueDate": "" },
-      { "title": "想喝飲料時先喝一杯溫水", "source": "FlowGPS", "dueDate": "" },
-      { "title": "看中醫（5 月底前安排）", "source": "FlowGPS", "dueDate": "2026-05-31" }
+      { "title": "溫和挑戰：多喝溫水", "source": "FlowGPS", "dueDate": "" }
     ],
     "backlog": [
-      { "title": "房租每月 $5,000", "source": "FlowGPS", "dueDate": "2026-09-05" },
-      { "title": "評估與執行 MOD/網路 停機", "source": "FlowGPS", "dueDate": "" },
-      { "title": "衛生紙一箱", "source": "FlowGPS", "dueDate": "" },
-      { "title": "手工書網站版面比例調整", "source": "FlowGPS", "dueDate": "" },
-      { "title": "高雄之旅計劃", "source": "FlowGPS", "dueDate": "" }
+      { "title": "整理 iCloud 空間與部分檔案移轉", "source": "FlowGPS", "dueDate": "" },
+      { "title": "衛生紙網購補充", "source": "FlowGPS", "dueDate": "" },
+      { "title": "Threads 衝追蹤（每日發文）", "source": "FlowGPS", "dueDate": "" }
     ]
   },
   "schedule": [],
   "stats": {
-    "total": 15,
+    "total": 11,
     "done": 0,
-    "pending": 15
+    "pending": 11
   }
 }
