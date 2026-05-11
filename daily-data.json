@@ -1,39 +1,34 @@
 {
-  "generatedAt": "2026-05-08T19:40:00+08:00",
+  "generatedAt": "2026-05-11T20:37:26",
   "tasks": {
     "urgent": [
-      { "title": "幫阿淇哥處理勞保的事宜", "source": "家庭行政", "dueDate": "2026-05-09" },
-      { "title": "客訴處理：等副理審核 (10件)", "source": "工作主線", "dueDate": "今日" },
-      { "title": "客訴處理：掌握新案 (17件)", "source": "工作主線", "dueDate": "今日" }
+      { "title": "婦女培力計劃（每週一）", "source": "FlowGPS", "dueDate": "2026-05-11" },
+      { "title": "客訴異議單優化：轉型 Mail 取代 FAX", "source": "FlowGPS", "dueDate": "2026-05-11" }
     ],
     "important": [
-      { "title": "🚗 接送女兒：苑裡走讀 (20:00 接回)", "source": "週末行程", "dueDate": "今日" },
-      { "title": "金錢約會（YNAB）", "source": "週末行程", "dueDate": "2026-05-10" },
-      { "title": "客訴流程優化評估", "source": "工作主線", "dueDate": "2026-05-11 08:00" },
-      { "title": "🦷 牙醫回診 (20:30)", "source": "健康與行政", "dueDate": "2026-05-15" },
-      { "title": "婦女培力計劃", "source": "個人主線", "dueDate": "每週一" }
+      { "title": "Google 數位人才：第一階段線上自學", "source": "FlowGPS", "dueDate": "2026-08-10" },
+      { "title": "客訴紙樣寄達追蹤", "source": "FlowGPS", "dueDate": "" },
+      { "title": "牙醫回診", "source": "FlowGPS", "dueDate": "2026-05-15" },
+      { "title": "童綜合回診－肝膽腸胃科預約", "source": "FlowGPS", "dueDate": "2026-06-25" },
+      { "title": "Threads 衝到 1000+ 追蹤", "source": "FlowGPS", "dueDate": "" }
     ],
     "quick": [
-      { "title": "💧 每日溫和挑戰（喝溫水）", "source": "健康日常", "dueDate": "每日" },
-      { "title": "看中醫安排", "source": "健康日常", "dueDate": "五月底前" },
-      { "title": "童綜合回診預約", "source": "健康日常", "dueDate": "2026-06-25前" }
+      { "title": "看 1 支「Google 數位人才計畫」短影片", "source": "FlowGPS", "dueDate": "" },
+      { "title": "想喝飲料時先喝一杯溫水", "source": "FlowGPS", "dueDate": "" },
+      { "title": "看中醫（5 月底前安排）", "source": "FlowGPS", "dueDate": "2026-05-31" }
     ],
     "backlog": [
-      { "title": "買衛生紙一箱", "source": "支線任務", "dueDate": "" },
-      { "title": "Threads 衝 1000+ 追蹤", "source": "個人主線", "dueDate": "每日" },
-      { "title": "Threads 貼文優化", "source": "支線任務", "dueDate": "" },
-      { "title": "繳交房租", "source": "家庭財務", "dueDate": "2026-09-05" },
-      { "title": "幫女兒預約（待確認）", "source": "Inbox", "dueDate": "" }
+      { "title": "房租每月 $5,000", "source": "FlowGPS", "dueDate": "2026-09-05" },
+      { "title": "評估與執行 MOD/網路 停機", "source": "FlowGPS", "dueDate": "" },
+      { "title": "衛生紙一箱", "source": "FlowGPS", "dueDate": "" },
+      { "title": "手工書網站版面比例調整", "source": "FlowGPS", "dueDate": "" },
+      { "title": "高雄之旅計劃", "source": "FlowGPS", "dueDate": "" }
     ]
   },
-    { "time": "上午", "title": "🚗 送女兒出門 / 致電牙醫 / 處理勞保" },
-    { "time": "下午", "title": "🎯 今日 Boss (Google AI 課程 或 手工書進度)" },
-    { "time": "20:00", "title": "🚗 接女兒回家" },
-    { "time": "21:00", "title": "✨ 黃金 ME TIME" }
-  ],
+  "schedule": [],
   "stats": {
-    "total": 16,
-    "done": 15,
-    "pending": 16
+    "total": 15,
+    "done": 0,
+    "pending": 15
   }
 }
