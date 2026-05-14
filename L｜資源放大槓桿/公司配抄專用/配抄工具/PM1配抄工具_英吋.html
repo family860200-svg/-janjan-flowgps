@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PM1 配抄計算工具（英吋）v4</title>
+<title>PM1 配抄計算工具（英吋）v5</title>
 <style>
 * { box-sizing: border-box; }
 body { font-family: 'Microsoft JhengHei', 'PingFang TC', sans-serif; max-width: 980px; margin: 0 auto; padding: 16px; background: #edf7ee; color: #1a2c3a; font-size: 16px; }
@@ -38,7 +38,7 @@ pre { background: #f0faf1; padding: 12px; border-radius: 4px; font-size: 12px; w
 </style>
 </head>
 <body>
-<h1>⚙️ PM1 配抄計算工具（英吋）<small style="font-size:13px;color:#aaa;font-weight:normal">v4</small></h1>
+<h1>⚙️ PM1 配抄計算工具（英吋）<small style="font-size:13px;color:#aaa;font-weight:normal">v5</small></h1>
 <div class="card">
   <h2>📋 訂單輸入（英吋）</h2>
   <table id="orderTable">
@@ -106,7 +106,7 @@ pre { background: #f0faf1; padding: 12px; border-radius: 4px; font-size: 12px; w
   </div>
 </div>
 <script>
-const GOLDEN_PRIMARY   = [19.09,20.28,21.46,22.67,23.86,25.04,26.26,27.44,28.63,29.84,31.02,32.21,32.81,33.39,34.59,35.8,36.97,38.19,39.37,40.55,41.75,42.95];
+const GOLDEN_PRIMARY   = [19.08,20.28,21.46,22.67,23.86,25.04,26.26,27.44,28.63,29.84,31.02,32.21,32.81,33.39,34.59,35.8,36.97,38.19,39.37,40.55,41.75,42.95];
 const GOLDEN_SECONDARY = [19.69,20.87,22.09,23.27,24.45,25.67,26.85,28.03,29.21,30.43,31.61,32.80,34.02,35.20,36.38,37.60,41.18];
 let _min,_max,_minH,_maxH;
 function r(n){return Math.round(n*100)/100;}
