@@ -1,29 +1,32 @@
 {
-  "generatedAt": "2026-05-14T07:47:00",
+  "generatedAt": "2026-05-15T05:48:00",
   "tasks": {
     "urgent": [
-      { "title": "外銷主線：剩餘 5 張 PI", "source": "FlowGPS", "dueDate": "2026-05-14" },
-      { "title": "胃藥提醒 (午餐/晚餐後)", "source": "FlowGPS", "dueDate": "2026-05-14" }
+      { "title": "🦷 牙醫回診 (20:30)", "source": "FlowGPS", "dueDate": "2026-05-15" },
+      { "title": "📝 厚磅生管本錄入 (9:00-10:00)", "source": "FlowGPS", "dueDate": "2026-05-15" },
+      { "title": "🧼 車內空間整理", "source": "FlowGPS", "dueDate": "2026-05-15" },
+      { "title": "🌊 外銷 PI 錄入 (5件)", "source": "FlowGPS", "dueDate": "2026-05-15" }
     ],
     "important": [
-      { "title": "牙醫回診", "source": "FlowGPS", "dueDate": "2026-05-15" },
-      { "title": "洗車 + 車內清理 (面試準備)", "source": "FlowGPS", "dueDate": "2026-05-15" },
-      { "title": "接送女兒：面試", "source": "FlowGPS", "dueDate": "2026-05-16" },
-      { "title": "Google 數位人才計畫：線上自學", "source": "FlowGPS", "dueDate": "2026-05-31" }
+      { "title": "🚗 接送女兒：苗栗面試", "source": "FlowGPS", "dueDate": "2026-05-16" },
+      { "title": "🎓 Claude 101 認證 (進行中)", "source": "FlowGPS", "dueDate": "" },
+      { "title": "🎓 Google 數位人才學程", "source": "FlowGPS", "dueDate": "2026-08-10" },
+      { "title": "🧵 Threads 1000+ 追蹤", "source": "FlowGPS", "dueDate": "" }
     ],
     "quick": [
-      { "title": "溫和飲水挑戰 (溫水取代飲料)", "source": "FlowGPS", "dueDate": "2026-05-14" },
-      { "title": "MOD 退租進度追蹤 (觀察中)", "source": "FlowGPS", "dueDate": "2026-05-14" }
+      { "title": "🥯 吃早餐", "source": "FlowGPS", "dueDate": "2026-05-15" },
+      { "title": "⚠️ 胃藥提醒", "source": "FlowGPS", "dueDate": "2026-05-15" },
+      { "title": "💧 溫和飲水", "source": "FlowGPS", "dueDate": "2026-05-15" }
     ],
     "backlog": [
-      { "title": "Threads 衝追蹤", "source": "FlowGPS", "dueDate": "2026-05-31" },
-      { "title": "看中醫安排", "source": "FlowGPS", "dueDate": "2026-05-31" }
+      { "title": "🛒 衛生紙一箱", "source": "FlowGPS", "dueDate": "" },
+      { "title": "💻 手工書網站版面調整", "source": "FlowGPS", "dueDate": "" }
     ]
   },
   "schedule": [
-    { "time": "08:30", "title": "早晨 Routine (早餐、打掃)" },
-    { "time": "09:45", "title": "外銷庶務處理" },
-    { "time": "14:00", "title": "能量調節與任務盤點" }
+    { "time": "05:45", "title": "黃金 ME TIME / PI 處理" },
+    { "time": "09:00", "title": "📝 厚磅生管本錄入 (350-550GSM)" },
+    { "time": "20:30", "title": "🦷 牙醫回診" }
   ],
   "stats": {
     "total": 10,
