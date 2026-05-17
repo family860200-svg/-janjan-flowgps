@@ -1,36 +1,33 @@
 {
-  "generatedAt": "2026-05-15T05:48:00",
+  "generatedAt": "2026-05-17T05:04:42",
   "tasks": {
     "urgent": [
-      { "title": "🦷 牙醫回診 (20:30)", "source": "FlowGPS", "dueDate": "2026-05-15" },
-      { "title": "📝 厚磅生管本錄入 (9:00-10:00)", "source": "FlowGPS", "dueDate": "2026-05-15" },
-      { "title": "🧼 車內空間整理", "source": "FlowGPS", "dueDate": "2026-05-15" },
-      { "title": "🌊 外銷 PI 錄入 (5件)", "source": "FlowGPS", "dueDate": "2026-05-15" }
+      { "title": "金錢約會 (YNAB 理帳)", "source": "📅 本週行程", "dueDate": "2026-05-17" },
+      { "title": "【緊急提前】平版棧板申購 (5/29 結關用)", "source": "🔴 五月主線（工作）", "dueDate": "2026-05-15" },
+      { "title": "交付保單：拿任意險保單 2 份給婆婆", "source": "💰 家庭財務與行政", "dueDate": "" }
     ],
     "important": [
-      { "title": "🚗 接送女兒：苗栗面試", "source": "FlowGPS", "dueDate": "2026-05-16" },
-      { "title": "🎓 Claude 101 認證 (進行中)", "source": "FlowGPS", "dueDate": "" },
-      { "title": "🎓 Google 數位人才學程", "source": "FlowGPS", "dueDate": "2026-08-10" },
-      { "title": "🧵 Threads 1000+ 追蹤", "source": "FlowGPS", "dueDate": "" }
+      { "title": "B 款樣品書 3 本", "source": "🔴 主線任務", "dueDate": "" },
+      { "title": "Threads 1000+ 追蹤", "source": "🔴 主線任務", "dueDate": "" },
+      { "title": "婦女培力計劃", "source": "🔴 主線任務", "dueDate": "" },
+      { "title": "Claude 101 課程", "source": "🔴 學習成長", "dueDate": "" },
+      { "title": "Google AI 職場通識學程 (自學)", "source": "🔴 學習成長", "dueDate": "" }
     ],
     "quick": [
-      { "title": "🥯 吃早餐", "source": "FlowGPS", "dueDate": "2026-05-15" },
-      { "title": "⚠️ 胃藥提醒", "source": "FlowGPS", "dueDate": "2026-05-15" },
-      { "title": "💧 溫和飲水", "source": "FlowGPS", "dueDate": "2026-05-15" }
+      { "title": "胃藥提醒 (三餐後)", "source": "🌞 每日例行", "dueDate": "" },
+      { "title": "每日溫和挑戰 (喝溫水)", "source": "🔴 健康", "dueDate": "" }
     ],
     "backlog": [
-      { "title": "🛒 衛生紙一箱", "source": "FlowGPS", "dueDate": "" },
-      { "title": "💻 手工書網站版面調整", "source": "FlowGPS", "dueDate": "" }
+      { "title": "衛生紙一箱", "source": "🛒 考慮購買與支線", "dueDate": "" },
+      { "title": "Threads 貼文優化", "source": "🛒 考慮購買與支線", "dueDate": "" }
     ]
   },
   "schedule": [
-    { "time": "05:45", "title": "黃金 ME TIME / PI 處理" },
-    { "time": "09:00", "title": "📝 厚磅生管本錄入 (350-550GSM)" },
-    { "time": "20:30", "title": "🦷 牙醫回診" }
+    { "time": "全天", "title": "假日專屬儀式：金錢約會" }
   ],
   "stats": {
-    "total": 10,
+    "total": 12,
     "done": 0,
-    "pending": 10
+    "pending": 12
   }
 }
